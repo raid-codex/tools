@@ -1,4 +1,4 @@
-package main
+package champions_parser
 
 import (
 	"encoding/csv"
@@ -6,38 +6,55 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"sort"
 
+	"github.com/juju/errors"
 	"github.com/raid-codex/tools/common"
 	"github.com/raid-codex/tools/utils"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
-var (
-	sourceFile    = kingpin.Arg("source-file", "CSV File with champions list and grades").Required().String()
-	targetFolder  = kingpin.Arg("target-folder", "Folder in which to create the JSON files").Required().String()
-	currentFolder = kingpin.Arg("current-folder", "Folder in which current champions are stored").Required().String()
-)
+type Command struct {
+	CSVFile *string	
+	CurrentFolder *string
+	TargetFolder *string
+	NoCurrent *bool
+}
 
-func main() {
-	kingpin.Parse()
-	content, errContent := getSourceFileContent()
+func New(cmd *kingpin.CmdClause) *Command {
+	command := &Command{
+		CSVFile: cmd.Flag("csv-file", "CSV File").Required().String(),
+		CurrentFolder: cmd.Flag("current-folder", "Folder where current champions are stored").String(),
+		TargetFolder: cmd.Flag("target-folder", "Folder in which the JSON files with champions data should be created").Required().String(),
+		NoCurrent: cmd.Flag("no-current", "Should be set to true if you don't want to specify any current folder, this is to avoid potential issues during champions parsing").Bool(),
+	}
+	return command
+}
+
+func (c *Command) Run() {
+	if *c.NoCurrent == false && *c.CurrentFolder == "" {
+		utils.Exit(1, errors.New("if no current folder, then --no-current should be set"))
+	}
+	content, errContent := c.getSourceFileContent()
 	if errContent != nil {
-		fmt.Fprintf(os.Stderr, "cannot read file: %s\n", errContent)
-		os.Exit(1)
+		utils.Exit(1, errors.Annotate(errContent, "cannot read file"))
 	}
-	errExport := exportContent(content)
+	errExport := c.exportContent(content)
 	if errExport != nil {
-		fmt.Fprintf(os.Stderr, "error while exporting: %s\n", errExport)
-		os.Exit(1)
+		utils.Exit(1, errors.Annotate(errExport, "cannot export content"))
 	}
+}
+
+func (c *Command) debug() string {
+	return fmt.Sprintf("csv-file: %s, current-folder: %s, target-folder: %s, no-current: %t", *c.CSVFile, *c.CurrentFolder, *c.TargetFolder, *c.NoCurrent)
 }
 
 type Champions struct {
 	Champions []*common.Champion
 }
 
-func getSourceFileContent() (*Champions, error) {
-	file, errFile := os.Open(*sourceFile)
+func (c *Command) getSourceFileContent() (*Champions, error) {
+	file, errFile := os.Open(*c.CSVFile)
 	if errFile != nil {
 		return nil, errFile
 	}
@@ -61,7 +78,7 @@ func getSourceFileContent() (*Champions, error) {
 			// in case faction is not mentionned on every line, use the one from previous line
 			line[0] = content[idx-1][0]
 		}
-		champion, err := getChampionByName(line[1])
+		champion, err := c.getChampionByName(line[1])
 		if err != nil {
 			return nil, err
 		}
@@ -98,19 +115,24 @@ func isNoSuchFileOrDirectory(err error) bool {
 	return strings.Contains(err.Error(), "no such file or directory")
 }
 
-func getChampionByName(name string) (*common.Champion, error) {
+func (c *Command) getChampionByName(name string) (*common.Champion, error) {
 	nameOk, errSanitize := common.GetSanitizedName(name)
 	if errSanitize != nil {
 		return nil, errSanitize
 	}
-	file, errOpen := os.Open(fmt.Sprintf("%s/%s.json", *currentFolder, common.GetLinkNameFromSanitizedName(nameOk)))
+	if *c.CurrentFolder == "" {
+		return &common.Champion{
+			Name: nameOk,
+		}, nil
+	}
+	file, errOpen := os.Open(fmt.Sprintf("%s/%s.json", *c.CurrentFolder, common.GetLinkNameFromSanitizedName(nameOk)))
 	if errOpen != nil && !isNoSuchFileOrDirectory(errOpen) {
 		return nil, errOpen
 	} else if errOpen != nil && isNoSuchFileOrDirectory(errOpen) {
 		return &common.Champion{
 			Name: nameOk,
 		}, nil
-	} else {
+	}
 		defer file.Close()
 		var champion common.Champion
 		errJSON := json.NewDecoder(file).Decode(&champion)
@@ -118,28 +140,54 @@ func getChampionByName(name string) (*common.Champion, error) {
 			return nil, errJSON
 		}
 		return &champion, nil
-	}
 }
 
 const (
 	csvSafeguardOrder = `Factions,Champion,Rarity,Element,Typ,Overall,Campaign,Arena-Off,Arena-Deff,CB (- GS),CB (+GS),IceG,Dragon,Spider,FK,Mino,Force,Magic,Spirit,Void`
 )
 
-func exportContent(content *Champions) error {
+var (
+	ratingToRank = map[string]int{
+		"SS": 5,
+		"S": 4,
+		"A": 3,
+		"B": 2,
+		"C": 1,
+		"D": 0,
+	}
+	rarityToRank = map[string]int{
+		"Legendary": 4,
+		"Epic": 3,
+		"Rare": 2,
+		"Uncommon": 1,
+		"Common": 0,
+	}
+)
+
+func (c *Command) exportContent(content *Champions) error {
+	sort.SliceStable(content.Champions, func (i, j int) bool {
+		if content.Champions[i].FactionSlug == content.Champions[j].FactionSlug {
+			if content.Champions[i].Rarity == content.Champions[j].Rarity {
+				if content.Champions[i].Rating.Overall == content.Champions[j].Rating.Overall {
+					return content.Champions[i].Slug < content.Champions[j].Slug
+				}
+				return ratingToRank[content.Champions[i].Rating.Overall] > ratingToRank[content.Champions[j].Rating.Overall]
+			}
+			return rarityToRank[content.Champions[i].Rarity] > rarityToRank[content.Champions[j].Rarity]
+		}
+		return content.Champions[i].FactionSlug < content.Champions[j].FactionSlug
+	})
+
 	for _, champion := range content.Champions {
 		filename := champion.Filename()
-		errWrite := writeToFile(filename, champion)
+		errWrite := utils.WriteToFile(fmt.Sprintf("%s/%s", *c.TargetFolder, filename), champion)
 		if errWrite != nil {
 			return errWrite
 		}
 	}
-	errWrite := writeToFile("index.json", content.Champions)
+	errWrite := utils.WriteToFile(fmt.Sprintf("%s/index.json", *c.TargetFolder), content.Champions)
 	if errWrite != nil {
 		return errWrite
 	}
 	return nil
-}
-
-func writeToFile(filename string, val interface{}) error {
-	return utils.WriteToFile(fmt.Sprintf("%s/%s", *targetFolder, filename), val)
 }

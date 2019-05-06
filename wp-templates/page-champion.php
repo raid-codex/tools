@@ -8,11 +8,12 @@
 
 require_once("tools/champion.php");
 require_once("tools.php");
+require_once("tools/dungeons.php");
 
 $custom = get_post_custom();
 if (!isset($custom['champion-file']))
 {
-    die("missing champion file");
+    wp_die("missing champion file");
 }
 $filename = $custom['champion-file'][0];
 $champion = champion_get_by_filename($filename);
@@ -66,10 +67,26 @@ $characteristics = array(
 		<div class="container">
             <article class="section pagebuilder-section centered">
                 <div class="row">
-                    <div class="col-xs-12" style="text-align: left;">
+                    <div class="col-xs-2 col-md-1" style="text-align: left;">
                         <a href="<?php echo get_permalink_by_slug("champions"); ?>">
                             <span class="btn btn-small"><i class="fa fa-arrow-left"></i></span>
                         </a>
+                    </div>
+                    <div class="col-xs-10 col-md-11">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6" style="margin-bottom: 15px;">
+                                <span class="h2">
+                                    <?php echo get_champion_rarity($champion->{"rarity"}); ?>
+                                </span>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <span class="h2">
+                                    <a href="<?php echo $champion->{"faction"}->{"website_link"}; ?>">
+                                        <?php echo $champion->{"faction"}->{"name"}; ?>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row align-left champion-description">
@@ -86,26 +103,21 @@ $characteristics = array(
                                         <?php echo get_image_url_by_slug($champion->{"image_slug"}); ?>
                                     </div>
                                     <div class="col-xs-12 col-md-6">
-                                        <h2>
+                                        <span class="h2">
                                             <?php echo get_champion_grade($champion->{"rating"}->{"overall"}); ?>
-                                        </h2>
-                                    </div>
-                                    <div class="col-xs-12 col-md-6">
-                                        <h2>
-                                            <?php echo get_champion_rarity($champion->{"rarity"}); ?>
-                                        </h2>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-xs-12 col-lg-6 centered">
-                                        <h4>
-                                            <a href="<?php echo $champion->{"faction"}->{"website_link"}; ?>">
-                                                <?php echo $champion->{"faction"}->{"name"}; ?>
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div class="col-xs-12 col-lg-6 centered">
-                                        <strong>Element:</strong> <?php echo $champion->{"element"}; ?><br>
+                                    <div class="col-xs-12 centered">
+                                        <?php
+                                        if ($champion->{"element"} != "")
+                                        {
+                                            ?>
+                                            <strong>Element:</strong> <?php echo $champion->{"element"}; ?><br>
+                                            <?php
+                                        }
+                                        ?>
                                         <strong>Type:</strong> <?php echo $champion->{"type"}; ?><br>
                                     </div>
                                 </div>
@@ -119,7 +131,7 @@ $characteristics = array(
                                 {
                                     ?>
                                     <div id="characteristics-<?php echo $level; ?>">
-                                        <table class="table table-hover table-responsive">
+                                        <table class="table table-hover table-responsive no-header-mobile">
                                             <thead>
                                                 <th colspan="2">
                                                     Level <?php echo $level; ?>
@@ -134,12 +146,13 @@ $characteristics = array(
                                                         <td><?php echo $c["display"]; ?></td>
                                                         <td>
                                                             <?php
-                                                            if ($champion_characteristics->{$c["key"]} == 0)
+                                                            if ($champion_characteristics->{$c["key"]} == 0 and $champion_characteristics->{"hp"} == 0)
                                                             {
                                                                 echo "Not specified";
                                                             }
                                                             else
                                                             {
+                                                                if (!isset($c["type"])) { $c["type"] = "default"; }
                                                                 switch ($c["type"]) {
                                                                     case "percentage":
                                                                         echo ($champion_characteristics->{$c["key"]} * 100)." %";
@@ -165,7 +178,7 @@ $characteristics = array(
                         </div>
                     </div>
                     <div class="col-xs-12 col-md-6">
-                        <table class="table-hover table table-responsive">
+                        <table class="table-hover table table-responsive no-header-mobile">
                             <thead>
                                 <tr class="row-header">
                                     <th>Location</th>
@@ -196,39 +209,39 @@ $characteristics = array(
                                         "key" => "clan_boss_with_giant_slayer",
                                     ),
                                     array(
-                                        "display" => "Ice Guardian",
+                                        "display" => null,
                                         "key" => "ice_guardian",
                                     ),
                                     array(
-                                        "display" => "Dragon",
+                                        "display" => null,
                                         "key" => "dragon",
                                     ),
                                     array(
-                                        "display" => "Spider",
+                                        "display" => null,
                                         "key" => "spider",
                                     ),
                                     array(
-                                        "display" => "Fire Knight",
+                                        "display" => null,
                                         "key" => "fire_knight",
                                     ),
                                     array(
-                                        "display" => "Minotaur",
+                                        "display" => null,
                                         "key" => "minotaur",
                                     ),
                                     array(
-                                        "display" => "Force Dungeon",
+                                        "display" => null,
                                         "key" => "force_dungeon",
                                     ),
                                     array(
-                                        "display" => "Magic Dungeon",
+                                        "display" => null,
                                         "key" => "magic_dungeon",
                                     ),
                                     array(
-                                        "display" => "Spirit Dungeon",
+                                        "display" => null,
                                         "key" => "spirit_dungeon",
                                     ),
                                     array(
-                                        "display" => "Void Dungeon",
+                                        "display" => null,
                                         "key" => "void_dungeon",
                                     )
                                 );
@@ -237,7 +250,15 @@ $characteristics = array(
                                     $grade = $champion->{'rating'}->{$rating_data["key"]};
                                     ?>
                                     <tr>
-                                        <td><?php echo $rating_data["display"]; ?></td>
+                                        <td>
+                                            <?php
+                                            if ($rating_data["display"] == null)
+                                            {
+                                                $rating_data["display"] = dungeon_get_name_from_key($rating_data["key"]);
+                                            }
+                                            echo $rating_data["display"];
+                                            ?>
+                                        </td>
                                         <td class="champion-rating-<?php echo $grade; ?>"><?php echo getStarsForGrade($grade); ?></td>
                                     </tr>
                                     <?php

@@ -1,10 +1,11 @@
 package utils
 
 import (
-	"github.com/raid-codex/tools/common"
-	"os"
 	"fmt"
+	"os"
+
 	"github.com/juju/errors"
+	"github.com/raid-codex/tools/common/paged"
 	"github.com/sogko/go-wordpress"
 )
 
@@ -18,7 +19,7 @@ func GetWPClient() *wordpress.Client {
 	return client
 }
 
-func CreatePage(client *wordpress.Client, page common.Paged) error {
+func CreatePage(client *wordpress.Client, page paged.Paged) error {
 	_, _, body, err := client.Pages().Create(&wordpress.Page{
 		Slug:     page.LinkName(),
 		Title:    wordpress.Title{Raw: page.GetPageTitle()},

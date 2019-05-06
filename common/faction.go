@@ -2,13 +2,18 @@ package common
 
 import (
 	"fmt"
+
+	"github.com/raid-codex/tools/seo"
 )
 
 type Faction struct {
-	Name        string `json:"name"`
-	Slug        string `json:"slug"`
-	WebsiteLink string `json:"website_link"`
-	ImageSlug   string `json:"image_slug"`
+	Name               string   `json:"name"`
+	Slug               string   `json:"slug"`
+	WebsiteLink        string   `json:"website_link"`
+	ImageSlug          string   `json:"image_slug"`
+	NumberOfChampions  int64    `json:"number_of_champions"`
+	DefaultDescription string   `json:"default_description"`
+	SEO                *seo.SEO `json:"seo"`
 }
 
 func (f *Faction) Sanitize() error {
@@ -20,7 +25,33 @@ func (f *Faction) Sanitize() error {
 	f.Slug = GetLinkNameFromSanitizedName(f.Name)
 	f.WebsiteLink = fmt.Sprintf("/factions/%s/", f.Slug)
 	f.ImageSlug = fmt.Sprintf("image-faction-%s", f.Slug)
+	if f.NumberOfChampions > 0 {
+		f.DefaultDescription = fmt.Sprintf(
+			"%s is a faction from RAID Shadow Legends composed of %d champions",
+			f.Name,
+			f.NumberOfChampions,
+		)
+	} else {
+		f.DefaultDescription = fmt.Sprintf(
+			"%s is a faction from RAID Shadow Legends",
+			f.Name,
+		)
+	}
+	if f.SEO == nil {
+		f.DefaultSEO()
+	}
+
 	return nil
+}
+
+func (f *Faction) DefaultSEO() {
+	f.SEO = &seo.SEO{
+		Title:       "%%title%% %%page%% %%sep%% %%parent_title%% %%sep%% %%sitename%%",
+		Description: fmt.Sprintf("%s. Find out more on this Raid Shadow Legends codex.", f.DefaultDescription),
+		Keywords: []string{
+			"raid", "shadow", "legends", "factions", f.Name, f.Slug,
+		},
+	}
 }
 
 func (f Faction) Filename() string {

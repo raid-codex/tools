@@ -1,4 +1,4 @@
-package common
+package paged
 
 type Paged interface {
 	GetPageSlug() string

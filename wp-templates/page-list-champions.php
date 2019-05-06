@@ -30,6 +30,15 @@ foreach ($data as $champion)
     array_push($championsPerFaction[$faction], $champion);
 }
 
+$champions = array();
+foreach ($championsPerFaction as $champions_in_faction)
+{
+    foreach ($champions_in_faction as $champion)
+    {
+        array_push($champions, $champion);
+    }
+}
+
 ?>
 
 <div class="<?php echo hestia_layout(); ?>">
@@ -45,67 +54,7 @@ foreach ($data as $champion)
                 </div>
                 <div class="row">
                     <div class="col-xs-12">
-                        <table class="centered table-responsive table-hover table">
-                            <thead>
-                                <tr class="row-header">
-                                    <th></th>
-                                    <th>Champion name</th>
-                                    <th>Faction</th>
-                                    <th>Rarity</th>
-                                    <th>Type</th>
-                                    <th>Element</th>
-                                    <th>Rank</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                foreach ($championsPerFaction as $faction => $champions)
-                                {
-                                    ?>
-                                    <tr class="row-header">
-                                        <th colspan=7 class="centered">
-                                            <?php echo $faction; ?>
-                                        </th>
-                                    </tr>
-                                    <?php
-                                    foreach ($champions as $champion_data)
-                                    {
-                                        ?>
-                                        <tr>
-                                            <td>
-                                                <?php echo get_image_url_by_slug($champion_data->{"image_slug"}, array(30, 30)); ?>
-                                            </td>
-                                            <td>
-                                                <strong>
-                                                    <a href="<?php echo $champion_data->{"website_link"}; ?>">
-                                                        <?php echo $champion_data->{"name"}; ?>
-                                                    </a>
-                                                </strong>
-                                            </td>
-                                            <td>
-                                                <a href="<?php echo $champion_data->{"faction"}->{"website_link"}; ?>">
-                                                    <?php echo $champion_data->{"faction"}->{"name"}; ?>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <?php echo get_champion_rarity($champion_data->{"rarity"}); ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $champion_data->{"type"}; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $champion_data->{"element"}; ?>
-                                            </td>
-                                            <td>
-                                                <?php echo get_champion_grade($champion_data->{"rating"}->{"overall"}); ?>
-                                            </td>
-                                        </tr>
-                                        <?php
-                                    }
-                                }
-                                ?>
-                            </tbody>
-                        </table>
+                        <?php echo champion_get_html_table($champions, array("image","name","faction","rarity","type","element","rating_overall"), TRUE); ?>
                     </div>
                 </div>
             </article>

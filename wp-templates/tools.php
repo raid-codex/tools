@@ -1,12 +1,12 @@
 <?php
 
 $starsPerGrade = array(
-    "D" => array("stars" => 0, title => "not usable"),
-    "C" => array("stars" => 1, title => "viable"),
-    "B" => array("stars" => 2, title => "good"),
-    "A" => array("stars" => 3, title => "exceptional"),
-    "S" => array("stars" => 4, title => "top tier"),
-    "SS" => array("stars" => 5, title => "god tier"),
+    "D" => array("stars" => 0, "title" => "not usable"),
+    "C" => array("stars" => 1, "title" => "viable"),
+    "B" => array("stars" => 2, "title" => "good"),
+    "A" => array("stars" => 3, "title" => "exceptional"),
+    "S" => array("stars" => 4, "title" => "top tier"),
+    "SS" => array("stars" => 5, "title" => "god tier"),
 );
 
 function get_image_url_by_slug($slug, $size="thumbnail") {

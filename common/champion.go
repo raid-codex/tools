@@ -26,6 +26,7 @@ type Champion struct {
 	ImageSlug          string                    `json:"image_slug"`
 	SEO                *seo.SEO                  `json:"seo"`
 	DefaultDescription string                    `json:"default_description"`
+	RecommendedBuilds  []Build                   `json:"recommended_builds"`
 }
 
 func (c *Champion) Sanitize() error {
@@ -44,6 +45,9 @@ func (c *Champion) Sanitize() error {
 	}
 	if c.Skills == nil {
 		c.Skills = make([]Skill, 0)
+	}
+	if c.RecommendedBuilds == nil {
+		c.RecommendedBuilds = make([]Build, 0)
 	}
 	c.Slug = c.LinkName()
 

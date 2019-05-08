@@ -13,6 +13,8 @@ import (
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
+// https://spreadsheets.google.com/feeds/download/spreadsheets/Export?key=1jdrS8mnsITEWL1qREShSG3xNOZKYJuL5dUnNrUWQIjw&exportFormat=csv
+
 type Command struct {
 	CSVFile       *string
 	CurrentFolder *string

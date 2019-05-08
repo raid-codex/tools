@@ -9,6 +9,7 @@ import (
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_parser"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_rebuild_index"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_sanitize"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_schema_validate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_create"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_seo"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_parser"
@@ -61,6 +62,10 @@ var (
 	championsPageSeoApply         = championsPageSeo.Command("apply", "Apply SEO settings to champion page")
 	championsPageSeoApplyCmd      = champions_page_seo.New(championsPageSeoApply, "apply")
 
+	championsSchema            = champions.Command("schema", "Handle champion schema")
+	championsSchemaValidate    = championsSchema.Command("validate", "Validate a champion against its schema")
+	championsSchemaValidateCmd = champions_schema_validate.New(championsSchemaValidate)
+
 	factions = app.Command("factions", "do stuff with factions")
 
 	factionsParse    = factions.Command("parse", "parse factions from champions json files")
@@ -94,5 +99,6 @@ var (
 		"factions page seo apply":         factionsPageSeoApplyCmd,
 		"champions characteristics parse": championsCharacteristicsParserCmd,
 		"champions sanitize":              championsSanitizeCmd,
+		"champions schema validate":       championsSchemaValidateCmd,
 	}
 )

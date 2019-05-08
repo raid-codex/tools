@@ -1,0 +1,85 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "KmjnydoAbofMieIWm+it5OWERaM=",
+			"path": "github.com/alecthomas/template",
+			"revision": "a0175ee3bccc567396460bf5acd36800cb10c49c",
+			"revisionTime": "2016-04-05T07:15:01Z"
+		},
+		{
+			"checksumSHA1": "3wt0pTXXeS+S93unwhGoLIyGX/Q=",
+			"path": "github.com/alecthomas/template/parse",
+			"revision": "a0175ee3bccc567396460bf5acd36800cb10c49c",
+			"revisionTime": "2016-04-05T07:15:01Z"
+		},
+		{
+			"checksumSHA1": "fCc3grA7vIxfBru7R3SqjcW+oLI=",
+			"path": "github.com/alecthomas/units",
+			"revision": "2efee857e7cfd4f3d0138cc3cbb1b4966962b93a",
+			"revisionTime": "2015-10-22T06:55:26Z"
+		},
+		{
+			"checksumSHA1": "HpnVP25yXZys8uwdVe25MKMIwn8=",
+			"path": "github.com/juju/errors",
+			"revision": "c7d06af17c68cd34c835053720b21f6549d9b0ee",
+			"revisionTime": "2017-07-03T01:00:42Z"
+		},
+		{
+			"checksumSHA1": "CxNwJP++vjUAyy3bbJnNss1Il9Q=",
+			"path": "github.com/moul/http2curl",
+			"revision": "4e24498b31dba4683efb9d35c1c8a91e2eda28c8",
+			"revisionTime": "2016-10-31T19:45:48Z"
+		},
+		{
+			"checksumSHA1": "LEDPmTEIs5Ykna4ahSjtX10Hd7g=",
+			"path": "github.com/parnurzeal/gorequest",
+			"revision": "5bf13be198787abbed057fb7c4007f372083a0f5",
+			"revisionTime": "2017-04-29T06:12:44Z"
+		},
+		{
+			"checksumSHA1": "I7hloldMJZTqUx6hbVDp5nk9fZQ=",
+			"path": "github.com/pkg/errors",
+			"revision": "27936f6d90f9c8e1145f11ed52ffffbfdb9e0af7",
+			"revisionTime": "2019-02-27T00:00:51Z"
+		},
+		{
+			"checksumSHA1": "wffoZbzxKXQ929XFxeRmEGZ3CCg=",
+			"path": "github.com/sogko/go-wordpress",
+			"revision": "0f4f3dc4231facb1559b59e07dc990dcf48682c0",
+			"revisionTime": "2016-03-22T05:45:48Z"
+		},
+		{
+			"checksumSHA1": "+SLRfCdnZzt59tTsNUp6ie39zjo=",
+			"path": "github.com/xeipuuv/gojsonpointer",
+			"revision": "4e3ac2762d5f479393488629ee9370b50873b3a6",
+			"revisionTime": "2018-01-27T04:07:02Z"
+		},
+		{
+			"checksumSHA1": "cjCjdAbLpKV1bxMpMRzC5Fn4R34=",
+			"path": "github.com/xeipuuv/gojsonreference",
+			"revision": "bd5ef7bd5415a7ac448318e64f11a24cd21e594b",
+			"revisionTime": "2018-01-27T04:06:03Z"
+		},
+		{
+			"checksumSHA1": "vlLrSHcm+jQSrCJoEF0z1l1AkMI=",
+			"path": "github.com/xeipuuv/gojsonschema",
+			"revision": "354ad34c2300dd6e84920ac70b41487336219e43",
+			"revisionTime": "2019-04-23T13:24:10Z"
+		},
+		{
+			"checksumSHA1": "CjDmpbYWUeTzpJBeH5AmfH/my88=",
+			"path": "golang.org/x/net/publicsuffix",
+			"revision": "b6d7b1396ec874c3b00f6c84cd4301a17c56c8ed",
+			"revisionTime": "2016-02-16T13:16:06Z"
+		},
+		{
+			"checksumSHA1": "sToCp8GThnMnsBzsHv+L/tBYQrQ=",
+			"path": "gopkg.in/alecthomas/kingpin.v2",
+			"revision": "947dcec5ba9c011838740e680966fd7087a71d0d",
+			"revisionTime": "2017-12-17T18:08:21Z"
+		}
+	],
+	"rootPath": "github.com/raid-codex/tools"
+}

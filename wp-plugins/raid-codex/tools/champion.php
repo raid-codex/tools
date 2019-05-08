@@ -10,14 +10,18 @@ function champion_get_by_slug( $slug )
     return champion_get_by_filename("$slug.json");
 }
 
-function champion_get_by_filename ($filename)
+function champion_get_by_filename ($filename, $from="current", $die_if_error=TRUE)
 {
     global $championUrl;
 
-    $data = url_get("$championUrl/export/current/$filename");
+    $data = url_get("$championUrl/export/$from/$filename");
     if ($data[1])
     {
-        wp_die("cannot load champion: ".$data[1]->getMessage());
+        if ($die_if_error)
+        {
+            wp_die("cannot load champion: ".$data[1]->getMessage());
+        }
+        return null;
     }
     $champion = json_decode($data[0]);
     return $champion;

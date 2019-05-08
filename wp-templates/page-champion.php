@@ -20,7 +20,28 @@ $champion = champion_get_by_filename($filename);
 $championSlug = $champion->{"slug"};
 $description = champion_get_description($champion);
 
+$champion_pre17 = champion_get_by_filename($filename, "pre-1.7", FALSE);
+
 get_header();
+
+function get_characteristics_text($champion_characteristics, $c, $override_value=null)
+{
+    if ($champion_characteristics->{$c["key"]} == 0 && $champion_characteristics->{"hp"} == 0)
+    {
+        return "Not specified";
+    }
+    $value = $champion_characteristics->{$c["key"]};
+    if ($override_value)
+    {
+        $value = $override_value;
+    }
+    if (!isset($c["type"])) { $c["type"] = "default"; }
+    switch ($c["type"]) {
+        case "percentage":
+            return ($value * 100)." %";
+    }
+    return $value;
+}
 
 /**
  * Don't display page header if header layout is set as classic blog.
@@ -89,11 +110,6 @@ $characteristics = array(
                         </div>
                     </div>
                 </div>
-                <div class="row align-left champion-description">
-                    <div class="col-xs-12">
-                        <?php echo $description; ?>
-                    </div>
-                </div>
                 <div class="row">
                     <div class="col-xs-12 col-md-6">
                         <div class="row">
@@ -129,6 +145,11 @@ $characteristics = array(
                                 <?php
                                 foreach ($champion->{"characteristics"} as $level => $champion_characteristics)
                                 {
+                                    $champion_characteristics_before = null;
+                                    if ($champion_pre17)
+                                    {
+                                        $champion_characteristics_before = $champion_pre17->{"characteristics"}->{$level};
+                                    }
                                     ?>
                                     <div id="characteristics-<?php echo $level; ?>">
                                         <table class="table table-hover table-responsive no-header-mobile">
@@ -145,22 +166,20 @@ $characteristics = array(
                                                     <tr>
                                                         <td><?php echo $c["display"]; ?></td>
                                                         <td>
+                                                            <span class="characteristic-current">
+                                                                <?php
+                                                                echo get_characteristics_text($champion_characteristics, $c);
+                                                                ?>
+                                                            </span>
                                                             <?php
-                                                            if ($champion_characteristics->{$c["key"]} == 0 and $champion_characteristics->{"hp"} == 0)
+                                                            if ($champion_characteristics_before->{$c["key"]} != $champion_characteristics->{$c["key"]})
                                                             {
-                                                                echo "Not specified";
-                                                            }
-                                                            else
-                                                            {
-                                                                if (!isset($c["type"])) { $c["type"] = "default"; }
-                                                                switch ($c["type"]) {
-                                                                    case "percentage":
-                                                                        echo ($champion_characteristics->{$c["key"]} * 100)." %";
-                                                                        break;
-                                                                    default:
-                                                                        echo $champion_characteristics->{$c["key"]};
-                                                                        break;
-                                                                }
+                                                                $type = ($champion_characteristics_before->{$c["key"]} > $champion_characteristics->{$c["key"]}) ? "down" : "up";
+                                                                ?>
+                                                                <span class="characteristic-before characteristic-before-<?php echo $type; ?>">
+                                                                    (<i class="fas fa-arrow-<?php echo $type; ?> fa-rotate<?php echo ($type == "down" ? "-" : ""); ?>-45"></i> <?php echo get_characteristics_text($champion_characteristics_before, $c, abs($champion_characteristics_before->{$c["key"]} - $champion_characteristics->{$c["key"]})); ?> since 1.7)
+                                                                </span>
+                                                                <?php
                                                             }
                                                             ?>
                                                         </td>
@@ -267,6 +286,11 @@ $characteristics = array(
                                 ?>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+                <div class="row align-left champion-description">
+                    <div class="col-xs-12">
+                        <?php echo $description; ?>
                     </div>
                 </div>
             </article>

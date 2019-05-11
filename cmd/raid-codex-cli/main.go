@@ -3,6 +3,8 @@ package main
 import (
 	"os"
 
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/website_cache_clear"
+
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_characteristics_parser"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_create"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_seo"
@@ -86,6 +88,11 @@ var (
 	scrapWikiaCharacteristics    = scrap.Command("wikia-characteristics", "Scrap data from wikia characteristics")
 	scrapWikiaCharacteristicsCmd = scrap_wikia_characteristics.New(scrapWikiaCharacteristics)
 
+	website              = app.Command("website", "Stuff for website")
+	websiteCache         = website.Command("cache", "Stuff with website cache")
+	websiteCacheClear    = websiteCache.Command("clear", "Clear cache of website")
+	websiteCacheClearCmd = website_cache_clear.New(websiteCacheClear)
+
 	runByCmd = map[string]Runnable{
 		"champions parse":                 championsParseCmd,
 		"factions parse":                  factionsParseCmd,
@@ -100,5 +107,6 @@ var (
 		"champions characteristics parse": championsCharacteristicsParserCmd,
 		"champions sanitize":              championsSanitizeCmd,
 		"champions schema validate":       championsSchemaValidateCmd,
+		"website cache clear":             websiteCacheClearCmd,
 	}
 )

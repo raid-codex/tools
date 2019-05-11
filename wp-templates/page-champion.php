@@ -116,7 +116,7 @@ $characteristics = array(
                             <div class="col-xs-12">
                                 <div class="row">
                                     <div class="col-xs-12 col-md-6">
-                                        <?php echo get_image_url_by_slug($champion->{"image_slug"}); ?>
+                                        <?php echo get_image_url_by_slug($champion->{"image_slug"}, "medium"); ?>
                                     </div>
                                     <div class="col-xs-12 col-md-6">
                                         <span class="h2">
@@ -152,7 +152,7 @@ $characteristics = array(
                                     }
                                     ?>
                                     <div id="characteristics-<?php echo $level; ?>">
-                                        <table class="table table-hover table-responsive no-header-mobile">
+                                        <table class="table table-hover">
                                             <thead>
                                                 <th colspan="2">
                                                     Level <?php echo $level; ?>
@@ -172,7 +172,7 @@ $characteristics = array(
                                                                 ?>
                                                             </span>
                                                             <?php
-                                                            if ($champion_characteristics_before->{$c["key"]} != $champion_characteristics->{$c["key"]})
+                                                            if ($champion_characteristics_before && $champion_characteristics_before->{$c["key"]} != $champion_characteristics->{$c["key"]})
                                                             {
                                                                 $type = ($champion_characteristics_before->{$c["key"]} > $champion_characteristics->{$c["key"]}) ? "down" : "up";
                                                                 ?>
@@ -197,7 +197,7 @@ $characteristics = array(
                         </div>
                     </div>
                     <div class="col-xs-12 col-md-6">
-                        <table class="table-hover table table-responsive no-header-mobile">
+                        <table class="table-hover table">
                             <thead>
                                 <tr class="row-header">
                                     <th>Location</th>

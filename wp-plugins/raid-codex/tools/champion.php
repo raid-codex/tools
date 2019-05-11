@@ -52,7 +52,7 @@ function champion_get_default_description_as_text( $champion, $lang="en")
 
 $champions_field_array = array(
     "image" => array(
-        "display" => function ($champion) { return get_image_url_by_slug($champion->{"image_slug"}, array(30, 30)); },
+        "display" => function ($champion) { return get_image_url_by_slug($champion->{"image_slug"}, "thumbnail"); },
         "header_name" => "",
     ),
     "name" => array(

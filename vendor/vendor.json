@@ -69,6 +69,30 @@
 			"revisionTime": "2019-05-14T20:44:23Z"
 		},
 		{
+			"checksumSHA1": "nLkOGI00KiWqRYlEUMCd7KM8L7o=",
+			"path": "github.com/tdewolff/parse",
+			"revision": "b8d8be7d83bf428ee370587d439137776d18362c",
+			"revisionTime": "2019-04-19T03:51:34Z"
+		},
+		{
+			"checksumSHA1": "JSfDvIjv3YL4XXQUQjRigreT4qc=",
+			"path": "github.com/tdewolff/parse/buffer",
+			"revision": "b8d8be7d83bf428ee370587d439137776d18362c",
+			"revisionTime": "2019-04-19T03:51:34Z"
+		},
+		{
+			"checksumSHA1": "48lnsl4hj+eHu+dFRUTiohS+po4=",
+			"path": "github.com/tdewolff/parse/html",
+			"revision": "b8d8be7d83bf428ee370587d439137776d18362c",
+			"revisionTime": "2019-04-19T03:51:34Z"
+		},
+		{
+			"checksumSHA1": "IrorTJ5lfYWU5QdWqMuLexxzoYA=",
+			"path": "github.com/tdewolff/parse/strconv",
+			"revision": "b8d8be7d83bf428ee370587d439137776d18362c",
+			"revisionTime": "2019-04-19T03:51:34Z"
+		},
+		{
 			"checksumSHA1": "+SLRfCdnZzt59tTsNUp6ie39zjo=",
 			"path": "github.com/xeipuuv/gojsonpointer",
 			"revision": "4e3ac2762d5f479393488629ee9370b50873b3a6",

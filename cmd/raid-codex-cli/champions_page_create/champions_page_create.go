@@ -1,22 +1,24 @@
 package champions_page_create
 
 import (
-	"github.com/raid-codex/tools/utils"
 	"encoding/json"
-	"fmt"
 	"os"
+
 	"github.com/juju/errors"
 	"github.com/raid-codex/tools/common"
+	"github.com/raid-codex/tools/utils"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
 type Command struct {
 	ChampionFile *string
+	TemplateFile *string
 }
 
 func New(cmd *kingpin.CmdClause) *Command {
 	return &Command{
 		ChampionFile: cmd.Flag("champion-file", "Filename for the champion").Required().String(),
+		TemplateFile: cmd.Flag("template-file", "Template file").Required().String(),
 	}
 }
 
@@ -27,16 +29,19 @@ func (c *Command) Run() {
 	if errChampion != nil {
 		utils.Exit(1, errChampion)
 	}
-	_, errPage := utils.GetPageFromSlug(client, champion.GetPageSlug())
+	page, errPage := utils.GetPageFromSlug(client, champion.GetPageSlug())
 	if errPage != nil && !errors.IsNotFound(errPage) {
 		utils.Exit(1, errPage)
 	} else if errPage != nil && errors.IsNotFound(errPage) {
-		errCreate := utils.CreatePage(client, champion)
+		errCreate := utils.CreatePage(client, champion, *c.TemplateFile)
 		if errCreate != nil {
 			utils.Exit(1, errCreate)
 		}
 	} else {
-		fmt.Println("page already exists, ignoring")
+		errUpdate := utils.UpdatePage(client, page, champion, *c.TemplateFile)
+		if errUpdate != nil {
+			utils.Exit(1, errUpdate)
+		}
 	}
 }
 

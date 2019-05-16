@@ -1,12 +1,13 @@
 package factions_page_create
 
 import (
-	"github.com/raid-codex/tools/utils"
 	"encoding/json"
 	"fmt"
 	"os"
+
 	"github.com/juju/errors"
 	"github.com/raid-codex/tools/common"
+	"github.com/raid-codex/tools/utils"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
@@ -31,7 +32,7 @@ func (c *Command) Run() {
 	if errPage != nil && !errors.IsNotFound(errPage) {
 		utils.Exit(1, errPage)
 	} else if errPage != nil && errors.IsNotFound(errPage) {
-		errCreate := utils.CreatePage(client, faction)
+		errCreate := utils.CreatePage(client, faction, "")
 		if errCreate != nil {
 			utils.Exit(1, errCreate)
 		}

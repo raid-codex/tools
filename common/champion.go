@@ -2,6 +2,9 @@ package common
 
 import (
 	"fmt"
+	"html/template"
+	"io"
+	"io/ioutil"
 	"regexp"
 	"sort"
 	"strconv"
@@ -27,6 +30,7 @@ type Champion struct {
 	SEO                *seo.SEO                  `json:"seo"`
 	DefaultDescription string                    `json:"default_description"`
 	RecommendedBuilds  []Build                   `json:"recommended_builds"`
+	Lore               string                    `json:"lore"`
 }
 
 func (c *Champion) Sanitize() error {
@@ -151,9 +155,32 @@ func (c Champion) GetPageTitle() string { return c.Name }
 
 func (c Champion) GetPageSlug() string { return c.Slug }
 
-func (_ Champion) GetPageTemplate() string { return "page-templates/template-champions.php" }
+func (_ Champion) GetPageTemplate() string { return "page-templates/template-champion-generated.php" }
 
 func (_ Champion) GetParentPageID() int { return 29 }
+
+func (c Champion) GetPageExcerpt() string { return c.DefaultDescription }
+
+func (c *Champion) GetPageContent(input io.Reader, output io.Writer) error {
+	funcMap := template.FuncMap{
+		"ToLower":      strings.ToLower,
+		"DisplayGrade": grade,
+		"Percentage":   func(s float64) int64 { return int64(s * 100.0) },
+	}
+	rawTemplate, err := ioutil.ReadAll(input)
+	if err != nil {
+		return err
+	}
+	tmpl, err := template.New("champion").Funcs(funcMap).Parse(string(rawTemplate))
+	if err != nil {
+		return err
+	}
+
+	err = tmpl.Execute(output, map[string]interface{}{
+		"Champion": c,
+	})
+	return err
+}
 
 type ChampionList []*Champion
 
@@ -189,3 +216,36 @@ var (
 		"Common":    0,
 	}
 )
+
+func grade(grade string) template.HTML {
+	if grade == "" {
+		return `<span class="champion-rating-none">No ranking yet</span>`
+	}
+	str := fmt.Sprintf(`<span class="champion-rating champion-rating-%s" title="%s">`, grade, gradeTitle(grade))
+	for i := 0; i < 5; i++ {
+		if i < ratingToRank[grade] {
+			str += `<i class="fas fa-star"></i>`
+		} else {
+			str += `<i class="far fa-star"></i>`
+		}
+	}
+	return template.HTML(str + `</span>`)
+}
+
+func gradeTitle(grade string) string {
+	switch grade {
+	case "D":
+		return "not usable"
+	case "C":
+		return "viable"
+	case "B":
+		return "good"
+	case "A":
+		return "exceptional"
+	case "S":
+		return "top tier"
+	case "SS":
+		return "god tier"
+	}
+	return ""
+}

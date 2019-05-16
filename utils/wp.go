@@ -1,12 +1,15 @@
 package utils
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 
 	"github.com/juju/errors"
 	"github.com/raid-codex/tools/common/paged"
 	"github.com/sogko/go-wordpress"
+	"github.com/tdewolff/minify"
+	"github.com/tdewolff/minify/html"
 )
 
 func GetWPClient() *wordpress.Client {
@@ -19,7 +22,35 @@ func GetWPClient() *wordpress.Client {
 	return client
 }
 
-func CreatePage(client *wordpress.Client, page paged.Paged) error {
+func getContent(page paged.Paged, templateFile string) (string, error) {
+	if templateFile == "" {
+		return "", nil
+	}
+	inputFile, errInput := os.Open(templateFile)
+	if errInput != nil {
+		return "", errInput
+	}
+	defer inputFile.Close()
+	buf := bytes.NewBufferString("")
+	errTemplate := page.GetPageContent(inputFile, buf)
+	if errTemplate != nil {
+		return "", errTemplate
+	}
+	str := buf.String()
+	m := minify.New()
+	m.AddFunc("text/html", html.Minify)
+	s, err := m.String("text/html", str)
+	if err != nil {
+		return "", err
+	}
+	return s, nil
+}
+
+func CreatePage(client *wordpress.Client, page paged.Paged, templateFile string) error {
+	content, err := getContent(page, templateFile)
+	if err != nil {
+		return errors.Annotatef(err, "error while creating page")
+	}
 	_, _, body, err := client.Pages().Create(&wordpress.Page{
 		Slug:     page.LinkName(),
 		Title:    wordpress.Title{Raw: page.GetPageTitle()},
@@ -27,10 +58,29 @@ func CreatePage(client *wordpress.Client, page paged.Paged) error {
 		Template: page.GetPageTemplate(),
 		Status:   "private",
 		Parent:   page.GetParentPageID(),
+		Content:  wordpress.Content{Raw: content},
+		Excerpt:  wordpress.Excerpt{Raw: page.GetPageExcerpt()},
 	})
 	if err != nil {
 		logWordpressError(body)
 		return errors.Annotatef(err, "error while creating page")
+	}
+	return nil
+}
+
+func UpdatePage(client *wordpress.Client, wpPage *wordpress.Page, page paged.Paged, templateFile string) error {
+	content, err := getContent(page, templateFile)
+	if err != nil {
+		return errors.Annotatef(err, "error while creating page")
+	}
+	_, _, body, err := client.Pages().Update(wpPage.ID, &wordpress.Page{
+		Content:  wordpress.Content{Raw: content},
+		Excerpt:  wordpress.Excerpt{Raw: page.GetPageExcerpt()},
+		Template: page.GetPageTemplate(),
+	})
+	if err != nil {
+		logWordpressError(body)
+		return errors.Annotatef(err, "error while updating page")
 	}
 	return nil
 }

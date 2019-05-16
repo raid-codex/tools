@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_generate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/website_cache_clear"
 
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_characteristics_parser"
@@ -58,6 +59,9 @@ var (
 	championsPageCreate    = championsPage.Command("create", "Create the page for the champion")
 	championsPageCreateCmd = champions_page_create.New(championsPageCreate)
 
+	championsPageGenerate    = championsPage.Command("generate", "Generate HTML for Champion page")
+	championsPageGenerateCmd = champions_page_generate.New(championsPageGenerate)
+
 	championsPageSeo              = championsPage.Command("seo", "Deal with SEO for a champion page")
 	championsPageSeoSetDefault    = championsPageSeo.Command("set-default", "Reset SEO settings to default")
 	championsPageSeoSetDefaultCmd = champions_page_seo.New(championsPageSeoSetDefault, "set-default")
@@ -108,5 +112,6 @@ var (
 		"champions sanitize":              championsSanitizeCmd,
 		"champions schema validate":       championsSchemaValidateCmd,
 		"website cache clear":             websiteCacheClearCmd,
+		"champions page generate":         championsPageGenerateCmd,
 	}
 )

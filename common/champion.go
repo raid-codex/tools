@@ -166,6 +166,7 @@ func (c *Champion) GetPageContent(input io.Reader, output io.Writer) error {
 		"ToLower":      strings.ToLower,
 		"DisplayGrade": grade,
 		"Percentage":   func(s float64) int64 { return int64(s * 100.0) },
+		"TrustAsHtml":  func(s string) template.HTML { return template.HTML(s) },
 	}
 	rawTemplate, err := ioutil.ReadAll(input)
 	if err != nil {

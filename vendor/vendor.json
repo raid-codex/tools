@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "IQ5aq98x8BA/FAzyEc4tv+qVrj8=",
+			"path": "github.com/Jeffail/tunny",
+			"revision": "4921fff29480bad359ad2fb3271fb461c8ffe1fc",
+			"revisionTime": "2018-11-08T20:56:50Z"
+		},
+		{
 			"checksumSHA1": "KmjnydoAbofMieIWm+it5OWERaM=",
 			"path": "github.com/alecthomas/template",
 			"revision": "a0175ee3bccc567396460bf5acd36800cb10c49c",
@@ -51,6 +57,18 @@
 			"revisionTime": "2016-03-22T05:45:48Z"
 		},
 		{
+			"checksumSHA1": "7mvHbJRdZsLwG2HiSGiN25eZ4D0=",
+			"path": "github.com/tdewolff/minify",
+			"revision": "1ef661fbe56bfb092c732e69a0ebc8affe386196",
+			"revisionTime": "2019-05-14T20:44:23Z"
+		},
+		{
+			"checksumSHA1": "WH2hdAoxBmSy9KdPPjJMGlNYvbA=",
+			"path": "github.com/tdewolff/minify/html",
+			"revision": "1ef661fbe56bfb092c732e69a0ebc8affe386196",
+			"revisionTime": "2019-05-14T20:44:23Z"
+		},
+		{
 			"checksumSHA1": "+SLRfCdnZzt59tTsNUp6ie39zjo=",
 			"path": "github.com/xeipuuv/gojsonpointer",
 			"revision": "4e3ac2762d5f479393488629ee9370b50873b3a6",
@@ -67,6 +85,12 @@
 			"path": "github.com/xeipuuv/gojsonschema",
 			"revision": "354ad34c2300dd6e84920ac70b41487336219e43",
 			"revisionTime": "2019-04-23T13:24:10Z"
+		},
+		{
+			"checksumSHA1": "YoWOqLNL8YTdL+eSMe9/V50LkEs=",
+			"path": "github.com/yterajima/go-sitemap",
+			"revision": "2eb384a3d049da294e409b7cab88bc9313c7b078",
+			"revisionTime": "2018-09-26T11:32:24Z"
 		},
 		{
 			"checksumSHA1": "CjDmpbYWUeTzpJBeH5AmfH/my88=",

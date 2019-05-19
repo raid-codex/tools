@@ -156,9 +156,5 @@ func (c *Command) exportContent(content *Champions) error {
 			return errWrite
 		}
 	}
-	errWrite := utils.WriteToFile(fmt.Sprintf("%s/index.json", *c.TargetFolder), content.Champions)
-	if errWrite != nil {
-		return errWrite
-	}
 	return nil
 }

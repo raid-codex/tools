@@ -13,14 +13,12 @@ func WriteToFile(filename string, val interface{}) error {
 		return errOpen
 	}
 	defer f.Close()
-	data, errJSON := json.MarshalIndent(val, "", "  ")
+	enc := json.NewEncoder(f)
+	enc.SetEscapeHTML(false)
+	enc.SetIndent("", "  ")
+	errJSON := enc.Encode(val)
 	if errJSON != nil {
 		return errJSON
 	}
-	nb, errWrite := f.Write(data)
-	if errWrite != nil {
-		return errWrite
-	}
-	log.Printf("wrote %d bytes to file\n", nb)
 	return nil
 }

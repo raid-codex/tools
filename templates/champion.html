@@ -114,7 +114,7 @@
                                                                         <div
                                                                             class="elementor-text-editor elementor-clearfix">
                                                                             <p style="text-align: center;"><span
-                                                                                    class="h2 champion-rarity champion-rarity-rare">{{.Champion.Rarity}}</span>
+                                                                                    class="h2 champion-rarity champion-rarity-{{.Champion.Rarity | ToLower }}">{{.Champion.Rarity}}</span>
                                                                             </p>
                                                                         </div>
                                                                     </div>

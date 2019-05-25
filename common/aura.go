@@ -1,5 +1,5 @@
 package common
 
 type Aura struct {
-	Name string `json:"name"`
+	RawDescription string `json:"raw_description"`
 }

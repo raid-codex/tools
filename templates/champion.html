@@ -1,4 +1,4 @@
-<article id="post-2747" class="section pagebuilder-section">
+<article id="post-2747" class="section pagebuilder-section" style="padding-top: 70px;">
     <div data-elementor-type="post" data-elementor-id="2747" class="elementor elementor-2747"
         data-elementor-settings="[]">
         <div class="elementor-inner">
@@ -17,13 +17,12 @@
                                             data-widget_type="button.default">
                                             <div class="elementor-widget-container">
                                                 <div class="elementor-button-wrapper">
-                                                    <a href="/champions/"
+                                                    <a href="https://raid-codex.com/champions/"
                                                         class="elementor-button-link elementor-button elementor-size-xs"
                                                         role="button">
                                                         <span class="elementor-button-content-wrapper">
-                                                            <span class="elementor-button-text">
-                                                                <i class="fa fa-arrow-left"></i>
-                                                            </span>
+                                                            <span class="elementor-button-text"><i
+                                                                    class="fa fa-arrow-left"></i></span>
                                                         </span>
                                                     </a>
                                                 </div>
@@ -40,6 +39,8 @@
                                             data-id="4f28b37" data-element_type="widget"
                                             data-widget_type="heading.default">
                                             <div class="elementor-widget-container">
+                                                <h1 class="elementor-heading-title elementor-size-default">
+                                                    {{ .Champion.Name }}</h1>
                                             </div>
                                         </div>
                                     </div>
@@ -85,10 +86,8 @@
                                             <div class="elementor-widget-container">
                                                 <div class="elementor-image">
                                                     <img width="300" height="300"
-                                                        src="https://raid-codex.com/wp-content/uploads/champions/{{ .Champion.ImageSlug }}-300x300.jpg"
-                                                        class="attachment-medium size-medium"
-                                                        alt="{{ .Champion.Name }}">
-                                                </div>
+                                                        src="https://raid-codex.com/wp-content/uploads/champions/image-champion-{{.Champion.Slug}}-300x300.jpg"
+                                                        class="attachment-medium size-medium" alt=""> </div>
                                             </div>
                                         </div>
                                     </div>
@@ -113,13 +112,8 @@
                                                                     <div class="elementor-widget-container">
                                                                         <div
                                                                             class="elementor-text-editor elementor-clearfix">
-                                                                            <p style="text-align: center;">
-                                                                                <span class="h2">
-                                                                                    <span
-                                                                                        class="champion-rarity champion-rarity-{{.Champion.Rarity | ToLower }}">
-                                                                                        {{.Champion.Rarity}}
-                                                                                    </span>
-                                                                                </span>
+                                                                            <p style="text-align: center;"><span
+                                                                                    class="h2 champion-rarity champion-rarity-rare">{{.Champion.Rarity}}</span>
                                                                             </p>
                                                                         </div>
                                                                     </div>
@@ -137,13 +131,9 @@
                                                                     <div class="elementor-widget-container">
                                                                         <div
                                                                             class="elementor-text-editor elementor-clearfix">
-                                                                            <p style="text-align: center;">
-                                                                                <span class="h2">
-                                                                                    <a
-                                                                                        href="{{.Champion.Faction.WebsiteLink}}">
-                                                                                        {{.Champion.Faction.Name}}
-                                                                                    </a>
-                                                                                </span>
+                                                                            <p style="text-align: center;"><a
+                                                                                    href="{{.Champion.Faction.WebsiteLink}}"><span
+                                                                                        class="h2">{{.Champion.Faction.Name}}</span></a>
                                                                             </p>
                                                                         </div>
                                                                     </div>
@@ -168,11 +158,9 @@
                                             data-widget_type="text-editor.default">
                                             <div class="elementor-widget-container">
                                                 <div class="elementor-text-editor elementor-clearfix">
-                                                    <div class="centered">
-                                                        <span class="h2">
+                                                    <div class="centered"><span class="h2">
                                                             {{ .Champion.Rating.Overall | DisplayGrade }}
-                                                        </span>
-                                                    </div>
+                                                        </span></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -193,8 +181,7 @@
                                                                             class="elementor-text-editor elementor-clearfix">
                                                                             <p style="text-align: center;">
                                                                                 <strong>Element</strong>:
-                                                                                {{ .Champion.Element }}
-                                                                            </p>
+                                                                                {{.Champion.Element}}</p>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -211,11 +198,48 @@
                                                                     <div class="elementor-widget-container">
                                                                         <div
                                                                             class="elementor-text-editor elementor-clearfix">
-                                                                            <p style="text-align: center;">
-                                                                                <b>Type</b>:
-                                                                                {{ .Champion.Type }}
-                                                                            </p>
+                                                                            <p style="text-align: center;"><b>Type</b>:
+                                                                                {{.Champion.Type}}</p>
                                                                         </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section
+                    class="elementor-element elementor-element-15838dd elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section"
+                    data-id="15838dd" data-element_type="section">
+                    <div class="elementor-container elementor-column-gap-default">
+                        <div class="elementor-row">
+                            <div class="elementor-element elementor-element-79df2f6 elementor-column elementor-col-100 elementor-top-column"
+                                data-id="79df2f6" data-element_type="column">
+                                <div class="elementor-column-wrap  elementor-element-populated">
+                                    <div class="elementor-widget-wrap">
+                                        <section
+                                            class="elementor-element elementor-element-a543779 elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-inner-section"
+                                            data-id="a543779" data-element_type="section">
+                                            <div class="elementor-container elementor-column-gap-default">
+                                                <div class="elementor-row">
+                                                    <div class="elementor-element elementor-element-79c75d4 elementor-column elementor-col-100 elementor-inner-column"
+                                                        data-id="79c75d4" data-element_type="column">
+                                                        <div class="elementor-column-wrap  elementor-element-populated">
+                                                            <div class="elementor-widget-wrap">
+                                                                <div class="elementor-element elementor-element-faa6046 elementor-widget elementor-widget-text-editor"
+                                                                    data-id="faa6046" data-element_type="widget"
+                                                                    data-widget_type="text-editor.default">
+                                                                    <div class="elementor-widget-container">
+                                                                        <div
+                                                                            class="elementor-text-editor elementor-clearfix">
+                                                                            {{ .Champion.Lore | TrustAsHtml }}</div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -239,99 +263,196 @@
                                 data-id="729059d" data-element_type="column">
                                 <div class="elementor-column-wrap  elementor-element-populated">
                                     <div class="elementor-widget-wrap">
-                                        <div class="elementor-element elementor-element-cd6574b elementor-widget elementor-widget-heading"
-                                            data-id="cd6574b" data-element_type="widget"
-                                            data-widget_type="heading.default">
-                                            <div class="elementor-widget-container">
-                                                <h3 class="elementor-heading-title elementor-size-default">
-                                                    Characteristics</h3>
-                                            </div>
-                                        </div>
-                                        <div class="elementor-element elementor-element-7db2d0a elementor-tabs-view-horizontal elementor-widget elementor-widget-tabs"
-                                            data-id="7db2d0a" data-element_type="widget"
-                                            data-widget_type="tabs.default">
-                                            <div class="elementor-widget-container">
-                                                <div class="elementor-tabs" role="tablist">
-                                                    <div class="elementor-tabs-wrapper">
-                                                        <div id="elementor-tab-title-1311"
-                                                            class="elementor-tab-title elementor-tab-desktop-title elementor-active"
-                                                            data-tab="1" role="tab"
-                                                            aria-controls="elementor-tab-content-1311">
-                                                            <a href="#characteristics-60">Level 60</a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="elementor-tabs-content-wrapper">
-                                                        <div class="elementor-tab-title elementor-tab-mobile-title elementor-active"
-                                                            data-tab="1" role="tab">Level 60</div>
-                                                        <div id="elementor-tab-content-1311"
-                                                            class="elementor-tab-content elementor-clearfix elementor-active"
-                                                            data-tab="1" role="tabpanel"
-                                                            aria-labelledby="elementor-tab-title-1311"
-                                                            style="display: block;">
-                                                            <table class="table table-hover table-no-border">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <td colspan="2"></td>
-                                                                    </tr>
-                                                                </thead>
-                                                                {{ with $characteristics := index .Champion.Characteristics 60 }}
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td>HP</td>
-                                                                        <td><span class="characteristic-current">
-                                                                                {{  $characteristics.HP }}
-                                                                            </span></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Attack</td>
-                                                                        <td><span class="characteristic-current">
-                                                                                {{  $characteristics.Attack }}
-                                                                            </span></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Defense</td>
-                                                                        <td><span class="characteristic-current">
-                                                                                {{  $characteristics.Defense }}
-                                                                            </span></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Critical rate</td>
-                                                                        <td><span class="characteristic-current">
-                                                                                {{  $characteristics.CriticalRate | Percentage }}%
-                                                                            </span></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Critical damage</td>
-                                                                        <td><span class="characteristic-current">
-                                                                                {{  $characteristics.CriticalDamage | Percentage }}%
-                                                                            </span></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Speed</td>
-                                                                        <td><span class="characteristic-current">
-                                                                                {{  $characteristics.Speed }}
-                                                                            </span></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Resistance</td>
-                                                                        <td><span class="characteristic-current">
-                                                                                {{  $characteristics.Resistance }}
-                                                                            </span></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Accuracy</td>
-                                                                        <td><span class="characteristic-current">
-                                                                                {{  $characteristics.Accuracy }}
-                                                                            </span></td>
-                                                                    </tr>
-                                                                </tbody>
-                                                                {{ end }}
-                                                            </table>
+                                        <section
+                                            class="elementor-element elementor-element-388f709 elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-inner-section"
+                                            data-id="388f709" data-element_type="section">
+                                            <div class="elementor-container elementor-column-gap-default">
+                                                <div class="elementor-row">
+                                                    <div class="elementor-element elementor-element-43894af elementor-column elementor-col-100 elementor-inner-column"
+                                                        data-id="43894af" data-element_type="column">
+                                                        <div class="elementor-column-wrap  elementor-element-populated">
+                                                            <div class="elementor-widget-wrap">
+                                                                <div class="elementor-element elementor-element-cd6574b elementor-widget elementor-widget-heading"
+                                                                    data-id="cd6574b" data-element_type="widget"
+                                                                    data-widget_type="heading.default">
+                                                                    <div class="elementor-widget-container">
+                                                                        <h3
+                                                                            class="elementor-heading-title elementor-size-default">
+                                                                            Characteristics</h3>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="elementor-element elementor-element-7db2d0a elementor-tabs-view-horizontal elementor-widget elementor-widget-tabs"
+                                                                    data-id="7db2d0a" data-element_type="widget"
+                                                                    data-widget_type="tabs.default">
+                                                                    <div class="elementor-widget-container">
+                                                                        <div class="elementor-tabs" role="tablist">
+                                                                            <div class="elementor-tabs-wrapper">
+                                                                                <div id="elementor-tab-title-1311"
+                                                                                    class="elementor-tab-title elementor-tab-desktop-title elementor-active"
+                                                                                    data-tab="1" role="tab"
+                                                                                    aria-controls="elementor-tab-content-1311">
+                                                                                    <a href="">Level 60</a></div>
+                                                                            </div>
+                                                                            <div class="elementor-tabs-content-wrapper">
+                                                                                <div class="elementor-tab-title elementor-tab-mobile-title elementor-active"
+                                                                                    data-tab="1" role="tab">Level 60
+                                                                                </div>
+                                                                                <div id="elementor-tab-content-1311"
+                                                                                    class="elementor-tab-content elementor-clearfix elementor-active"
+                                                                                    data-tab="1" role="tabpanel"
+                                                                                    aria-labelledby="elementor-tab-title-1311"
+                                                                                    style="display: block;">
+                                                                                    {{ with $characteristics := index .Champion.Characteristics 60 }}
+                                                                                    <table
+                                                                                        class="table table-hover table-no-border">
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <td colspan="2"></td>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            <tr>
+                                                                                                <td>HP</td>
+                                                                                                <td><span
+                                                                                                        class="characteristic-current">
+                                                                                                        {{ $characteristics.HP }}
+                                                                                                    </span></td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td>Attack</td>
+                                                                                                <td><span
+                                                                                                        class="characteristic-current">
+                                                                                                        {{ $characteristics.Attack }}
+                                                                                                    </span></td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td>Defense</td>
+                                                                                                <td><span
+                                                                                                        class="characteristic-current">
+                                                                                                        {{ $characteristics.Defense }}
+                                                                                                    </span></td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td>Critical rate</td>
+                                                                                                <td><span
+                                                                                                        class="characteristic-current">
+                                                                                                        {{ $characteristics.CriticalRate | Percentage }}%
+                                                                                                    </span></td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td>Critical damage</td>
+                                                                                                <td><span
+                                                                                                        class="characteristic-current">
+                                                                                                        {{ $characteristics.CriticalRate | Percentage }}%
+                                                                                                    </span></td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td>Speed</td>
+                                                                                                <td><span
+                                                                                                        class="characteristic-current">
+                                                                                                        {{ $characteristics.Speed }}
+                                                                                                    </span></td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td>Resistance</td>
+                                                                                                <td><span
+                                                                                                        class="characteristic-current">
+                                                                                                        {{ $characteristics.Resistance }}
+                                                                                                    </span></td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td>Accuracy</td>
+                                                                                                <td><span
+                                                                                                        class="characteristic-current">
+                                                                                                        {{ $characteristics.Accuracy }}
+                                                                                                    </span></td>
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                    {{ end }}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </section>
+                                        <section
+                                            class="elementor-element elementor-element-b16ed6f elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-inner-section"
+                                            data-id="b16ed6f" data-element_type="section">
+                                            <div class="elementor-container elementor-column-gap-default">
+                                                <div class="elementor-row">
+                                                    <div class="elementor-element elementor-element-704734d elementor-column elementor-col-100 elementor-inner-column"
+                                                        data-id="704734d" data-element_type="column">
+                                                        <div class="elementor-column-wrap  elementor-element-populated">
+                                                            <div class="elementor-widget-wrap">
+                                                                <div class="elementor-element elementor-element-ae57ac8 elementor-widget elementor-widget-heading"
+                                                                    data-id="ae57ac8" data-element_type="widget"
+                                                                    data-widget_type="heading.default">
+                                                                    <div class="elementor-widget-container">
+                                                                        <h2
+                                                                            class="elementor-heading-title elementor-size-default">
+                                                                            Skills</h2>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="elementor-element elementor-element-c6449ca elementor-widget elementor-widget-text-editor"
+                                                                    data-id="c6449ca" data-element_type="widget"
+                                                                    data-widget_type="text-editor.default">
+                                                                    <div class="elementor-widget-container">
+                                                                        <div
+                                                                            class="elementor-text-editor elementor-clearfix">
+                                                                            <table
+                                                                                class="table table-hover table-no-border">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <td colspan="2" align="right"><a
+                                                                                                class="suggest-update"
+                                                                                                style="color: white;"
+                                                                                                href="/contribution-forms/champion-skills/#champion={{.Champion.Name}}">Suggest
+                                                                                                an update</a></td>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    {{ if gt .Skills 0 }}
+                                                                                    {{ range $skill := .Champion.Skills }}
+                                                                                    <tr>
+                                                                                        <td class="h4">{{ $skill.Name }}
+                                                                                        </td>
+                                                                                        <td>{{ $skill.RawDescription | TrustAsHtml }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    {{ end }}
+                                                                                    {{ range $aura := .Champion.Auras }}
+                                                                                    <tr>
+                                                                                        <td class="h4">Aura</td>
+                                                                                        <td>{{ $aura.RawDescription | TrustAsHtml }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    {{ end }}
+                                                                                    {{ end }}
+                                                                                    {{ if eq .Skills 0 }}
+                                                                                    <tr>
+                                                                                        <td colspan="2">Coming soon…
+                                                                                            Want to help? <a
+                                                                                                href="/contribution-forms/champion-skills/#champion={{.Champion.Name}}">Suggest
+                                                                                                an update</a>!</td>
+                                                                                    </tr>
+                                                                                    {{ end }}
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
                                     </div>
                                 </div>
                             </div>
@@ -339,193 +460,154 @@
                                 data-id="4a81cf1" data-element_type="column">
                                 <div class="elementor-column-wrap  elementor-element-populated">
                                     <div class="elementor-widget-wrap">
-                                        <div class="elementor-element elementor-element-9a9b121 elementor-widget elementor-widget-heading"
-                                            data-id="9a9b121" data-element_type="widget"
-                                            data-widget_type="heading.default">
-                                            <div class="elementor-widget-container">
-                                                <h3 class="elementor-heading-title elementor-size-default">
-                                                    Ratings</h3>
-                                            </div>
-                                        </div>
-                                        <div class="elementor-element elementor-element-6a03b48 elementor-widget elementor-widget-text-editor"
-                                            data-id="6a03b48" data-element_type="widget"
-                                            data-widget_type="text-editor.default">
-                                            <div class="elementor-widget-container">
-                                                <div class="elementor-text-editor elementor-clearfix">
-                                                    <table class="table-hover table">
-                                                        <thead>
-                                                            <tr class="row-header">
-                                                                <th>Location</th>
-                                                                <th>Rating</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tbody>
-                                                            <tr>
-                                                                <td>
-                                                                    Campaign </td>
-                                                                <td
-                                                                    class="champion-rating-{{ .Champion.Rating.Campaign }}">
-                                                                    {{ .Champion.Rating.Campaign | DisplayGrade }}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Arena (off) </td>
-                                                                <td
-                                                                    class="champion-rating-{{ .Champion.Rating.ArenaOff }}">
-                                                                    {{ .Champion.Rating.ArenaOff | DisplayGrade }}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Arena (def) </td>
-                                                                <td
-                                                                    class="champion-rating-{{ .Champion.Rating.ArenaDef }}">
-                                                                    {{ .Champion.Rating.ArenaDef | DisplayGrade }}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Clan boss (without GS) </td>
-                                                                <td
-                                                                    class="champion-rating-{{ .Champion.Rating.ClanBossWoGS }}">
-                                                                    {{ .Champion.Rating.ClanBossWoGS | DisplayGrade }}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Clan boss (with GS) </td>
-                                                                <td
-                                                                    class="champion-rating-{{ .Champion.Rating.ClanBosswGS }}">
-                                                                    {{ .Champion.Rating.ClanBosswGS | DisplayGrade }}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Ice Golem’s Peak </td>
-                                                                <td
-                                                                    class="champion-rating-{{ .Champion.Rating.IceGuardian }}">
-                                                                    {{ .Champion.Rating.IceGuardian | DisplayGrade }}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Dragon’s Lair </td>
-                                                                <td
-                                                                    class="champion-rating-{{ .Champion.Rating.Dragon }}">
-                                                                    {{ .Champion.Rating.Dragon | DisplayGrade }}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Spider’s Den </td>
-                                                                <td
-                                                                    class="champion-rating-{{ .Champion.Rating.Spider }}">
-                                                                    {{ .Champion.Rating.Spider | DisplayGrade }}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Fire Knight’s Castle </td>
-                                                                <td
-                                                                    class="champion-rating-{{ .Champion.Rating.FireKnight }}">
-                                                                    {{ .Champion.Rating.FireKnight | DisplayGrade }}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Minotaur’s Labyrinth </td>
-                                                                <td
-                                                                    class="champion-rating-{{ .Champion.Rating.Minotaur }}">
-                                                                    {{ .Champion.Rating.Minotaur | DisplayGrade }}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Force Keep </td>
-                                                                <td
-                                                                    class="champion-rating-{{ .Champion.Rating.ForceDungeon }}">
-                                                                    {{ .Champion.Rating.ForceDungeon | DisplayGrade }}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Magic Keep </td>
-                                                                <td
-                                                                    class="champion-rating-{{ .Champion.Rating.MagicDungeon }}">
-                                                                    {{ .Champion.Rating.MagicDungeon | DisplayGrade }}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Spirit Keep </td>
-                                                                <td
-                                                                    class="champion-rating-{{ .Champion.Rating.SpiritDungeon }}">
-                                                                    {{ .Champion.Rating.SpiritDungeon | DisplayGrade }}
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>
-                                                                    Void Keep </td>
-                                                                <td
-                                                                    class="champion-rating-{{ .Champion.Rating.VoidDungeon }}">
-                                                                    {{ .Champion.Rating.VoidDungeon | DisplayGrade }}
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                        </tbody>
-                                                    </table>
+                                        <section
+                                            class="elementor-element elementor-element-223fc39 elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-inner-section"
+                                            data-id="223fc39" data-element_type="section">
+                                            <div class="elementor-container elementor-column-gap-default">
+                                                <div class="elementor-row">
+                                                    <div class="elementor-element elementor-element-e85380c elementor-column elementor-col-100 elementor-inner-column"
+                                                        data-id="e85380c" data-element_type="column">
+                                                        <div class="elementor-column-wrap  elementor-element-populated">
+                                                            <div class="elementor-widget-wrap">
+                                                                <div class="elementor-element elementor-element-9a9b121 elementor-widget elementor-widget-heading"
+                                                                    data-id="9a9b121" data-element_type="widget"
+                                                                    data-widget_type="heading.default">
+                                                                    <div class="elementor-widget-container">
+                                                                        <h3
+                                                                            class="elementor-heading-title elementor-size-default">
+                                                                            Ratings</h3>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="elementor-element elementor-element-6a03b48 elementor-widget elementor-widget-text-editor"
+                                                                    data-id="6a03b48" data-element_type="widget"
+                                                                    data-widget_type="text-editor.default">
+                                                                    <div class="elementor-widget-container">
+                                                                        <div
+                                                                            class="elementor-text-editor elementor-clearfix">
+                                                                            <table class="table-hover table">
+                                                                                <thead>
+                                                                                    <tr class="row-header">
+                                                                                        <th>Location</th>
+                                                                                        <th>Rating</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td>Campaign</td>
+                                                                                        <td
+                                                                                            class="champion-rating-{{ .Champion.Rating.Campaign }}">
+                                                                                            {{ .Champion.Rating.Campaign | DisplayGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Arena (off)</td>
+                                                                                        <td
+                                                                                            class="champion-rating-{{ .Champion.Rating.ArenaOff }}">
+                                                                                            {{ .Champion.Rating.ArenaOff | DisplayGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Arena (def)</td>
+                                                                                        <td
+                                                                                            class="champion-rating-{{ .Champion.Rating.ArenaDef }}">
+                                                                                            {{ .Champion.Rating.ArenaDef | DisplayGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Clan boss (without GS)</td>
+                                                                                        <td
+                                                                                            class="champion-rating-{{ .Champion.Rating.ClanBossWoGS }}">
+                                                                                            {{ .Champion.Rating.ClanBossWoGS | DisplayGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Clan boss (with GS)</td>
+                                                                                        <td
+                                                                                            class="champion-rating-{{ .Champion.Rating.ClanBosswGS }}">
+                                                                                            <span
+                                                                                                class="champion-rating-none">{{ .Champion.Rating.ClanBosswGS | DisplayGrade }}</span>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Ice Golem’s Peak</td>
+                                                                                        <td
+                                                                                            class="champion-rating-{{ .Champion.Rating.IceGuardian }}">
+                                                                                            {{ .Champion.Rating.IceGuardian | DisplayGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Dragon’s Lair</td>
+                                                                                        <td
+                                                                                            class="champion-rating-{{ .Champion.Rating.Dragon }}">
+                                                                                            {{ .Champion.Rating.Dragon | DisplayGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Spider’s Den</td>
+                                                                                        <td
+                                                                                            class="champion-rating-{{ .Champion.Rating.Spider }}">
+                                                                                            {{ .Champion.Rating.Spider | DisplayGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Fire Knight’s Castle</td>
+                                                                                        <td
+                                                                                            class="champion-rating-{{ .Champion.Rating.FireKnight }}">
+                                                                                            {{ .Champion.Rating.FireKnight | DisplayGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Minotaur’s Labyrinth</td>
+                                                                                        <td
+                                                                                            class="champion-rating-{{ .Champion.Rating.Minotaur }}">
+                                                                                            {{ .Champion.Rating.Minotaur | DisplayGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Force Keep</td>
+                                                                                        <td
+                                                                                            class="champion-rating-{{ .Champion.Rating.ForceDungeon }}">
+                                                                                            {{ .Champion.Rating.ForceDungeon | DisplayGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Magic Keep</td>
+                                                                                        <td
+                                                                                            class="champion-rating-{{ .Champion.Rating.MagicDungeon }}">
+                                                                                            {{ .Champion.Rating.MagicDungeon | DisplayGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Spirit Keep</td>
+                                                                                        <td
+                                                                                            class="champion-rating-{{ .Champion.Rating.SpiritDungeon }}">
+                                                                                            {{ .Champion.Rating.SpiritDungeon | DisplayGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Void Keep</td>
+                                                                                        <td
+                                                                                            class="champion-rating-{{ .Champion.Rating.VoidDungeon }}">
+                                                                                            {{ .Champion.Rating.VoidDungeon | DisplayGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </section>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </section>
-                {{ if .Champion.Lore }}
-                <section
-                    class="elementor-element elementor-element-08c5503 elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section"
-                    data-id="08c5503" data-element_type="section">
-                    <div class="elementor-container elementor-column-gap-default">
-                        <div class="elementor-row">
-                            <div class="elementor-element elementor-element-f3da6a5 elementor-column elementor-col-50 elementor-top-column"
-                                data-id="f3da6a5" data-element_type="column">
-                                <div class="elementor-column-wrap  elementor-element-populated">
-                                    <div class="elementor-widget-wrap">
-                                        <div class="elementor-element elementor-element-5bfde36 elementor-widget elementor-widget-heading"
-                                            data-id="5bfde36" data-element_type="widget"
-                                            data-widget_type="heading.default">
-                                            <div class="elementor-widget-container">
-                                                <h2 class="elementor-heading-title elementor-size-default">
-                                                    Lore</h2>
-                                            </div>
-                                        </div>
-                                        <div class="elementor-element elementor-element-14ee248 elementor-widget elementor-widget-text-editor"
-                                            data-id="14ee248" data-element_type="widget"
-                                            data-widget_type="text-editor.default">
-                                            <div class="elementor-widget-container">
-                                                <div class="elementor-text-editor elementor-clearfix">
-                                                    {{ .Champion.Lore | TrustAsHtml }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="elementor-element elementor-element-e46daa0 elementor-column elementor-col-50 elementor-top-column"
-                                data-id="e46daa0" data-element_type="column">
-                                <div class="elementor-column-wrap">
-                                    <div class="elementor-widget-wrap">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                {{ end }}
             </div>
         </div>
     </div>

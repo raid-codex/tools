@@ -176,9 +176,9 @@ func (c *Champion) GetPageContent(input io.Reader, output io.Writer) error {
 	if err != nil {
 		return err
 	}
-
 	err = tmpl.Execute(output, map[string]interface{}{
 		"Champion": c,
+		"Skills":   len(c.Skills) + len(c.Auras),
 	})
 	return err
 }
@@ -249,4 +249,75 @@ func gradeTitle(grade string) string {
 		return "god tier"
 	}
 	return ""
+}
+
+func (c *Champion) ParseRawSkill(raw string) error {
+	if raw == "" {
+		return nil
+	} else if strings.Index(raw, "Aura") != -1 {
+		return c.setAuraFromRaw(raw)
+	}
+	return c.setSkillFromRaw(raw)
+}
+
+func (c *Champion) setAuraFromRaw(raw string) error {
+	data := strings.Join(strings.Split(raw, "\n")[1:], "<br>")
+	aura := Aura{RawDescription: strings.Trim(data, " \n\r")}
+	if aura.RawDescription != "" {
+		c.Auras = make([]Aura, 1)
+		c.Auras[0] = aura
+	}
+
+	return nil
+}
+
+func (c *Champion) setSkillFromRaw(raw string) error {
+	data := strings.Split(raw, "\n")
+	// assuming name is on line 1, before the "Level"
+	dataOkForDescription := make([]string, 0)
+	for idx := range data {
+		data[idx] = strings.Trim(data[idx], " ")
+		if idx > 0 && data[idx] != "" {
+			fit := false
+			concat := false
+			switch true {
+			case idx == 1,
+				strings.HasPrefix(data[idx], "Lvl."),
+				strings.HasPrefix(data[idx], "Damage based on:"):
+				fit = true
+			case data[idx-1] != "" && idx != 1:
+				fit = true
+				concat = true
+			}
+			if fit {
+				if concat {
+					dataOkForDescription[len(dataOkForDescription)-1] = fmt.Sprintf("%s %s", dataOkForDescription[len(dataOkForDescription)-1], data[idx])
+				} else {
+					dataOkForDescription = append(dataOkForDescription, data[idx])
+				}
+			}
+		}
+	}
+	text := strings.Join(dataOkForDescription, "<br>")
+	name := strings.Trim(data[0][:strings.Index(data[0], "Level")-1], " ")
+	okName, errName := GetSanitizedName(name)
+	if errName != nil {
+		return errName
+	}
+	for _, skill := range c.Skills {
+		if skill.Name == okName {
+			skill.RawDescription = text
+			return nil
+		}
+	}
+	skill := &Skill{
+		Name:           okName,
+		RawDescription: text,
+	}
+	errSanitize := skill.Sanitize()
+	if errSanitize != nil {
+		return errSanitize
+	}
+	c.Skills = append(c.Skills, *skill)
+	return nil
 }

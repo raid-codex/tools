@@ -53,7 +53,7 @@ func (c *Command) Run() {
 		if err != nil {
 			utils.Exit(1, err)
 		}
-		if champion.Rarity == "" {
+		/*if champion.Rarity == "" {
 			// it's a new champion let's do something buddy
 			champion.Faction.Name = line[0]
 			champion.Name = line[1]
@@ -73,7 +73,12 @@ func (c *Command) Run() {
 		characteristics.CriticalDamage = float64(mustInt64(line[9])) / 100.0
 		characteristics.Resistance = mustInt64(line[10])
 		characteristics.Accuracy = mustInt64(line[11])
-		champion.Characteristics[60] = characteristics
+		champion.Characteristics[60] = characteristics*/
+		champion.ParseRawSkill(line[12])
+		champion.ParseRawSkill(line[13])
+		champion.ParseRawSkill(line[14])
+		champion.ParseRawSkill(line[15])
+		champion.ParseRawSkill(line[16])
 		errWrite := utils.WriteToFile(fmt.Sprintf("%s/%s", *c.ChampionsFolder, champion.Filename()), champion)
 		if errWrite != nil {
 			utils.Exit(1, errWrite)

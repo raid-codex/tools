@@ -1,6 +1,7 @@
 package seo
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"strings"
@@ -10,9 +11,10 @@ import (
 )
 
 type SEO struct {
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	Keywords    []string `json:"keywords"`
+	Title          string            `json:"title"`
+	Description    string            `json:"description"`
+	Keywords       []string          `json:"keywords"`
+	StructuredData []json.RawMessage `json:"structured_data"`
 }
 
 func (s *SEO) Apply(pageSlug string) error {

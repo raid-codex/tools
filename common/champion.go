@@ -1,6 +1,7 @@
 package common
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io"
@@ -114,7 +115,23 @@ func (c *Champion) DefaultSEO() {
 		Keywords: []string{
 			"raid", "shadow", "legends", "champions", "tier", "list", c.Name, c.Slug,
 		},
+		StructuredData: []json.RawMessage{},
 	}
+	championDoc := map[string]interface{}{
+		"@context":    "http://schema.org/",
+		"@type":       "Person",
+		"name":        c.Name,
+		"url":         fmt.Sprintf("https://raid-codex.com%s", c.WebsiteLink),
+		"image":       fmt.Sprintf("https://raid-codex.com/wp-content/uploads/champions/%s.jpg", c.ImageSlug),
+		"description": fmt.Sprintf("Member of the faction %s, %s is a champion of %s rarity and of %s type", c.Faction.Name, c.Name, c.Rarity, c.Type),
+		"affiliation": map[string]interface{}{
+			"@type":    "Organization",
+			"@context": "http://schema.org",
+			"name":     c.Faction.Name,
+		},
+	}
+	rawMessage, _ := json.Marshal(championDoc)
+	c.SEO.StructuredData = append(c.SEO.StructuredData, json.RawMessage(rawMessage))
 }
 
 func (c Champion) Filename() string {

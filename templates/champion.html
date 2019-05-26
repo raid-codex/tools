@@ -613,3 +613,8 @@
         </div>
     </div>
 </article>
+{{ range $data := .Champion.SEO.StructuredData }}
+<script type="application/ld+json">
+{{ $data }}
+</script>
+{{ end }}

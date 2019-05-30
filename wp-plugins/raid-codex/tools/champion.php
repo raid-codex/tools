@@ -54,16 +54,23 @@ $champions_field_array = array(
     "image" => array(
         "display" => function ($champion) { return get_image_url_by_slug($champion->{"image_slug"}, "thumbnail"); },
         "header_name" => "",
+        "display_phone" => function ($champion) { return '<a href="'.$champion->{"website_link"}.'">'.get_image_url_by_slug($champion->{"image_slug"}, "thumbnail").'</a>'; },
     ),
     "name" => array(
         "display" => function ($champion) {
             return '<strong><a href="'.$champion->{"website_link"}.'">'.$champion->{"name"}.'</a></strong>';
+        },
+        "display_phone" => function ($champion) {
+            return '<strong>'.$champion->{"name"}.'</strong>';
         },
         "header_name" => "Name",
     ),
     "faction" => array(
         "display" => function ($champion) {
             return '<a href="'.$champion->{"faction"}->{"website_link"}.'">'.$champion->{"faction"}->{"name"}.'</a>';
+        },
+        "display_phone" => function ($champion) {
+            return $champion->{"faction"}->{"name"};
         },
         "header_name" => "Faction",
     ),
@@ -162,7 +169,7 @@ function champion_get_html_table($champions, $fields, $separate_factions=FALSE)
         if ($champion->{"faction_slug"} != $lastFaction && $separate_factions)
         {
             $table .= '<tr class="row-header"><th colspan='.sizeof($fields).' class="centered">'.$champion->{"faction"}->{"name"}.'</th></tr>';
-            $phoneTable .= '<tr class="row-header"><th class="centered">'.$champion->{"faction"}->{"name"}.'</th></tr>';
+            $phoneTable .= '<tr class="row-header"><th class="centered"><a href="'.$champion->{"faction"}->{"website_link"}.'">'.$champion->{"faction"}->{"name"}.'</a></th></tr>';
         }
         $lastFaction = $champion->{"faction_slug"};
         $table .= '<tr>';
@@ -171,7 +178,15 @@ function champion_get_html_table($champions, $fields, $separate_factions=FALSE)
         {
             $cellValue = $champions_field_array[$field]["display"]($champion);
             $table .= '<td class="table-col-'.$field.'">'.$cellValue.'</td>';
-            $phoneCell .= "$cellValue<br/>";
+            if (isset($champions_field_array[$field]["display_phone"]))
+            {
+                $phoneValue = $champions_field_array[$field]["display_phone"]($champion);
+            }
+            else
+            {
+                $phoneValue = $cellValue;
+            }
+            $phoneCell .= "$phoneValue<br/>";
         }
         $table .= "</tr>";
         $phoneTable .= '<tr><td>'.$phoneCell.'</td></tr>';

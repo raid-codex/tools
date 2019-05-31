@@ -14,18 +14,20 @@ import (
 )
 
 type Command struct {
-	ChampionFile *string
-	TemplateFile *string
-	OutputFile   *string
-	PageTemplate *string
+	ChampionFile  *string
+	TemplateFile  *string
+	OutputFile    *string
+	PageTemplate  *string
+	DataDirectory *string
 }
 
 func New(cmd *kingpin.CmdClause) *Command {
 	return &Command{
-		ChampionFile: cmd.Flag("champion-file", "Filename for the champion").Required().String(),
-		TemplateFile: cmd.Flag("template-file", "Template file").Required().String(),
-		OutputFile:   cmd.Flag("output-file", "Output file").Required().String(),
-		PageTemplate: cmd.Flag("page-template", "Page template file").Required().String(),
+		ChampionFile:  cmd.Flag("champion-file", "Filename for the champion").Required().String(),
+		DataDirectory: cmd.Flag("data-directory", "Data directory").Required().String(),
+		TemplateFile:  cmd.Flag("template-file", "Template file").Required().String(),
+		OutputFile:    cmd.Flag("output-file", "Output file").Required().String(),
+		PageTemplate:  cmd.Flag("page-template", "Page template file").Required().String(),
 	}
 }
 
@@ -44,8 +46,12 @@ func (c *Command) Run() {
 		utils.Exit(1, errInput)
 	}
 	defer inputFile.Close()
+	extraData, errData := common.GetPageExtraData(*c.DataDirectory)
+	if errData != nil {
+		utils.Exit(1, errData)
+	}
 	buf := bytes.NewBufferString("")
-	errTemplate := champion.GetPageContent(inputFile, buf)
+	errTemplate := champion.GetPageContent(inputFile, buf, extraData)
 	if errTemplate != nil {
 		utils.Exit(1, errTemplate)
 	}

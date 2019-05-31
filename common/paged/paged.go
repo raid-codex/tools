@@ -8,6 +8,6 @@ type Paged interface {
 	GetPageTemplate() string
 	GetParentPageID() int
 	LinkName() string
-	GetPageContent(io.Reader, io.Writer) error
+	GetPageContent(io.Reader, io.Writer, map[string]interface{}) error
 	GetPageExcerpt() string
 }

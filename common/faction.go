@@ -71,6 +71,8 @@ func (_ Faction) GetPageTemplate() string { return "page-templates/template-fact
 
 func (_ Faction) GetParentPageID() int { return 1730 }
 
-func (_ Faction) GetPageContent(input io.Reader, output io.Writer) error { return nil }
+func (_ Faction) GetPageContent(input io.Reader, output io.Writer, extraData map[string]interface{}) error {
+	return nil
+}
 
 func (f Faction) GetPageExcerpt() string { return f.DefaultDescription }

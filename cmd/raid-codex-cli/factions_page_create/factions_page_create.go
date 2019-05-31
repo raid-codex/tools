@@ -8,6 +8,7 @@ import (
 	"github.com/juju/errors"
 	"github.com/raid-codex/tools/common"
 	"github.com/raid-codex/tools/utils"
+	"github.com/raid-codex/tools/utils/wp"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
@@ -22,17 +23,17 @@ func New(cmd *kingpin.CmdClause) *Command {
 }
 
 func (c *Command) Run() {
-	client := utils.GetWPClient()
+	client := wp.GetWPClient()
 
 	faction, errFaction := c.getFaction()
 	if errFaction != nil {
 		utils.Exit(1, errFaction)
 	}
-	_, errPage := utils.GetPageFromSlug(client, faction.GetPageSlug())
+	_, errPage := wp.GetPageFromSlug(client, faction.GetPageSlug())
 	if errPage != nil && !errors.IsNotFound(errPage) {
 		utils.Exit(1, errPage)
 	} else if errPage != nil && errors.IsNotFound(errPage) {
-		errCreate := utils.CreatePage(client, faction, "")
+		errCreate := wp.CreatePage(client, faction, "", "")
 		if errCreate != nil {
 			utils.Exit(1, errCreate)
 		}

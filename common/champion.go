@@ -192,7 +192,7 @@ func (_ Champion) GetParentPageID() int { return 29 }
 
 func (c Champion) GetPageExcerpt() string { return c.DefaultDescription }
 
-func (c *Champion) GetPageContent(input io.Reader, output io.Writer) error {
+func (c *Champion) GetPageContent(input io.Reader, output io.Writer, extraData map[string]interface{}) error {
 	funcMap := template.FuncMap{
 		"ToLower":      strings.ToLower,
 		"DisplayGrade": grade,
@@ -218,11 +218,10 @@ func (c *Champion) GetPageContent(input io.Reader, output io.Writer) error {
 			effects[effect.Slug] = effect
 		}
 	}
-	err = tmpl.Execute(output, map[string]interface{}{
-		"Champion": c,
-		"Skills":   len(c.Skills) + len(c.Auras),
-		"Effects":  effects,
-	})
+	extraData["Champion"] = c
+	extraData["Skills"] = len(c.Skills) + len(c.Auras)
+	extraData["Effects"] = effects
+	err = tmpl.Execute(output, extraData)
 	return err
 }
 

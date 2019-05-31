@@ -93,7 +93,7 @@ var (
 		"Increase SPD":     "30%",
 		"Increase DEF":     "60%",
 		"Reflect Damage":   "30%",
-		"Block Heal":       "100%",
+		"Heal Reduction":   "100%",
 		"Decrease ACC":     "50%",
 		"Decrease ATK":     "50%",
 		"Decrease SPD":     "30%",

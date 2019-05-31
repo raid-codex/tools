@@ -1,4 +1,4 @@
-package utils
+package wp
 
 import (
 	"bytes"
@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/juju/errors"
+	"github.com/raid-codex/tools/common"
 	"github.com/raid-codex/tools/common/paged"
 	"github.com/sogko/go-wordpress"
 	"github.com/tdewolff/minify"
@@ -22,9 +23,13 @@ func GetWPClient() *wordpress.Client {
 	return client
 }
 
-func getContent(page paged.Paged, templateFile string) (string, error) {
+func getContent(page paged.Paged, templateFile, dataDirectory string) (string, error) {
 	if templateFile == "" {
 		return "", nil
+	}
+	data, errData := common.GetPageExtraData(dataDirectory)
+	if errData != nil {
+		return "", errData
 	}
 	inputFile, errInput := os.Open(templateFile)
 	if errInput != nil {
@@ -32,7 +37,7 @@ func getContent(page paged.Paged, templateFile string) (string, error) {
 	}
 	defer inputFile.Close()
 	buf := bytes.NewBufferString("")
-	errTemplate := page.GetPageContent(inputFile, buf)
+	errTemplate := page.GetPageContent(inputFile, buf, data)
 	if errTemplate != nil {
 		return "", errTemplate
 	}
@@ -46,8 +51,8 @@ func getContent(page paged.Paged, templateFile string) (string, error) {
 	return s, nil
 }
 
-func CreatePage(client *wordpress.Client, page paged.Paged, templateFile string) error {
-	content, err := getContent(page, templateFile)
+func CreatePage(client *wordpress.Client, page paged.Paged, templateFile, dataDirectory string) error {
+	content, err := getContent(page, templateFile, dataDirectory)
 	if err != nil {
 		return errors.Annotatef(err, "error while creating page")
 	}
@@ -68,8 +73,8 @@ func CreatePage(client *wordpress.Client, page paged.Paged, templateFile string)
 	return nil
 }
 
-func UpdatePage(client *wordpress.Client, wpPage *wordpress.Page, page paged.Paged, templateFile string) error {
-	content, err := getContent(page, templateFile)
+func UpdatePage(client *wordpress.Client, wpPage *wordpress.Page, page paged.Paged, templateFile, dataDirectory string) error {
+	content, err := getContent(page, templateFile, dataDirectory)
 	if err != nil {
 		return errors.Annotatef(err, "error while creating page")
 	}

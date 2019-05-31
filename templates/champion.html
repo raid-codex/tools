@@ -224,9 +224,10 @@
                                                                             <p style="text-align: center;">
                                                                                 <strong>Status effects</strong><br>
                                                                                 {{ range  $effect := .Effects }}
+                                                                                {{ $effectData := index $.AllEffects $effect.Slug }}
                                                                                 <img src="https://raid-codex.com/wp-content/uploads/status-effects/{{$effect.ImageSlug}}.png"
-                                                                                    title="{{ $effect.Type }}"
-                                                                                    alt="{{ $effect.Type }}">
+                                                                                    title="{{ $effectData.RawDescription }}"
+                                                                                    alt="{{ $effectData.Type }}">
                                                                                 {{ end }}
                                                                             </p>
                                                                         </div>

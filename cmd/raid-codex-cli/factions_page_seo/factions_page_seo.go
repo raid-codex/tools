@@ -6,6 +6,7 @@ import (
 
 	"github.com/juju/errors"
 	"github.com/raid-codex/tools/common"
+	"github.com/raid-codex/tools/seo/seowp"
 	"github.com/raid-codex/tools/utils"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
@@ -65,7 +66,7 @@ func (c *Command) setDefault() {
 }
 
 func (c *Command) apply() {
-	errApply := c.faction.SEO.Apply(c.faction.Slug)
+	errApply := seowp.Apply(c.faction.Slug, c.faction.SEO)
 	if errApply != nil {
 		utils.Exit(1, errApply)
 	}

@@ -16,12 +16,21 @@ type Skill struct {
 
 func (s *Skill) Sanitize() error {
 	s.Slug = GetLinkNameFromSanitizedName(s.Name)
-	effects, basedOn, err := getEffectsFromDescription(s.Effects, s.DamageBasedOn, s.RawDescription)
-	if err != nil {
-		return err
+	if s.Effects == nil {
+		effects, basedOn, err := getEffectsFromDescription(s.Effects, s.DamageBasedOn, s.RawDescription)
+		if err != nil {
+			return err
+		}
+		s.Effects = effects
+		s.DamageBasedOn = basedOn
+	} else {
+		for _, effect := range s.Effects {
+			errSanitize := effect.Sanitize()
+			if errSanitize != nil {
+				return errSanitize
+			}
+		}
 	}
-	s.Effects = effects
-	s.DamageBasedOn = basedOn
 	return nil
 }
 

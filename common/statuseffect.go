@@ -8,26 +8,35 @@ import (
 )
 
 type StatusEffect struct {
-	EffectType  string  `json:"effect_type"`
-	Type        string  `json:"type"`
-	Value       float64 `json:"value"`
-	ImageSlug   string  `json:"image_slug"`
-	Slug        string  `json:"slug"`
-	WebsiteLink string  `json:"website_link"`
-	Extra       bool    `json:"extra"`
+	EffectType     string  `json:"effect_type"`
+	Type           string  `json:"type"`
+	Value          float64 `json:"value"`
+	ImageSlug      string  `json:"image_slug"`
+	Slug           string  `json:"slug"`
+	WebsiteLink    string  `json:"website_link"`
+	Extra          bool    `json:"extra"`
+	RawDescription string  `json:"raw_description"`
 }
 
 func (se *StatusEffect) Sanitize() error {
 	if se.Slug == "" {
 		se.Slug = GetLinkNameFromSanitizedName(strings.Replace(se.Type, ".", "", -1))
 	}
-	se.ImageSlug = fmt.Sprintf("image-%s-%s", se.EffectType, se.Slug)
+	if se.ImageSlug == "" {
+		se.ImageSlug = fmt.Sprintf("image-%s-%s", se.EffectType, se.Slug)
+	}
 	if se.Extra && !strings.HasSuffix(se.ImageSlug, "-2") {
 		se.ImageSlug = fmt.Sprintf("%s-2", se.ImageSlug)
 	} else if strings.HasSuffix(se.ImageSlug, "-2") {
 		se.Extra = true
+		if !strings.HasSuffix(se.Slug, "-2") {
+			se.Slug = fmt.Sprintf("%s-2", se.Slug)
+		}
 	}
 	se.WebsiteLink = fmt.Sprintf("/%s/%s", se.EffectType, se.Slug)
+	if strings.HasSuffix(se.WebsiteLink, "-2") {
+		se.WebsiteLink = se.WebsiteLink[:len(se.WebsiteLink)-2]
+	}
 	return nil
 }
 

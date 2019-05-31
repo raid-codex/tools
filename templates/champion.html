@@ -223,12 +223,10 @@
                                                                             class="elementor-text-editor elementor-clearfix">
                                                                             <p style="text-align: center;">
                                                                                 <strong>Status effects</strong><br>
-                                                                                {{ range  $effect := .Effects }}
-                                                                                {{ $effectData := index $.AllEffects $effect.Slug }}
-                                                                                <img src="https://raid-codex.com/wp-content/uploads/status-effects/{{$effect.ImageSlug}}.png"
+                                                                                {{ range  $effect := .Effects }}{{ $effectData := index $.AllEffects $effect.Slug }}<img
+                                                                                    src="https://raid-codex.com/wp-content/uploads/status-effects/{{$effect.ImageSlug}}.png"
                                                                                     title="{{ $effectData.RawDescription }}"
-                                                                                    alt="{{ $effectData.Type }}">
-                                                                                {{ end }}
+                                                                                    alt="{{ $effectData.Type }}">{{ end }}
                                                                             </p>
                                                                         </div>
                                                                     </div>

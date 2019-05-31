@@ -1,0 +1,242 @@
+<div data-elementor-type="post" data-elementor-id="5315" class="elementor elementor-5315" data-elementor-settings="[]">
+    <div class="elementor-inner">
+        <div class="elementor-section-wrap">
+            <section
+                class="elementor-element elementor-element-868efdf elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section"
+                data-id="868efdf" data-element_type="section">
+                <div class="elementor-container elementor-column-gap-default">
+                    <div class="elementor-row">
+                        <div class="elementor-element elementor-element-9cd8bf2 elementor-column elementor-col-100 elementor-top-column"
+                            data-id="9cd8bf2" data-element_type="column">
+                            <div class="elementor-column-wrap  elementor-element-populated">
+                                <div class="elementor-widget-wrap">
+                                    <div style="height: 30px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section
+                class="elementor-element elementor-element-868efdf elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section"
+                data-id="868efdf" data-element_type="section">
+                <div class="elementor-container elementor-column-gap-default">
+                    <div class="elementor-row">
+                        <div class="elementor-element elementor-element-9cd8bf2 elementor-column elementor-col-100 elementor-top-column"
+                            data-id="9cd8bf2" data-element_type="column">
+                            <div class="elementor-column-wrap  elementor-element-populated">
+                                <div class="elementor-widget-wrap">
+                                    <div class="elementor-element elementor-element-242f547 elementor-widget elementor-widget-image"
+                                        data-id="242f547" data-element_type="widget" data-widget_type="image.default">
+                                        <div class="elementor-widget-container">
+                                            <div class="elementor-image">
+                                                <figure class="wp-caption">
+                                                    <img src="https://raid-codex.com/wp-content/uploads/status-effects/{{.StatusEffect.ImageSlug}}.png"
+                                                        class="attachment-full size-full" alt="{{.StatusEffect.Type}}">
+                                                    <figcaption class="widget-image-caption wp-caption-text">
+                                                        {{.StatusEffect.RawDescription}}</figcaption>
+                                                </figure>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{ if .UpgradedVersionOfStatusEffect }}
+                <div class="elementor-container elementor-column-gap-default">
+                    <div class="elementor-row">
+                        <div class="elementor-element elementor-element-9cd8bf2 elementor-column elementor-col-100 elementor-top-column"
+                            data-id="9cd8bf2" data-element_type="column">
+                            <div class="elementor-column-wrap  elementor-element-populated">
+                                <div class="elementor-widget-wrap">
+                                    <div class="elementor-element elementor-element-242f547 elementor-widget elementor-widget-image"
+                                        data-id="242f547" data-element_type="widget" data-widget_type="image.default">
+                                        <div class="elementor-widget-container">
+                                            <div class="elementor-image">
+                                                <figure class="wp-caption">
+                                                    <img src="https://raid-codex.com/wp-content/uploads/status-effects/{{.UpgradedVersionOfStatusEffect.ImageSlug}}.png"
+                                                        class="attachment-full size-full"
+                                                        alt="{{.UpgradedVersionOfStatusEffect.Type}}">
+                                                    <figcaption class="widget-image-caption wp-caption-text">
+                                                        {{.UpgradedVersionOfStatusEffect.RawDescription}}
+                                                    </figcaption>
+                                                </figure>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{ end }}
+            </section>
+            <section
+                class="elementor-element elementor-element-778054a elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section"
+                data-id="778054a" data-element_type="section">
+                <div class="elementor-container elementor-column-gap-default">
+                    <div class="elementor-row">
+                        <div class="elementor-element elementor-element-1a69910 elementor-column elementor-col-100 elementor-top-column"
+                            data-id="1a69910" data-element_type="column">
+                            <div class="elementor-column-wrap  elementor-element-populated">
+                                <div class="elementor-widget-wrap">
+                                    <div class="elementor-element elementor-element-c7bc0c1 elementor-widget elementor-widget-heading"
+                                        data-id="c7bc0c1" data-element_type="widget" data-widget_type="heading.default">
+                                        <div class="elementor-widget-container">
+                                            <h2 class="elementor-heading-title elementor-size-default">Champions
+                                            </h2>
+                                        </div>
+                                    </div>
+                                    <div class="elementor-element elementor-element-070df1d elementor-widget elementor-widget-text-editor"
+                                        data-id="070df1d" data-element_type="widget"
+                                        data-widget_type="text-editor.default">
+                                        <div class="elementor-widget-container">
+                                            <div class="elementor-text-editor elementor-clearfix">
+                                                <p>Here are the champions which possess the ability to apply a
+                                                    {{.StatusEffect.Type}} effect, either on themselves, the enemy,
+                                                    or
+                                                    on their
+                                                    team.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="elementor-element elementor-element-7f43657 elementor-widget elementor-widget-text-editor"
+                                        data-id="7f43657" data-element_type="widget"
+                                        data-widget_type="text-editor.default">
+                                        <div class="elementor-widget-container">
+                                            <div class="elementor-text-editor elementor-clearfix">
+                                                <table
+                                                    class="centered table-responsive table-hover table champion-list-table no-header-mobile hidden-xs">
+                                                    <thead>
+                                                        <tr class="row-header">
+                                                            <th class="table-header-image"></th>
+                                                            <th class="table-header-name">Name</th>
+                                                            <th class="table-header-faction">Faction</th>
+                                                            <th class="table-header-rarity">Rarity</th>
+                                                            <th class="table-header-effects">Effects</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {{ if eq (len .AvailableChampions) 0 }}
+                                                        <tr>
+                                                            <td colspan=5>
+                                                                No champion found...
+                                                            </td>
+                                                        </tr>
+                                                        {{ end }}
+                                                        {{ range $champion := .AvailableChampions }}
+                                                        <tr>
+                                                            <td class="table-col-image"><img width="150" height="150"
+                                                                    src="https://raid-codex.com/wp-content/uploads/champions/{{$champion.ImageSlug}}-150x150.jpg"
+                                                                    class="attachment-thumbnail size-thumbnail" alt="">
+                                                            </td>
+                                                            <td class="table-col-name"><strong><a
+                                                                        href="{{$champion.WebsiteLink}}">{{$champion.Name}}</a></strong>
+                                                            </td>
+                                                            <td class="table-col-faction"><a
+                                                                    href="{{$champion.Faction.WebsiteLink}}">{{$champion.Faction.Name}}</a>
+                                                            </td>
+                                                            <td class="table-col-rarity"><span
+                                                                    class="champion-rarity champion-rarity-{{ $champion.Rarity | ToLower }}">{{ $champion.Rarity }}</span>
+                                                            </td>
+                                                            <td class="table-col-effects">
+                                                                {{ range $effect := (index $.ChampionEffectsMap $champion.Slug )}}
+                                                                {{ $effectData := index $.AllEffects $effect.Slug }}<img
+                                                                    src="https://raid-codex.com/wp-content/uploads/status-effects/{{$effect.ImageSlug}}.png"
+                                                                    title="{{ $effectData.RawDescription }}"
+                                                                    alt="{{ $effectData.Type }}">
+                                                                {{ end }}
+                                                            </td>
+                                                        </tr>
+                                                        {{ end }}
+                                                    </tbody>
+                                                </table>
+                                                <table
+                                                    class="centered table-responsive table-hover table champion-list-table no-header-mobile hidden-s hidden-md hidden-lg">
+                                                    <thead>
+                                                        <tr class="row-header">
+                                                            <th>Champion</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {{ if eq (len .AvailableChampions) 0 }}
+                                                        <tr>
+                                                            <td>
+                                                                No champion found...
+                                                            </td>
+                                                        </tr>
+                                                        {{ end }}
+                                                        {{ range $champion := .AvailableChampions }}
+                                                        <tr>
+                                                            <td>
+                                                                <a href="{{$champion.WebsiteLink}}"><img width="150"
+                                                                        height="150"
+                                                                        src="https://raid-codex.com/wp-content/uploads/champions/{{$champion.ImageSlug}}-150x150.jpg"
+                                                                        class="attachment-thumbnail size-thumbnail"
+                                                                        alt=""></a><br>
+                                                                <strong><a
+                                                                        href="{{$champion.WebsiteLink}}">{{$champion.Name}}</a></strong><br>
+                                                                {{$champion.Faction.Name}}<br>
+                                                                <span
+                                                                    class="champion-rarity champion-rarity-{{ $champion.Rarity | ToLower }}">{{ $champion.Rarity }}</span><br>
+                                                                <div class="row" style="margin-top: 20px;">
+                                                                    <div class="col-xs-12">
+                                                                        {{ range $effect := (index $.ChampionEffectsMap $champion.Slug )}}
+                                                                        {{ $effectData := index $.AllEffects $effect.Slug }}<img
+                                                                            src="https://raid-codex.com/wp-content/uploads/status-effects/{{$effect.ImageSlug}}.png"
+                                                                            title="{{ $effectData.RawDescription }}"
+                                                                            alt="{{ $effectData.Type }}">
+                                                                        {{ end }}
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        {{ end }}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section
+                class="elementor-element elementor-element-ed22d2c elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-top-section"
+                data-id="ed22d2c" data-element_type="section" style="display: none;">
+                <div class="elementor-container elementor-column-gap-default">
+                    <div class="elementor-row">
+                        <div class="elementor-element elementor-element-8763705 elementor-column elementor-col-100 elementor-top-column"
+                            data-id="8763705" data-element_type="column">
+                            <div class="elementor-column-wrap  elementor-element-populated">
+                                <div class="elementor-widget-wrap">
+                                    <div class="elementor-element elementor-element-30d99cb elementor-widget elementor-widget-divider"
+                                        data-id="30d99cb" data-element_type="widget" data-widget_type="divider.default">
+                                        <div class="elementor-widget-container">
+                                            <div class="elementor-divider">
+                                                <span class="elementor-divider-separator"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="elementor-element elementor-element-1720a29 elementor-widget elementor-widget-shortcode"
+                                        data-id="1720a29" data-element_type="widget"
+                                        data-widget_type="shortcode.default">
+                                        <div class="elementor-widget-container">
+                                            <div class="elementor-shortcode">
+                                                [related-posts]
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

@@ -363,3 +363,20 @@ func (c *Champion) setSkillFromRaw(raw string) error {
 	c.Skills = append(c.Skills, skill)
 	return nil
 }
+
+func (c *Champion) GetPageExtraData(dataDirectory string) (map[string]interface{}, error) {
+	data := map[string]interface{}{}
+
+	if dataDirectory == "" {
+		return data, nil
+	}
+
+	statusList, errStatusEffects := fetchStatusEffects(dataDirectory)
+	if errStatusEffects != nil {
+		return nil, errStatusEffects
+	}
+
+	data["AllStatus"] = statusList
+
+	return data, nil
+}

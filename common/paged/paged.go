@@ -10,4 +10,5 @@ type Paged interface {
 	LinkName() string
 	GetPageContent(io.Reader, io.Writer, map[string]interface{}) error
 	GetPageExcerpt() string
+	GetPageExtraData(string) (map[string]interface{}, error)
 }

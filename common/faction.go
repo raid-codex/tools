@@ -76,3 +76,7 @@ func (_ Faction) GetPageContent(input io.Reader, output io.Writer, extraData map
 }
 
 func (f Faction) GetPageExcerpt() string { return f.DefaultDescription }
+
+func (c *Faction) GetPageExtraData(dataDirectory string) (map[string]interface{}, error) {
+	return map[string]interface{}{}, nil
+}

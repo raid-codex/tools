@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/juju/errors"
-	"github.com/raid-codex/tools/common"
 	"github.com/raid-codex/tools/common/paged"
 	"github.com/sogko/go-wordpress"
 	"github.com/tdewolff/minify"
@@ -27,7 +27,7 @@ func getContent(page paged.Paged, templateFile, dataDirectory string) (string, e
 	if templateFile == "" {
 		return "", nil
 	}
-	data, errData := common.GetPageExtraData(dataDirectory)
+	data, errData := page.GetPageExtraData(dataDirectory)
 	if errData != nil {
 		return "", errData
 	}
@@ -42,6 +42,7 @@ func getContent(page paged.Paged, templateFile, dataDirectory string) (string, e
 		return "", errTemplate
 	}
 	str := buf.String()
+	str = strings.Replace(str, "\n", "", -1)
 	m := minify.New()
 	m.AddFunc("text/html", html.Minify)
 	s, err := m.String("text/html", str)

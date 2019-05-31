@@ -4,6 +4,8 @@ import (
 	"os"
 
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/schema_validate"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_page_create"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_page_generate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_rebuild_index"
 
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_sanitize"
@@ -105,6 +107,13 @@ var (
 	statusEffectRebuildIndex    = statusEffect.Command("rebuild-index", "Rebuild status effects index")
 	statusEffectRebuildIndexCmd = status_effects_rebuild_index.New(statusEffectRebuildIndex)
 
+	statusEffectPage            = statusEffect.Command("page", "Handle status effect page")
+	statusEffectPageGenerate    = statusEffectPage.Command("generate", "Generate HTML for status effect page")
+	statusEffectPageGenerateCmd = status_effects_page_generate.New(statusEffectPageGenerate)
+
+	statusEffectPageCreate    = statusEffectPage.Command("create", "Create or update page on the website")
+	statusEffectPageCreateCmd = status_effects_page_create.New(statusEffectPageCreate)
+
 	schema            = app.Command("schema", "Stuff for schemas")
 	schemaValidate    = schema.Command("validate", "Validate a file against a schema")
 	schemaValidateCmd = schema_validate.New(schemaValidate)
@@ -127,5 +136,7 @@ var (
 		"schema validate":                 schemaValidateCmd,
 		"status-effect sanitize":          statusEffectSanitizeCmd,
 		"status-effect rebuild-index":     statusEffectRebuildIndexCmd,
+		"status-effect page generate":     statusEffectPageGenerateCmd,
+		"status-effect page create":       statusEffectPageCreateCmd,
 	}
 )

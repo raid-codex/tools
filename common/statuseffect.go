@@ -100,7 +100,7 @@ var (
 		"Decrease ACC":     "50%",
 		"Decrease ATK":     "50%",
 		"Decrease SPD":     "30%",
-		"Poison":           "5%",
+		"Poison":           " 5%",
 		"Weaken":           "25%",
 	}
 )

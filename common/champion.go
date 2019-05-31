@@ -376,7 +376,7 @@ func (c *Champion) GetPageExtraData(dataDirectory string) (map[string]interface{
 		return nil, errStatusEffects
 	}
 
-	data["AllStatus"] = statusList
+	data["AllEffects"] = statusList
 
 	return data, nil
 }

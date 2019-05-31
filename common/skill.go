@@ -16,7 +16,7 @@ type Skill struct {
 
 func (s *Skill) Sanitize() error {
 	s.Slug = GetLinkNameFromSanitizedName(s.Name)
-	if s.Effects == nil {
+	if s.Effects == nil || len(s.Effects) == 0 {
 		effects, basedOn, err := getEffectsFromDescription(s.Effects, s.DamageBasedOn, s.RawDescription)
 		if err != nil {
 			return err

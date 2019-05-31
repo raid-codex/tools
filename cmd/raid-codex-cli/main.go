@@ -3,6 +3,11 @@ package main
 import (
 	"os"
 
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/schema_validate"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_rebuild_index"
+
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_sanitize"
+
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_generate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/website_cache_clear"
 
@@ -12,7 +17,6 @@ import (
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_parser"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_rebuild_index"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_sanitize"
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_schema_validate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_create"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_seo"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_parser"
@@ -68,10 +72,6 @@ var (
 	championsPageSeoApply         = championsPageSeo.Command("apply", "Apply SEO settings to champion page")
 	championsPageSeoApplyCmd      = champions_page_seo.New(championsPageSeoApply, "apply")
 
-	championsSchema            = champions.Command("schema", "Handle champion schema")
-	championsSchemaValidate    = championsSchema.Command("validate", "Validate a champion against its schema")
-	championsSchemaValidateCmd = champions_schema_validate.New(championsSchemaValidate)
-
 	factions = app.Command("factions", "do stuff with factions")
 
 	factionsParse    = factions.Command("parse", "parse factions from champions json files")
@@ -97,6 +97,18 @@ var (
 	websiteCacheClear    = websiteCache.Command("clear", "Clear cache of website")
 	websiteCacheClearCmd = website_cache_clear.New(websiteCacheClear)
 
+	statusEffect = app.Command("status-effect", "Stuff for status effect")
+
+	statusEffectSanitize    = statusEffect.Command("sanitize", "Sanitize a status effect file")
+	statusEffectSanitizeCmd = status_effects_sanitize.New(statusEffectSanitize)
+
+	statusEffectRebuildIndex    = statusEffect.Command("rebuild-index", "Rebuild status effects index")
+	statusEffectRebuildIndexCmd = status_effects_rebuild_index.New(statusEffectRebuildIndex)
+
+	schema            = app.Command("schema", "Stuff for schemas")
+	schemaValidate    = schema.Command("validate", "Validate a file against a schema")
+	schemaValidateCmd = schema_validate.New(schemaValidate)
+
 	runByCmd = map[string]Runnable{
 		"champions parse":                 championsParseCmd,
 		"factions parse":                  factionsParseCmd,
@@ -110,8 +122,10 @@ var (
 		"factions page seo apply":         factionsPageSeoApplyCmd,
 		"champions characteristics parse": championsCharacteristicsParserCmd,
 		"champions sanitize":              championsSanitizeCmd,
-		"champions schema validate":       championsSchemaValidateCmd,
 		"website cache clear":             websiteCacheClearCmd,
 		"champions page generate":         championsPageGenerateCmd,
+		"schema validate":                 schemaValidateCmd,
+		"status-effect sanitize":          statusEffectSanitizeCmd,
+		"status-effect rebuild-index":     statusEffectRebuildIndexCmd,
 	}
 )

@@ -1,4 +1,4 @@
-package champions_schema_validate
+package schema_validate
 
 import (
 	"fmt"
@@ -9,20 +9,20 @@ import (
 )
 
 type Command struct {
-	ChampionFile *string
-	SchemaFile   *string
+	File       *string
+	SchemaFile *string
 }
 
 func New(cmd *kingpin.CmdClause) *Command {
 	return &Command{
-		ChampionFile: cmd.Flag("champion-file", "Filename for the champion").Required().String(),
-		SchemaFile:   cmd.Flag("schema-file", "Filename for the schema").Required().String(),
+		File:       cmd.Flag("file", "Filename to check").Required().String(),
+		SchemaFile: cmd.Flag("schema-file", "Filename for the schema").Required().String(),
 	}
 }
 
 func (c *Command) Run() {
 	schemaLoader := gojsonschema.NewReferenceLoader(*c.SchemaFile)
-	documentLoader := gojsonschema.NewReferenceLoader(*c.ChampionFile)
+	documentLoader := gojsonschema.NewReferenceLoader(*c.File)
 
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {

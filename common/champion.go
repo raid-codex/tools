@@ -19,18 +19,18 @@ type Champion struct {
 	Rarity             string                    `json:"rarity"`
 	Element            string                    `json:"element"`
 	Type               string                    `json:"type"`
-	Rating             Rating                    `json:"rating"`
+	Rating             *Rating                   `json:"rating"`
 	Slug               string                    `json:"slug"`
 	Characteristics    map[int64]Characteristics `json:"characteristics"`
-	Auras              []Aura                    `json:"auras"`
-	Skills             []Skill                   `json:"skills"`
+	Auras              []*Aura                   `json:"auras"`
+	Skills             []*Skill                  `json:"skills"`
 	Faction            Faction                   `json:"faction"`
 	FactionSlug        string                    `json:"faction_slug"`
 	WebsiteLink        string                    `json:"website_link"`
 	ImageSlug          string                    `json:"image_slug"`
 	SEO                *seo.SEO                  `json:"seo"`
 	DefaultDescription string                    `json:"default_description"`
-	RecommendedBuilds  []Build                   `json:"recommended_builds"`
+	RecommendedBuilds  []*Build                  `json:"recommended_builds"`
 	Lore               string                    `json:"lore"`
 }
 
@@ -46,13 +46,13 @@ func (c *Champion) Sanitize() error {
 		}
 	}
 	if c.Auras == nil {
-		c.Auras = make([]Aura, 0)
+		c.Auras = make([]*Aura, 0)
 	}
 	if c.Skills == nil {
-		c.Skills = make([]Skill, 0)
+		c.Skills = make([]*Skill, 0)
 	}
 	if c.RecommendedBuilds == nil {
-		c.RecommendedBuilds = make([]Build, 0)
+		c.RecommendedBuilds = make([]*Build, 0)
 	}
 	c.Slug = c.LinkName()
 
@@ -94,6 +94,20 @@ func (c *Champion) Sanitize() error {
 	}
 
 	c.defaultRating()
+
+	for _, skill := range c.Skills {
+		errSanitize := skill.Sanitize()
+		if errSanitize != nil {
+			return errSanitize
+		}
+	}
+
+	for _, aura := range c.Auras {
+		errSanitize := aura.Sanitize()
+		if errSanitize != nil {
+			return errSanitize
+		}
+	}
 
 	return nil
 }
@@ -193,9 +207,21 @@ func (c *Champion) GetPageContent(input io.Reader, output io.Writer) error {
 	if err != nil {
 		return err
 	}
+	effects := map[string]*StatusEffect{}
+	for _, skill := range c.Skills {
+		for _, effect := range skill.Effects {
+			effects[effect.Slug] = effect
+		}
+	}
+	for _, aura := range c.Auras {
+		for _, effect := range aura.Effects {
+			effects[effect.Slug] = effect
+		}
+	}
 	err = tmpl.Execute(output, map[string]interface{}{
 		"Champion": c,
 		"Skills":   len(c.Skills) + len(c.Auras),
+		"Effects":  effects,
 	})
 	return err
 }
@@ -279,9 +305,9 @@ func (c *Champion) ParseRawSkill(raw string) error {
 
 func (c *Champion) setAuraFromRaw(raw string) error {
 	data := strings.Join(strings.Split(raw, "\n")[1:], "<br>")
-	aura := Aura{RawDescription: strings.Trim(data, " \n\r")}
+	aura := &Aura{RawDescription: strings.Trim(data, " \n\r")}
 	if aura.RawDescription != "" {
-		c.Auras = make([]Aura, 1)
+		c.Auras = make([]*Aura, 1)
 		c.Auras[0] = aura
 	}
 
@@ -335,6 +361,6 @@ func (c *Champion) setSkillFromRaw(raw string) error {
 	if errSanitize != nil {
 		return errSanitize
 	}
-	c.Skills = append(c.Skills, *skill)
+	c.Skills = append(c.Skills, skill)
 	return nil
 }

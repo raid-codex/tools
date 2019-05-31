@@ -1,4 +1,4 @@
-package champions_sanitize
+package status_effects_sanitize
 
 import (
 	"encoding/json"
@@ -11,41 +11,41 @@ import (
 )
 
 type Command struct {
-	ChampionFile *string
+	StatusEffectFile *string
 }
 
 func New(cmd *kingpin.CmdClause) *Command {
 	return &Command{
-		ChampionFile: cmd.Flag("champion-file", "Filename for the champion").Required().String(),
+		StatusEffectFile: cmd.Flag("status-effect-file", "Filename for the status effect").Required().String(),
 	}
 }
 
 func (c *Command) Run() {
-	champion, errChampion := c.getChampion()
-	if errChampion != nil {
-		utils.Exit(1, errChampion)
+	effect, errEffect := c.getEffect()
+	if errEffect != nil {
+		utils.Exit(1, errEffect)
 	}
-	errSanitize := champion.Sanitize()
+	errSanitize := effect.Sanitize()
 	if errSanitize != nil {
 		utils.Exit(1, errSanitize)
 	}
-	errWrite := utils.WriteToFile(*c.ChampionFile, champion)
+	errWrite := utils.WriteToFile(*c.StatusEffectFile, effect)
 	if errWrite != nil {
 		utils.Exit(1, errWrite)
 	}
 }
 
-func (c *Command) getChampion() (*common.Champion, error) {
-	file, errFile := os.Open(*c.ChampionFile)
+func (c *Command) getEffect() (*common.StatusEffect, error) {
+	file, errFile := os.Open(*c.StatusEffectFile)
 	if errFile != nil {
 		return nil, errors.Annotate(errFile, "cannot open file")
 	}
 	defer file.Close()
 
-	var champion common.Champion
-	errJSON := json.NewDecoder(file).Decode(&champion)
+	var effect common.StatusEffect
+	errJSON := json.NewDecoder(file).Decode(&effect)
 	if errJSON != nil {
 		return nil, errors.Annotate(errJSON, "cannot unmarshal file")
 	}
-	return &champion, nil
+	return &effect, nil
 }

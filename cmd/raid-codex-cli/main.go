@@ -3,8 +3,6 @@ package main
 import (
 	"os"
 
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_sanitize"
-
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_characteristics_parser"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_create"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_generate"
@@ -16,6 +14,8 @@ import (
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_seo"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_parser"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_rebuild_index"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_sanitize"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/parse_full_sheet"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/schema_validate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/scrap_wikia_characteristics"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_page_create"
@@ -124,6 +124,10 @@ var (
 	schemaValidate    = schema.Command("validate", "Validate a file against a schema")
 	schemaValidateCmd = schema_validate.New(schemaValidate)
 
+	parse             = app.Command("parse", "Parse stuff")
+	parseFullSheet    = parse.Command("full-sheet", "Parse the full-sheet stuff")
+	parseFullSheetCmd = parse_full_sheet.New(parseFullSheet)
+
 	runByCmd = map[string]Runnable{
 		"champions parse":                 championsParseCmd,
 		"factions parse":                  factionsParseCmd,
@@ -146,5 +150,6 @@ var (
 		"factions rebuild-index":          factionsRebuildIndexCmd,
 		"status-effect page generate":     statusEffectPageGenerateCmd,
 		"status-effect page create":       statusEffectPageCreateCmd,
+		"parse full-sheet":                parseFullSheetCmd,
 	}
 )

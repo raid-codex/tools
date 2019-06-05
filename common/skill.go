@@ -7,12 +7,14 @@ import (
 )
 
 type Skill struct {
+	Passive        bool            `json:"passive"`
 	Name           string          `json:"name"`
 	RawDescription string          `json:"raw_description"`
 	Slug           string          `json:"slug"`
 	Effects        []*StatusEffect `json:"effects"`
 	DamageBasedOn  []string        `json:"damaged_based_on"`
 	GIID           string          `json:"giid"`
+	Upgrades       []*SkillData    `json:"upgrades"`
 }
 
 func (s *Skill) Sanitize() error {
@@ -32,7 +34,113 @@ func (s *Skill) Sanitize() error {
 			}
 		}
 	}
+	for _, upgrade := range s.Upgrades {
+		errUpgrade := upgrade.Sanitize()
+		if errUpgrade != nil {
+			return errUpgrade
+		}
+	}
+	sort.SliceStable(s.Upgrades, func(i, j int) bool {
+		return s.Upgrades[i].Level < s.Upgrades[j].Level
+	})
 	return nil
+}
+
+func (s *Skill) SetSkillData(sd *SkillData) {
+	ns := make([]*SkillData, 0)
+	ns = append(ns, sd)
+	for _, skillData := range s.Upgrades {
+		if skillData.Level != sd.Level {
+			ns = append(ns, skillData)
+		}
+	}
+	s.Upgrades = ns
+}
+
+type SkillData struct {
+	Level   string          `json:"level"`
+	Hits    int64           `json:"hits"`
+	Target  *Target         `json:"target"`
+	Effects []*StatusEffect `json:"effects"`
+	BasedOn []string        `json:"based_on"`
+}
+
+func (sd *SkillData) Sanitize() error {
+	errTarget := sd.Target.Sanitize()
+	if errTarget != nil {
+		return errTarget
+	}
+	for _, effect := range sd.Effects {
+		errSanitize := effect.Sanitize()
+		if errSanitize != nil {
+			return errSanitize
+		}
+	}
+	return nil
+}
+
+func translateEffect(str string) string {
+	if _, ok := effectTranslate[str]; ok {
+		return effectTranslate[str]
+	} else if strings.HasPrefix(str, "Dec ") {
+		return strings.Replace(str, "Dec ", "Decrease ", -1)
+	} else if strings.HasPrefix(str, "Inc ") {
+		return strings.Replace(str, "Inc ", "Increase ", -1)
+	}
+	return str
+}
+
+var (
+	effectTranslate = map[string]string{
+		"Heal Red":           "Heal Reduction",
+		"Crit":               "Critical Strike",
+		"Inc Meter":          "Increase Turn Meter",
+		"Dec Meter":          "Decrease Turn Meter",
+		"Reflect DMG":        "Reflect Damage",
+		"Inc Crit Rate":      "Increase C. RATE",
+		"Skills on Cooldown": "Block Cooldown Skills",
+		"Skill on Cooldown":  "Block Cooldown Skills",
+		"Inc Skill Cooldown": "Block Cooldown Skills",
+		"Cont Heal":          "Continuous Heal",
+		"Counter":            "Counterattack",
+		"Ally Prot":          "Ally Protection",
+		"Block DMG":          "Block Damage",
+		"Fill Meter":         "Increase Turn Meter",
+		"cont heal":          "Continuous Heal",
+		"Empty Meter":        "Decrease Turn Meter",
+		"block debuffs":      "Block Debuffs",
+		"Remove All Debuffs": "Remove ALL Debuffs",
+	}
+)
+
+func (sd *SkillData) AddEffect(effect string, who string, turns int64, chance float64, placesIf string, value float64) {
+	realEffect := translateEffect(effect)
+	placesIf = translateEffect(placesIf)
+	statusEffect := &StatusEffect{
+		Type:     realEffect,
+		Turns:    turns,
+		Target:   &Target{Who: who},
+		Chance:   chance,
+		Value:    value,
+		PlacesIf: placesIf,
+	}
+	if _, ok := debuffs[statusEffect.Type]; ok {
+		statusEffect.EffectType = "debuff"
+	} else if _, ok := buffs[statusEffect.Type]; ok {
+		statusEffect.EffectType = "debuff"
+	} else if _, ok := battleEnhancements[statusEffect.Type]; ok {
+		statusEffect.EffectType = "battle_enhancement"
+	} else {
+		panic(fmt.Errorf("unknown effect %s", statusEffect.Type))
+	}
+	ne := make([]*StatusEffect, 0)
+	ne = append(ne, statusEffect)
+	for _, se := range sd.Effects {
+		if se.Type != statusEffect.Type {
+			ne = append(ne, se)
+		}
+	}
+	sd.Effects = ne
 }
 
 func getEffectsFromDescription(effects []*StatusEffect, damageBasedOn []string, rawDescription string) ([]*StatusEffect, []string, error) {
@@ -103,4 +211,15 @@ func getEffectsFromDescription(effects []*StatusEffect, damageBasedOn []string, 
 		return newBasedOn[i] < newBasedOn[j]
 	})
 	return newEffects, newBasedOn, nil
+}
+
+type Target struct {
+	Who     string `json:"who"`
+	Targets string `json:"targets"`
+}
+
+func (t *Target) Sanitize() error {
+	t.Who = strings.ToLower(t.Who)
+	t.Targets = strings.ToLower(t.Targets)
+	return nil
 }

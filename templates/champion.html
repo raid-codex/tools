@@ -633,6 +633,131 @@
                                                 </div>
                                             </div>
                                         </section>
+                                        {{ if .Champion.Reviews }}
+                                        <section
+                                            class="elementor-element elementor-element-223fc39 elementor-section-boxed elementor-section-height-default elementor-section-height-default elementor-section elementor-inner-section"
+                                            data-id="223fc39" data-element_type="section">
+                                            <div class="elementor-container elementor-column-gap-default">
+                                                <div class="elementor-row">
+                                                    <div class="elementor-element elementor-element-e85380c elementor-column elementor-col-100 elementor-inner-column"
+                                                        data-id="e85380c" data-element_type="column">
+                                                        <div class="elementor-column-wrap  elementor-element-populated">
+                                                            <div class="elementor-widget-wrap">
+                                                                <div class="elementor-element elementor-element-9a9b121 elementor-widget elementor-widget-heading"
+                                                                    data-id="9a9b121" data-element_type="widget"
+                                                                    data-widget_type="heading.default">
+                                                                    <div class="elementor-widget-container">
+                                                                        <h3
+                                                                            class="elementor-heading-title elementor-size-default">
+                                                                            In-Game Reviews
+                                                                            ({{ .Champion.Reviews.NumberOfReviews }})
+                                                                        </h3>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="elementor-element elementor-element-6a03b48 elementor-widget elementor-widget-text-editor"
+                                                                    data-id="6a03b48" data-element_type="widget"
+                                                                    data-widget_type="text-editor.default">
+                                                                    <div class="elementor-widget-container">
+                                                                        <div
+                                                                            class="elementor-text-editor elementor-clearfix">
+                                                                            <table class="table-hover table">
+                                                                                <thead>
+                                                                                    <tr class="row-header">
+                                                                                        <th>Location</th>
+                                                                                        <th>Rating</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td>Campaign</td>
+                                                                                        <td>
+                                                                                            {{ .Champion.Reviews.Campaign | ReviewGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Arena (off)</td>
+                                                                                        <td>
+                                                                                            {{ .Champion.Reviews.ArenaOff | ReviewGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Arena (def)</td>
+                                                                                        <td>
+                                                                                            {{ .Champion.Reviews.ArenaDef | ReviewGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Clan boss</td>
+                                                                                        <td>
+                                                                                            {{ .Champion.Reviews.ClanBoss | ReviewGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Ice Golem’s Peak</td>
+                                                                                        <td>
+                                                                                            {{ .Champion.Reviews.IceGuardian | ReviewGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Dragon’s Lair</td>
+                                                                                        <td>
+                                                                                            {{ .Champion.Reviews.Dragon | ReviewGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Spider’s Den</td>
+                                                                                        <td>
+                                                                                            {{ .Champion.Reviews.Spider | ReviewGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Fire Knight’s Castle</td>
+                                                                                        <td>
+                                                                                            {{ .Champion.Reviews.FireKnight | ReviewGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Minotaur’s Labyrinth</td>
+                                                                                        <td>
+                                                                                            {{ .Champion.Reviews.Minotaur | ReviewGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Force Keep</td>
+                                                                                        <td>
+                                                                                            {{ .Champion.Reviews.ForceDungeon | ReviewGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Magic Keep</td>
+                                                                                        <td>
+                                                                                            {{ .Champion.Reviews.MagicDungeon | ReviewGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Spirit Keep</td>
+                                                                                        <td>
+                                                                                            {{ .Champion.Reviews.SpiritDungeon | ReviewGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>Void Keep</td>
+                                                                                        <td>
+                                                                                            {{ .Champion.Reviews.VoidDungeon | ReviewGrade }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+                                        {{ end }}
                                     </div>
                                 </div>
                             </div>

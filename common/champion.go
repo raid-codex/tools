@@ -20,6 +20,7 @@ type Champion struct {
 	Element            string                    `json:"element"`
 	Type               string                    `json:"type"`
 	Rating             *Rating                   `json:"rating"`
+	Reviews            *Review                   `json:"reviews"`
 	Slug               string                    `json:"slug"`
 	Characteristics    map[int64]Characteristics `json:"characteristics"`
 	Auras              []*Aura                   `json:"auras"`
@@ -195,6 +196,7 @@ func (c Champion) GetPageExcerpt() string { return c.DefaultDescription }
 
 func (c *Champion) GetPageContent(input io.Reader, output io.Writer, extraData map[string]interface{}) error {
 	funcMap := template.FuncMap{
+		"ReviewGrade":  reviewGrade,
 		"ToLower":      strings.ToLower,
 		"DisplayGrade": grade,
 		"Percentage":   func(s float64) int64 { return int64(s * 100.0) },
@@ -224,6 +226,13 @@ func (c *Champion) GetPageContent(input io.Reader, output io.Writer, extraData m
 	extraData["Effects"] = effects
 	err = tmpl.Execute(output, extraData)
 	return err
+}
+
+func (c *Champion) SetAura(description string) {
+	if len(c.Auras) == 0 {
+		c.Auras = append(c.Auras, &Aura{Effects: make([]*StatusEffect, 0)})
+	}
+	c.Auras[0].RawDescription = description
 }
 
 type ChampionList []*Champion
@@ -260,6 +269,21 @@ var (
 		"Common":    0,
 	}
 )
+
+func reviewGrade(gr float64) template.HTML {
+	g := ""
+	for v, r := range ratingToRank {
+		if r == int(gr) {
+			g = v
+			break
+		}
+	}
+	val := ``
+	if g != "" {
+		val = fmt.Sprintf(`<span class="champion-rating champion-rating-%s"><strong>%.1f</strong></span> `, g, gr)
+	}
+	return template.HTML(fmt.Sprintf("%s%s", val, grade(g)))
+}
 
 func grade(grade string) template.HTML {
 	if grade == "" {
@@ -380,4 +404,17 @@ func (c *Champion) GetPageExtraData(dataDirectory string) (map[string]interface{
 	data["AllEffects"] = statusList
 
 	return data, nil
+}
+
+var (
+	ErrSkillNotFound = fmt.Errorf("skill not found")
+)
+
+func (c *Champion) GetSkillByName(name string) (*Skill, error) {
+	for _, skill := range c.Skills {
+		if skill.Name == name {
+			return skill, nil
+		}
+	}
+	return nil, ErrSkillNotFound
 }

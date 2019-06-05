@@ -14,11 +14,15 @@ type StatusEffect struct {
 	EffectType     string  `json:"effect_type"`
 	Type           string  `json:"type"`
 	Value          float64 `json:"value"`
+	Chance         float64 `json:"chance"`
+	Turns          int64   `json:"turns"`
+	Target         *Target `json:"target"`
 	ImageSlug      string  `json:"image_slug"`
 	Slug           string  `json:"slug"`
 	WebsiteLink    string  `json:"website_link"`
 	Extra          bool    `json:"extra"`
 	RawDescription string  `json:"raw_description"`
+	PlacesIf       string  `json:"places_if"`
 }
 
 func (se *StatusEffect) Sanitize() error {
@@ -39,6 +43,12 @@ func (se *StatusEffect) Sanitize() error {
 	se.WebsiteLink = fmt.Sprintf("/%ss/%s", se.EffectType, se.Slug)
 	if strings.HasSuffix(se.WebsiteLink, "-2") {
 		se.WebsiteLink = se.WebsiteLink[:len(se.WebsiteLink)-2]
+	}
+	if se.Target != nil {
+		errTarget := se.Target.Sanitize()
+		if errTarget != nil {
+			return errTarget
+		}
 	}
 	return nil
 }
@@ -78,6 +88,52 @@ var (
 		"Unkillable":       true,
 		"Block Debuffs":    true,
 		"Block Damage":     true,
+	}
+	battleEnhancements = map[string]bool{
+		"Ignore Block Damage":      true,
+		"Ignore Shield":            true,
+		"Critical Strike":          true,
+		"Increase Turn Meter":      true,
+		"Decrease Turn Meter":      true,
+		"Remove ALL Debuffs":       true,
+		"Heal":                     true,
+		"Extra Turn":               true,
+		"Heal per DMG":             true,
+		"Revive":                   true,
+		"Reset ALL Cooldowns":      true,
+		"Increase DMG":             true,
+		"DMG Reduction":            true,
+		"Steal 1 Buff":             true,
+		"Transfer 1 Debuff":        true,
+		"Increase DMG per Debuff":  true,
+		"Swap HP":                  true,
+		"Extra Crit Chance":        true,
+		"Immune STUN":              true,
+		"Immune Freeze":            true,
+		"Immune Sleep":             true,
+		"Always Crit":              true,
+		"Extra Hit":                true,
+		"Remove 1 Buff":            true,
+		"Extra Crit DMG":           true,
+		"Crit Chance":              true,
+		"Ignore DEF":               true,
+		"ATK all Enemies":          true,
+		"Increase DMG per HP lost": true,
+		"Shield per Champ Max HP":  true,
+		"DMG per Max HP":           true,
+		"ATK with Surplus DMG":     true,
+		"Unlock Skypiercer":        true,
+		"Increase DMG per Buff":    true,
+		"Ignore Block DMG":         true,
+		"Revive Block":             true,
+		"Stack Damage upto X4":     true,
+		"Stack Damage upto X5":     true,
+		"Stack Damage upto X6":     true,
+		"Stack Damage upto X7":     true,
+		"Stack Damage upto X8":     true,
+		"Stack Damage upto X9":     true,
+		"Repeat Attack":            true,
+		"Remove 2 Buffs":           true,
 	}
 	stats = map[string]bool{
 		"ATK":          true,

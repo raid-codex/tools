@@ -12,6 +12,7 @@ type Skill struct {
 	Slug           string          `json:"slug"`
 	Effects        []*StatusEffect `json:"effects"`
 	DamageBasedOn  []string        `json:"damaged_based_on"`
+	GIID           string          `json:"giid"`
 }
 
 func (s *Skill) Sanitize() error {

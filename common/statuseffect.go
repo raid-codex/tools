@@ -64,7 +64,6 @@ var (
 		"Revive on Death":       true,
 		"Heal Reduction":        true,
 		"Leech":                 true,
-		"Debuff Spread":         true,
 	}
 	buffs = map[string]bool{
 		"Increase C. RATE": true,

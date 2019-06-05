@@ -32,6 +32,7 @@ type Champion struct {
 	DefaultDescription string                    `json:"default_description"`
 	RecommendedBuilds  []*Build                  `json:"recommended_builds"`
 	Lore               string                    `json:"lore"`
+	GIID               string                    `json:"giid"`
 }
 
 func (c *Champion) Sanitize() error {

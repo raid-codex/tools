@@ -3,18 +3,11 @@ package main
 import (
 	"os"
 
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/schema_validate"
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_page_create"
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_page_generate"
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_rebuild_index"
-
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_sanitize"
-
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_generate"
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/website_cache_clear"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_sanitize"
 
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_characteristics_parser"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_create"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_generate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_seo"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_parser"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_rebuild_index"
@@ -22,7 +15,14 @@ import (
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_create"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_seo"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_parser"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_rebuild_index"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/schema_validate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/scrap_wikia_characteristics"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_page_create"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_page_generate"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_rebuild_index"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_sanitize"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/website_cache_clear"
 	"github.com/raid-codex/tools/utils"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
@@ -76,8 +76,14 @@ var (
 
 	factions = app.Command("factions", "do stuff with factions")
 
+	factionsSanitize    = factions.Command("sanitize", "sanitize faction file")
+	factionsSanitizeCmd = factions_sanitize.New(factionsSanitize)
+
 	factionsParse    = factions.Command("parse", "parse factions from champions json files")
 	factionsParseCmd = factions_parser.New(factionsParse)
+
+	factionsRebuildIndex    = factions.Command("rebuild-index", "rebuild faction index")
+	factionsRebuildIndexCmd = factions_rebuild_index.New(factionsRebuildIndex)
 
 	factionsPage          = factions.Command("page", "Handle faction page")
 	factionsPageCreate    = factionsPage.Command("create", "Create the page for the faction")
@@ -131,11 +137,13 @@ var (
 		"factions page seo apply":         factionsPageSeoApplyCmd,
 		"champions characteristics parse": championsCharacteristicsParserCmd,
 		"champions sanitize":              championsSanitizeCmd,
+		"factions sanitize":               factionsSanitizeCmd,
 		"website cache clear":             websiteCacheClearCmd,
 		"champions page generate":         championsPageGenerateCmd,
 		"schema validate":                 schemaValidateCmd,
 		"status-effect sanitize":          statusEffectSanitizeCmd,
 		"status-effect rebuild-index":     statusEffectRebuildIndexCmd,
+		"factions rebuild-index":          factionsRebuildIndexCmd,
 		"status-effect page generate":     statusEffectPageGenerateCmd,
 		"status-effect page create":       statusEffectPageCreateCmd,
 	}

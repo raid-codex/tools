@@ -34,6 +34,9 @@ func (s *Skill) Sanitize() error {
 			}
 		}
 	}
+	if s.Upgrades == nil {
+		s.Upgrades = make([]*SkillData, 0)
+	}
 	for _, upgrade := range s.Upgrades {
 		errUpgrade := upgrade.Sanitize()
 		if errUpgrade != nil {
@@ -70,11 +73,17 @@ func (sd *SkillData) Sanitize() error {
 	if errTarget != nil {
 		return errTarget
 	}
+	if sd.Effects == nil {
+		sd.Effects = make([]*StatusEffect, 0)
+	}
 	for _, effect := range sd.Effects {
 		errSanitize := effect.Sanitize()
 		if errSanitize != nil {
 			return errSanitize
 		}
+	}
+	if sd.BasedOn == nil {
+		sd.BasedOn = make([]string, 0)
 	}
 	return nil
 }
@@ -92,28 +101,83 @@ func translateEffect(str string) string {
 
 var (
 	effectTranslate = map[string]string{
-		"Heal Red":           "Heal Reduction",
-		"Crit":               "Critical Strike",
-		"Inc Meter":          "Increase Turn Meter",
-		"Dec Meter":          "Decrease Turn Meter",
-		"Reflect DMG":        "Reflect Damage",
-		"Inc Crit Rate":      "Increase C. RATE",
-		"Skills on Cooldown": "Block Cooldown Skills",
-		"Skill on Cooldown":  "Block Cooldown Skills",
-		"Inc Skill Cooldown": "Block Cooldown Skills",
-		"Cont Heal":          "Continuous Heal",
-		"Counter":            "Counterattack",
-		"Ally Prot":          "Ally Protection",
-		"Block DMG":          "Block Damage",
-		"Fill Meter":         "Increase Turn Meter",
-		"cont heal":          "Continuous Heal",
-		"Empty Meter":        "Decrease Turn Meter",
-		"block debuffs":      "Block Debuffs",
-		"Remove All Debuffs": "Remove ALL Debuffs",
+		"Heal Red":                     "Heal Reduction",
+		"Crit":                         "Critical Strike",
+		"Inc Meter":                    "Increase Turn Meter",
+		"Dec Meter":                    "Decrease Turn Meter",
+		"Reflect DMG":                  "Reflect Damage",
+		"Inc Crit Rate":                "Increase C. RATE",
+		"Skills on Cooldown":           "Block Cooldown Skills",
+		"Skill on Cooldown":            "Block Cooldown Skills",
+		"Inc Skill Cooldown":           "Block Cooldown Skills",
+		"Inc 1 Skill Cooldown":         "Block Cooldown Skills",
+		"Increase Cooldowns":           "Block Cooldown Skills",
+		"Dec Buffs":                    "Decrease Buff",
+		"Decrease Max HP":              "Decrease MAX HP",
+		"Heal per HP":                  "Heal",
+		"Cont Heal":                    "Continuous Heal",
+		"Counter":                      "Counterattack",
+		"Ally Prot":                    "Ally Protection",
+		"Block DMG":                    "Block Damage",
+		"Fill Meter":                   "Increase Turn Meter",
+		"cont heal":                    "Continuous Heal",
+		"Empty Meter":                  "Decrease Turn Meter",
+		"block debuffs":                "Block Debuffs",
+		"Remove All Debuffs":           "Remove ALL Debuffs",
+		"Shield per dmg":               "Shield per DMG",
+		"heal":                         "Heal",
+		"Burn":                         "HP Burn",
+		"ignore block dmg":             "Ignore Block DMG",
+		"Revive Block":                 "Block Revive",
+		"transfer 1 debuff":            "Transfer 1 Debuff",
+		"Inc DMG as HP lost":           "Increase DMG per HP lost",
+		"reflect dmg":                  "Reflect Damage",
+		"shield":                       "Shield",
+		"Inc Crit DMG":                 "Increase C. DAMAGE",
+		"skills on cooldown":           "Block Cooldown Skills",
+		"Dec DEF per Self Debuff":      "Decrease DEF",
+		"extra turn":                   "Extra Turn",
+		"Inc Buffs":                    "Increase All Buffs",
+		"Shield per DEF":               "Shield",
+		"Shield per Max HP":            "Shield",
+		"extra crit chance":            "Extra Crit Chance",
+		"deal all poison dmg":          "Deal all poison DMG",
+		"dec spd":                      "Decrease SPD",
+		"Inc DMG per Debuff on Target": "Increase DMG per Debuff",
+		"2x bomb":                      "Bomb",
+		"ignore shield":                "Ignore Shield",
+		"sleep":                        "Sleep",
+		"steal 1 buff":                 "Steal 1 Buff",
+		"Shield per LVL":               "Shield",
+		"Heal per Self Max HP":         "Heal",
+		"shield per max hp":            "Shield",
+		"Reset all Cooldowns":          "Reset ALL Cooldowns",
+		"Heal per ATK":                 "Heal",
+		"Revive with Full HP":          "Revive",
+		"Dec Max HP per DMG":           "Decrease MAX HP",
+		"Dec MAX HP Per DMG":           "Decrease MAX HP",
+		"Dec Max HP":                   "Decrease MAX HP",
+		"Heal Per Surplus DMG":         "Heal",
+		"weaken":                       "Weaken",
+		"inc debuffs":                  "Increase Debuffs",
+		"Block Debuff":                 "Block Debuffs",
+		"Inc Meter per Hit":            "Increase Turn Meter",
+		"Heal ALL to Highest HP":       "Heal",
+		"shield per dmg":               "Shield",
+		"Inc Meter per Debuff":         "Increase Turn Meter",
+		"Heal per Debuff":              "Heal",
+		"heal per debuff":              "Heal",
+		"Shield per DEF+Crit DMG":      "Shield",
+		"Dec Meter Per Buff":           "Decrease Turn Meter",
+		"Poison x3":                    "Poison",
+		"dec buff":                     "Decrease Buff",
+		"Heal per Buff":                "Heal",
+		"Inc DEF per Dead Ally":        "Increase DEF",
+		"Deal ALL Poison":              "Deal all poison DMG",
 	}
 )
 
-func (sd *SkillData) AddEffect(effect string, who string, turns int64, chance float64, placesIf string, value float64) {
+func (sd *SkillData) AddEffect(effect string, who string, turns int64, chance float64, placesIf string, value float64, amount int64) {
 	realEffect := translateEffect(effect)
 	placesIf = translateEffect(placesIf)
 	statusEffect := &StatusEffect{
@@ -123,6 +187,7 @@ func (sd *SkillData) AddEffect(effect string, who string, turns int64, chance fl
 		Chance:   chance,
 		Value:    value,
 		PlacesIf: placesIf,
+		Amount:   amount,
 	}
 	if _, ok := debuffs[statusEffect.Type]; ok {
 		statusEffect.EffectType = "debuff"

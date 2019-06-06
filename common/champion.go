@@ -172,11 +172,12 @@ func GetSanitizedName(name string) (string, error) {
 
 func GetLinkNameFromSanitizedName(name string) string {
 	for _, part := range []string{
-		`'`, `"`, ` `,
+		`'`, `"`, ` `, `_`, `(P)`, `+`, `%`,
 	} {
 		name = strings.Replace(name, part, "-", -1)
 	}
 	name = strings.ToLower(name)
+	name = strings.Trim(name, " ")
 	return name
 }
 

@@ -233,7 +233,8 @@ func (c *Command) handleDetail(champions map[string]*common.Champion, content []
 			}
 			skill, errSkill := champion.GetSkillByName(line[2])
 			if errSkill != nil {
-				panic(fmt.Sprintf("did not find skill '%s'", line[2]))
+				skill = &common.Skill{Name: line[2]}
+				champion.Skills = append(champion.Skills, skill)
 			}
 			skill.Passive = passive
 			if line[3] != "-" {
@@ -242,9 +243,9 @@ func (c *Command) handleDetail(champions map[string]*common.Champion, content []
 				if basedOn[0] != "-" {
 					sd.BasedOn = basedOn
 				}
-				hits, errHits := strconv.ParseInt(line[7], 10, 64)
-				if errHits != nil && line[7] != "-" {
-					utils.Exit(1, fmt.Errorf("cannot parse hits %s: %s", line[7], errHits))
+				hits, errHits := parseInt(line[7])
+				if errHits != nil {
+					utils.Exit(1, errHits)
 				}
 				sd.Hits = hits
 				sd.Target = &common.Target{Who: line[8], Targets: line[7]}
@@ -262,6 +263,12 @@ func (c *Command) handleDetail(champions map[string]*common.Champion, content []
 						log.Printf("invalid value value\n")
 						utils.Exit(1, errValue)
 					}
+					amount := int64(1)
+					if strings.HasPrefix(line[i+1], "2x") {
+						amount = 2
+					} else if strings.HasPrefix(line[i+1], "3x") {
+						amount = 3
+					}
 					effect := line[i+2]
 					who := line[i+3]
 					turns, errTurns := parseInt(line[i+4])
@@ -270,7 +277,7 @@ func (c *Command) handleDetail(champions map[string]*common.Champion, content []
 						utils.Exit(1, errTurns)
 					}
 					placesIf := line[i+5]
-					sd.AddEffect(effect, who, turns, float64(chance)/100.0, placesIf, float64(value)/100.0)
+					sd.AddEffect(effect, who, turns, float64(chance)/100.0, placesIf, float64(value)/100.0, amount)
 				}
 				skill.SetSkillData(sd)
 			}
@@ -278,10 +285,10 @@ func (c *Command) handleDetail(champions map[string]*common.Champion, content []
 			if errSanitize != nil {
 				utils.Exit(1, errSanitize)
 			}
-			/*errWrite := utils.WriteToFile(fmt.Sprintf("%s/%s", *c.ChampionsDirectory, champion.Filename()), champion)
+			errWrite := utils.WriteToFile(fmt.Sprintf("%s/%s", *c.ChampionsDirectory, champion.Filename()), champion)
 			if errWrite != nil {
 				utils.Exit(1, errWrite)
-			}*/
+			}
 		}
 	}
 	return nil
@@ -292,8 +299,12 @@ func parseInt(str string) (int64, error) {
 	if errValue != nil && str != "-" {
 		if strings.HasPrefix(str, "x") {
 			return parseInt(str[1:])
+		} else if strings.HasSuffix(str, "(2)") {
+			return parseInt(str[:len(str)-3])
+		} else if strings.HasSuffix(str, " turn") {
+			return parseInt(str[:len(str)-5])
 		}
-		return 0, fmt.Errorf("cannot parse %s: %s", str, errValue)
+		return 0, fmt.Errorf("cannot parse '%s': %s", str, errValue)
 	}
 	return value, nil
 }
@@ -305,6 +316,14 @@ func parseFloat(str string) (float64, error) {
 			return parseFloat(str[1:])
 		} else if strings.Contains(str, ",") {
 			return parseFloat(strings.Replace(str, ",", ".", -1))
+		} else if strings.HasSuffix(str, " turn") {
+			return parseFloat(str[:len(str)-5])
+		} else if strings.HasSuffix(str, " Turn") {
+			return parseFloat(str[:len(str)-5])
+		} else if strings.HasPrefix(str, "2x") || strings.HasPrefix(str, "3x") {
+			return parseFloat(str[2:])
+		} else if strings.HasSuffix(str, "+") {
+			return parseFloat(str[:len(str)-1])
 		}
 		return 0, fmt.Errorf("cannot parse %s: %s", str, errValue)
 	}

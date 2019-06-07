@@ -1,6 +1,7 @@
 package common
 
 import (
+	"crypto/md5"
 	"fmt"
 	"sort"
 	"strings"
@@ -15,6 +16,7 @@ type Skill struct {
 	DamageBasedOn  []string        `json:"damaged_based_on"`
 	GIID           string          `json:"giid"`
 	Upgrades       []*SkillData    `json:"upgrades"`
+	ImageSlug      string          `json:"image_slug"`
 }
 
 func (s *Skill) Sanitize() error {
@@ -46,6 +48,9 @@ func (s *Skill) Sanitize() error {
 	sort.SliceStable(s.Upgrades, func(i, j int) bool {
 		return s.Upgrades[i].Level < s.Upgrades[j].Level
 	})
+	if s.GIID != "" {
+		s.ImageSlug = fmt.Sprintf("%x", md5.Sum([]byte(s.GIID)))
+	}
 	return nil
 }
 

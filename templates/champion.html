@@ -86,9 +86,15 @@
                                             data-widget_type="image.default">
                                             <div class="elementor-widget-container">
                                                 <div class="elementor-image">
-                                                    <img width="300" height="300"
-                                                        src="https://raid-codex.com/wp-content/uploads/champions/image-champion-{{.Champion.Slug}}-300x300.jpg"
-                                                        class="attachment-medium size-medium" alt=""> </div>
+                                                    <object
+                                                        data="https://raid-codex.com/wp-content/uploads/champions/image-champion-{{.Champion.Slug}}-300x300.jpg"
+                                                        class="attachment-medium size-medium"
+                                                        style="height: 300px; width: 300px;">
+                                                        <img src="https://raid-codex.com/wp-content/uploads/champion-thumbnails/image-champion-small-{{.Champion.Slug}}.jpg"
+                                                            class="attachment-medium size-medium">
+                                                    </object>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -437,10 +443,10 @@
                                                                         <div
                                                                             class="elementor-text-editor elementor-clearfix">
                                                                             <table
-                                                                                class="table table-hover table-no-border">
+                                                                                class="table table-hover table-no-border elementor-hidden-phone">
                                                                                 <thead>
                                                                                     <tr>
-                                                                                        <td colspan="2" align="right"><a
+                                                                                        <td colspan="3" align="right"><a
                                                                                                 class="suggest-update"
                                                                                                 style="color: white;"
                                                                                                 href="/contribution-forms/champion-skills/#champion={{.Champion.Name}}">Suggest
@@ -451,16 +457,79 @@
                                                                                     {{ if gt .Skills 0 }}
                                                                                     {{ range $skill := .Champion.Skills }}
                                                                                     <tr>
-                                                                                        <td class="h4">{{ $skill.Name }}
+                                                                                        {{ if $skill.ImageSlug }}
+                                                                                        <td>
+                                                                                            <object
+                                                                                                data="https://raid-codex.com/wp-content/uploads/hashed-img/{{ $skill.ImageSlug }}.png"
+                                                                                                class="attachment-full size-full"
+                                                                                                style="max-width: 127px; max-height: 127px">
+                                                                                            </object>
                                                                                         </td>
+                                                                                        <td class="h4">
+                                                                                            {{ $skill.Name }}
+                                                                                        </td>
+                                                                                        {{ else }}
+                                                                                        <td colspan=2 class="h4">
+                                                                                            {{ $skill.Name }}</td>
+                                                                                        {{ end }}
                                                                                         <td>{{ $skill.RawDescription | TrustAsHtml }}
                                                                                         </td>
                                                                                     </tr>
                                                                                     {{ end }}
                                                                                     {{ range $aura := .Champion.Auras }}
                                                                                     <tr>
-                                                                                        <td class="h4">Aura</td>
+                                                                                        <td colspan=2 class="h4">Aura
+                                                                                        </td>
                                                                                         <td>{{ $aura.RawDescription | TrustAsHtml }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    {{ end }}
+                                                                                    {{ end }}
+                                                                                    {{ if eq .Skills 0 }}
+                                                                                    <tr>
+                                                                                        <td colspan="2">Coming soon…
+                                                                                            Want to help? <a
+                                                                                                href="/contribution-forms/champion-skills/#champion={{.Champion.Name}}">Suggest
+                                                                                                an update</a>!</td>
+                                                                                    </tr>
+                                                                                    {{ end }}
+                                                                                </tbody>
+                                                                            </table>
+                                                                            <table
+                                                                                class="table table-hover table-no-border elementor-hidden-tablet elementor-hidden-desktop">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <td><a class="suggest-update"
+                                                                                                style="color: white;"
+                                                                                                href="/contribution-forms/champion-skills/#champion={{.Champion.Name}}">Suggest
+                                                                                                an update</a></td>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    {{ if gt .Skills 0 }}
+                                                                                    {{ range $skill := .Champion.Skills }}
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            {{ if $skill.ImageSlug }}
+                                                                                            <object
+                                                                                                data="https://raid-codex.com/wp-content/uploads/hashed-img/{{ $skill.ImageSlug }}.png"
+                                                                                                style="max-width: 127px; max-height: 127px">
+                                                                                            </object>
+                                                                                            <br>
+                                                                                            {{ end }}
+                                                                                            <span class="h4">
+                                                                                                {{ $skill.Name }}
+                                                                                            </span>
+                                                                                            <br>
+                                                                                            {{ $skill.RawDescription | TrustAsHtml }}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    {{ end }}
+                                                                                    {{ range $aura := .Champion.Auras }}
+                                                                                    <tr>
+                                                                                        <td><span
+                                                                                                class="h4">Aura</span><br>
+                                                                                            {{ $aura.RawDescription | TrustAsHtml }}
                                                                                         </td>
                                                                                     </tr>
                                                                                     {{ end }}

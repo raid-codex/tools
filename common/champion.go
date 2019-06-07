@@ -97,7 +97,10 @@ func (c *Champion) Sanitize() error {
 
 	c.defaultRating()
 
-	for _, skill := range c.Skills {
+	for idx, skill := range c.Skills {
+		if c.GIID != "" && skill.GIID == "" {
+			skill.GIID = fmt.Sprintf("%s_s%d", c.GIID, idx+1)
+		}
 		errSanitize := skill.Sanitize()
 		if errSanitize != nil {
 			return errSanitize

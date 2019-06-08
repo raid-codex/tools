@@ -200,56 +200,76 @@ func (c *Command) handleReviews(champions map[string]*common.Champion, content [
 	return nil
 }
 
+const (
+	detail_aura         = 0
+	detail_championName = 1
+	detail_skillNumber  = 2
+	detail_skillName    = 3
+	detail_level        = 4
+	detail_levelDetail  = 5
+	detail_basedOn      = 6
+	detail_targets      = 7
+	detail_hits         = 8
+	detail_cooldown     = 9
+	detail_who          = 10
+)
+
 func (c *Command) handleDetail(champions map[string]*common.Champion, content [][]string) error {
 	for idx, line := range content {
-		if len(line) != 39 {
-			return fmt.Errorf("line %s has %d parts, not 39", strings.Join(line, ";"), len(line))
+		if len(line) != 41 {
+			return fmt.Errorf("line %s has %d parts, not 41", strings.Join(line, ";"), len(line))
 		} else if idx == 0 {
-			if strings.Join(line, ";") != "Aura;title;skill_1;;Level;Based On;Targets;Hits;Who;Chance;%;Effect 1;B Who;Turns;Places If;Chance;%;Effect 2;B Who;Turns;Places If;Chance;%;Effect 3;B Who;Turns;Places If;Chance;%;Effect 4;B Who;Turns;Places If;Chance;%;Effect 5;B Who;Turns;Places If" {
+			if strings.Join(line, ";") != "Aura;title;Skill #;skill_1;;Level;Based On;Targets;Hits;Cooldown;Who;Chance;%;Effect 1;B Who;Turns;Places If;Chance;%;Effect 2;B Who;Turns;Places If;Chance;%;Effect 3;B Who;Turns;Places If;Chance;%;Effect 4;B Who;Turns;Places If;Chance;%;Effect 5;B Who;Turns;Places If" {
 				return fmt.Errorf("invalid first line %s", strings.Join(line, ";"))
 			}
 		} else {
 			for i := range line {
 				line[i] = strings.Trim(line[i], " !")
 			}
-			if _, ok := replaceChampionName[line[1]]; ok {
-				line[1] = replaceChampionName[line[1]]
+			if _, ok := replaceChampionName[line[detail_championName]]; ok {
+				line[detail_championName] = replaceChampionName[line[detail_championName]]
 			}
-			champion := champions[line[1]]
+			champion := champions[line[detail_championName]]
 			if champion == nil {
-				panic(fmt.Sprintf("champion %s not found", line[1]))
+				panic(fmt.Sprintf("champion %s not found", line[detail_championName]))
 			}
 			log.Printf("%d/%d ;; treating champion %s\n\tline: %s\n", idx, len(content), champion.Name, strings.Join(line, ";"))
-			if line[0] != "" {
-				champion.SetAura(line[0])
+			if line[detail_aura] != "" {
+				champion.SetAura(line[detail_aura])
 			}
 			passive := false
-			if strings.Contains(line[2], " [Passive]") {
+			if strings.Contains(line[detail_skillName], " [Passive]") {
 				passive = true
-				line[2] = strings.Replace(line[2], " [Passive]", "", -1)
-			} else if strings.Contains(line[2], " [P]") {
+				line[3] = strings.Replace(line[detail_skillName], " [Passive]", "", -1)
+			} else if strings.Contains(line[detail_skillName], " [P]") {
 				passive = true
-				line[2] = strings.Replace(line[2], " [P]", "", -1)
+				line[3] = strings.Replace(line[detail_skillName], " [P]", "", -1)
 			}
-			skill, errSkill := champion.GetSkillByName(line[2])
+			skill, errSkill := champion.GetSkillByName(line[detail_skillName])
 			if errSkill != nil {
-				skill = &common.Skill{Name: line[2]}
+				skill = &common.Skill{Name: line[detail_skillName]}
 				champion.Skills = append(champion.Skills, skill)
 			}
+			skill.SkillNumber = line[detail_skillNumber]
 			skill.Passive = passive
-			if line[3] != "-" {
-				sd := &common.SkillData{Level: line[3]}
-				basedOn := strings.Split(line[5], "/")
+			if line[detail_level] != "-" {
+				sd := &common.SkillData{Level: line[detail_level], RawDetail: line[detail_levelDetail]}
+				basedOn := strings.Split(line[detail_basedOn], "/")
 				if basedOn[0] != "-" {
 					sd.BasedOn = basedOn
 				}
-				hits, errHits := parseInt(line[7])
+				hits, errHits := parseInt(line[detail_hits])
 				if errHits != nil {
 					utils.Exit(1, errHits)
 				}
 				sd.Hits = hits
-				sd.Target = &common.Target{Who: line[8], Targets: line[7]}
-				for _, i := range []int64{9, 15, 21, 27} {
+				cooldown, errCooldown := parseInt(line[detail_cooldown])
+				if errCooldown != nil {
+					utils.Exit(1, errCooldown)
+				}
+				sd.Cooldown = cooldown
+				sd.Target = &common.Target{Who: line[detail_who], Targets: line[detail_targets]}
+				for _, i := range []int64{11, 17, 23, 29} {
 					if line[i+2] == "-" {
 						continue
 					}
@@ -295,8 +315,11 @@ func (c *Command) handleDetail(champions map[string]*common.Champion, content []
 }
 
 func parseInt(str string) (int64, error) {
+	if str == "-" || str == "" {
+		return 0, nil
+	}
 	value, errValue := strconv.ParseInt(str, 10, 64)
-	if errValue != nil && str != "-" {
+	if errValue != nil {
 		if strings.HasPrefix(str, "x") {
 			return parseInt(str[1:])
 		} else if strings.HasSuffix(str, "(2)") {
@@ -310,8 +333,11 @@ func parseInt(str string) (int64, error) {
 }
 
 func parseFloat(str string) (float64, error) {
+	if str == "-" || str == "" {
+		return 0.0, nil
+	}
 	value, errValue := strconv.ParseFloat(str, 64)
-	if errValue != nil && str != "-" {
+	if errValue != nil {
 		if strings.HasPrefix(str, "x") {
 			return parseFloat(str[1:])
 		} else if strings.Contains(str, ",") {

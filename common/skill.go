@@ -17,6 +17,7 @@ type Skill struct {
 	GIID           string          `json:"giid"`
 	Upgrades       []*SkillData    `json:"upgrades"`
 	ImageSlug      string          `json:"image_slug"`
+	SkillNumber    string          `json:"skill_number"`
 }
 
 func (s *Skill) Sanitize() error {
@@ -66,11 +67,13 @@ func (s *Skill) SetSkillData(sd *SkillData) {
 }
 
 type SkillData struct {
-	Level   string          `json:"level"`
-	Hits    int64           `json:"hits"`
-	Target  *Target         `json:"target"`
-	Effects []*StatusEffect `json:"effects"`
-	BasedOn []string        `json:"based_on"`
+	Level     string          `json:"level"`
+	Hits      int64           `json:"hits"`
+	Target    *Target         `json:"target"`
+	Effects   []*StatusEffect `json:"effects"`
+	BasedOn   []string        `json:"based_on"`
+	Cooldown  int64           `json:"cooldown"`
+	RawDetail string          `json:"raw_detail"`
 }
 
 func (sd *SkillData) Sanitize() error {
@@ -179,10 +182,15 @@ var (
 		"Heal per Buff":                "Heal",
 		"Inc DEF per Dead Ally":        "Increase DEF",
 		"Deal ALL Poison":              "Deal all poison DMG",
+		"Remove All Buffs":             "Remove ALL Buffs",
+		"increase DEF":                 "Increase DEF",
 	}
 )
 
 func (sd *SkillData) AddEffect(effect string, who string, turns int64, chance float64, placesIf string, value float64, amount int64) {
+	if effect == "" {
+		return
+	}
 	realEffect := translateEffect(effect)
 	placesIf = translateEffect(placesIf)
 	statusEffect := &StatusEffect{
@@ -201,7 +209,7 @@ func (sd *SkillData) AddEffect(effect string, who string, turns int64, chance fl
 	} else if _, ok := battleEnhancements[statusEffect.Type]; ok {
 		statusEffect.EffectType = "battle_enhancement"
 	} else {
-		panic(fmt.Errorf("unknown effect %s", statusEffect.Type))
+		panic(fmt.Errorf("unknown effect '%s'", statusEffect.Type))
 	}
 	ne := make([]*StatusEffect, 0)
 	ne = append(ne, statusEffect)
@@ -228,7 +236,7 @@ func getEffectsFromDescription(effects []*StatusEffect, damageBasedOn []string, 
 		if len(m2) != 1 {
 			panic(fmt.Sprintf("wtf %+v", m2))
 		}
-		val := m2[0][1]
+		val := translateEffect(m2[0][1])
 		switch true {
 		case strings.Contains(m, fmt.Sprintf("is under a [%s]", val)),
 			strings.Contains(m, fmt.Sprintf("is under [%s]", val)),
@@ -249,7 +257,7 @@ func getEffectsFromDescription(effects []*StatusEffect, damageBasedOn []string, 
 		} else if _, ok := stats[val]; ok {
 			basedOn[val] = true
 		} else {
-			return nil, nil, fmt.Errorf("unknown thing: %+v", m2)
+			return nil, nil, fmt.Errorf("unknown thing: %s (%+v) -- %s", val, m2, rawDescription)
 		}
 		if v, ok := buffDebuffRateExtraSlug[val]; ok && strings.Contains(m, v) {
 			currentEffects[val].Extra = true

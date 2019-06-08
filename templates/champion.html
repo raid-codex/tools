@@ -465,12 +465,33 @@
                                                                                                 style="max-width: 127px; max-height: 127px">
                                                                                             </object>
                                                                                         </td>
-                                                                                        <td class="h4">
-                                                                                            {{ $skill.Name }}
+                                                                                        <td>
+                                                                                            <span
+                                                                                                class="h4">{{ $skill.Name }}</span>
+                                                                                            {{ if $skill.Upgrades }}
+                                                                                            {{ $data := index $skill.Upgrades 0 }}
+                                                                                            {{ if $data.Cooldown }}
+                                                                                            <br>Cooldown:
+                                                                                            <span
+                                                                                                style="white-space: nowrap;">{{ $data.Cooldown }}
+                                                                                                turns</span>
+                                                                                            {{ end }}
+                                                                                            {{ end }}
                                                                                         </td>
                                                                                         {{ else }}
-                                                                                        <td colspan=2 class="h4">
-                                                                                            {{ $skill.Name }}</td>
+                                                                                        <td colspan=2>
+                                                                                            <span
+                                                                                                class="h4">{{ $skill.Name }}</span>
+                                                                                            {{ if $skill.Upgrades }}
+                                                                                            {{ $data := index $skill.Upgrades 0 }}
+                                                                                            {{ if $data.Cooldown }}
+                                                                                            <br>Cooldown:
+                                                                                            <span
+                                                                                                style="white-space: nowrap;">{{ $data.Cooldown }}
+                                                                                                turns</span>
+                                                                                            {{ end }}
+                                                                                            {{ end }}
+                                                                                        </td>
                                                                                         {{ end }}
                                                                                         <td>{{ $skill.RawDescription | TrustAsHtml }}
                                                                                         </td>
@@ -520,6 +541,15 @@
                                                                                             <span class="h4">
                                                                                                 {{ $skill.Name }}
                                                                                             </span>
+                                                                                            {{ if $skill.Upgrades }}
+                                                                                            {{ $data := index $skill.Upgrades 0 }}
+                                                                                            {{ if $data.Cooldown }}
+                                                                                            <br>Cooldown:
+                                                                                            <span
+                                                                                                style="white-space: nowrap;">{{ $data.Cooldown }}
+                                                                                                turns</span>
+                                                                                            {{ end }}
+                                                                                            {{ end }}
                                                                                             <br>
                                                                                             {{ $skill.RawDescription | TrustAsHtml }}
                                                                                         </td>

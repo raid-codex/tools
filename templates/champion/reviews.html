@@ -5,7 +5,7 @@
         <h2>In-Game Reviews ({{ .Champion.Reviews.NumberOfReviews }})</h2>
     </div>
     <div class="col-xs-12">
-        <table class="table-hover table">
+        <table class="table-hover table table-champion-ratings">
             <thead>
                 <tr class="row-header">
                     <th>Location</th>
@@ -13,74 +13,74 @@
                 </tr>
             </thead>
             <tbody>
-                <tr style="height: 65px;">
+                <tr>
                     <td>Campaign</td>
                     <td>
                         {{ .Champion.Reviews.Campaign | ReviewGrade }}
                     </td>
                 </tr>
-                <tr style="height: 65px;">
+                <tr>
                     <td>Arena</td>
                     <td>
                         Offensive: {{ .Champion.Reviews.ArenaOff | ReviewGrade }}<br>
                         Defensive: {{ .Champion.Reviews.ArenaDef | ReviewGrade }}
                     </td>
                 </tr>
-                <tr style="height: 65px;">
+                <tr>
                     <td>Clan boss</td>
                     <td>
                         {{ .Champion.Reviews.ClanBoss | ReviewGrade }}
                     </td>
                 </tr>
-                <tr style="height: 65px;">
+                <tr>
                     <td>Ice Golem’s Peak</td>
                     <td>
                         {{ .Champion.Reviews.IceGuardian | ReviewGrade }}
                     </td>
                 </tr>
-                <tr style="height: 65px;">
+                <tr>
                     <td>Dragon’s Lair</td>
                     <td>
                         {{ .Champion.Reviews.Dragon | ReviewGrade }}
                     </td>
                 </tr>
-                <tr style="height: 65px;">
+                <tr>
                     <td>Spider’s Den</td>
                     <td>
                         {{ .Champion.Reviews.Spider | ReviewGrade }}
                     </td>
                 </tr>
-                <tr style="height: 65px;">
+                <tr>
                     <td>Fire Knight’s Castle</td>
                     <td>
                         {{ .Champion.Reviews.FireKnight | ReviewGrade }}
                     </td>
                 </tr>
-                <tr style="height: 65px;">
+                <tr>
                     <td>Minotaur’s Labyrinth</td>
                     <td>
                         {{ .Champion.Reviews.Minotaur | ReviewGrade }}
                     </td>
                 </tr>
-                <tr style="height: 65px;">
+                <tr>
                     <td>Force Keep</td>
                     <td>
                         {{ .Champion.Reviews.ForceDungeon | ReviewGrade }}
                     </td>
                 </tr>
-                <tr style="height: 65px;">
+                <tr>
                     <td>Magic Keep</td>
                     <td>
                         {{ .Champion.Reviews.MagicDungeon | ReviewGrade }}
                     </td>
                 </tr>
-                <tr style="height: 65px;">
+                <tr>
                     <td>Spirit Keep</td>
                     <td>
                         {{ .Champion.Reviews.SpiritDungeon | ReviewGrade }}
                     </td>
                 </tr>
-                <tr style="height: 65px;">
+                <tr>
                     <td>Void Keep</td>
                     <td>
                         {{ .Champion.Reviews.VoidDungeon | ReviewGrade }}

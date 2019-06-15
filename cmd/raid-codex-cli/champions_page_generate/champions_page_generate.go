@@ -3,9 +3,12 @@ package champions_page_generate
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"html/template"
 	"io/ioutil"
 	"os"
-	"text/template"
+
+	"github.com/raid-codex/tools/templatefuncs"
 
 	"github.com/juju/errors"
 	"github.com/raid-codex/tools/common"
@@ -14,20 +17,20 @@ import (
 )
 
 type Command struct {
-	ChampionFile  *string
-	TemplateFile  *string
-	OutputFile    *string
-	PageTemplate  *string
-	DataDirectory *string
+	ChampionFile   *string
+	TemplateFolder *string
+	OutputFile     *string
+	PageTemplate   *string
+	DataDirectory  *string
 }
 
 func New(cmd *kingpin.CmdClause) *Command {
 	return &Command{
-		ChampionFile:  cmd.Flag("champion-file", "Filename for the champion").Required().String(),
-		DataDirectory: cmd.Flag("data-directory", "Data directory").Required().String(),
-		TemplateFile:  cmd.Flag("template-file", "Template file").Required().String(),
-		OutputFile:    cmd.Flag("output-file", "Output file").Required().String(),
-		PageTemplate:  cmd.Flag("page-template", "Page template file").Required().String(),
+		ChampionFile:   cmd.Flag("champion-file", "Filename for the champion").Required().String(),
+		DataDirectory:  cmd.Flag("data-directory", "Data directory").Required().String(),
+		TemplateFolder: cmd.Flag("template-folder", "Template folder").Required().String(),
+		OutputFile:     cmd.Flag("output-file", "Output file").Required().String(),
+		PageTemplate:   cmd.Flag("page-template", "Page template file").Required().String(),
 	}
 }
 
@@ -41,17 +44,16 @@ func (c *Command) Run() {
 		utils.Exit(1, errOutput)
 	}
 	defer outputFile.Close()
-	inputFile, errInput := os.Open(*c.TemplateFile)
-	if errInput != nil {
-		utils.Exit(1, errInput)
+	templates, errLoad := c.loadTemplates()
+	if errLoad != nil {
+		utils.Exit(1, errLoad)
 	}
-	defer inputFile.Close()
 	extraData, errData := champion.GetPageExtraData(*c.DataDirectory)
 	if errData != nil {
 		utils.Exit(1, errData)
 	}
 	buf := bytes.NewBufferString("")
-	errTemplate := champion.GetPageContent(inputFile, buf, extraData)
+	errTemplate := champion.GetPageContent_Templates(templates, buf, extraData)
 	if errTemplate != nil {
 		utils.Exit(1, errTemplate)
 	}
@@ -59,7 +61,7 @@ func (c *Command) Run() {
 	if errPageTemplate != nil {
 		utils.Exit(1, errPageTemplate)
 	}
-	tmpl, errTmpl := template.New("page").Parse(string(pageTemplate))
+	tmpl, errTmpl := template.New("page").Funcs(templatefuncs.FuncMap).Parse(string(pageTemplate))
 	if errTmpl != nil {
 		utils.Exit(1, errTmpl)
 	}
@@ -67,6 +69,18 @@ func (c *Command) Run() {
 	if errExecute != nil {
 		utils.Exit(1, errExecute)
 	}
+}
+
+func (c *Command) loadTemplates() (*template.Template, error) {
+	files, errFiles := ioutil.ReadDir(*c.TemplateFolder)
+	if errFiles != nil {
+		return nil, errFiles
+	}
+	templateFiles := make([]string, 0)
+	for _, file := range files {
+		templateFiles = append(templateFiles, fmt.Sprintf("%s/%s", *c.TemplateFolder, file.Name()))
+	}
+	return template.New("main.html").Funcs(templatefuncs.FuncMap).ParseFiles(templateFiles...)
 }
 
 func (c *Command) getChampion() (*common.Champion, error) {

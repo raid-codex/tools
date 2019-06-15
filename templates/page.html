@@ -102,12 +102,8 @@
     <link rel='stylesheet' id='wp-block-library-css'
         href='https://raid-codex.com/wp-includes/css/dist/block-library/style.min.css?ver=5.2' type='text/css'
         media='all' />
-    <link rel='stylesheet' id='font-awesome-5-css'
-        href='https://raid-codex.com/wp-content/plugins/themeisle-companion/obfx_modules/gutenberg-blocks/assets/fontawesome/css/all.min.css?ver=5.2'
-        type='text/css' media='all' />
-    <link rel='stylesheet' id='font-awesome-4-shims-css'
-        href='https://raid-codex.com/wp-content/plugins/themeisle-companion/obfx_modules/gutenberg-blocks/assets/fontawesome/css/v4-shims.min.css?ver=5.2'
-        type='text/css' media='all' />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/v4-shims.css">
     <link rel='stylesheet' id='themeisle-block_styles-css'
         href='https://raid-codex.com/wp-content/plugins/themeisle-companion/vendor/codeinwp/gutenberg-blocks/build/style.css?ver=5.2'
         type='text/css' media='all' />
@@ -786,6 +782,11 @@
             transform: rotate(-45deg);
         }
 
+        .characteristic-current {
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
         .characteristic-before {
             font-size: 11px;
             font-weight: bold;
@@ -797,6 +798,48 @@
 
         .characteristic-before-down {
             color: red;
+        }
+
+        .page-content-wrap ul {
+            font-size: inherit !important;
+        }
+
+        .related-posts {}
+
+        .related-posts .related-posts-thumbnail {
+            text-align: center;
+        }
+
+        .related-posts .related-posts-content {}
+
+        .related-posts .related-posts-content p {
+            font-size: 11px;
+        }
+
+        .row.display-flex {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .row.display-flex>[class*='col-'] {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .row.display-flex>[class*='col-'] {
+            flex-grow: 1;
+        }
+
+        .champion-view-characteristics>.row>[class*="col-"]:first-child,
+        .champion-view-info>.row>[class*="col-"]:first-child {
+            text-align: right;
+            text-transform: uppercase;
+        }
+
+        .champion-view h3,
+        .champion-view h2,
+        .champion-view h4 {
+            text-transform: uppercase;
         }
     </style>
     <style type='text/css'>
@@ -1000,8 +1043,7 @@
         <div class="main main-raised">
             <div class="blog-post champion-view">
                 <div class="container">
-                    {{ .Page }}
-                    {{ .Skills }}
+                    {{ .Page | TrustAsHtml}}
                 </div>
             </div>
         </div>

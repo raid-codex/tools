@@ -1,0 +1,34 @@
+<article class="champion-view" style="padding-top: 70px;">
+    <div class="row">
+        <div class="col-xs-12">
+            <a class="btn" href="/champions">
+                <i class="fa fa-arrow-left"></i>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            {{ template "champion-card" . }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            {{ template "lore" . }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            {{ template "skills" . }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            {{ template "champion-ratings" . }}
+        </div>
+    </div>
+</article>
+{{ range $data := .Champion.SEO.StructuredData }}
+<script type="application/ld+json">
+{{ $data }}
+</script>
+{{ end }}

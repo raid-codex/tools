@@ -1,0 +1,14 @@
+{{ define "skills-1" }}
+<div class="row">
+    {{ range $skill := .Champion.Skills }}
+    <div class="col-xs-12 col-md-4">
+        {{ template "single-skill" $skill }}
+    </div>
+    {{ end }}
+    {{ range $aura := .Champion.Auras }}
+    <div class="col-xs-12 col-md-4">
+        {{ template "aura" $aura }}
+    </div>
+    {{ end }}
+</div>
+{{ end }}

@@ -198,6 +198,24 @@ func (_ Champion) GetParentPageID() int { return 29 }
 
 func (c Champion) GetPageExcerpt() string { return c.DefaultDescription }
 
+func (c *Champion) GetPageContent_Templates(tmpl *template.Template, output io.Writer, extraData map[string]interface{}) error {
+	effects := map[string]*StatusEffect{}
+	for _, skill := range c.Skills {
+		for _, effect := range skill.Effects {
+			effects[effect.Slug] = effect
+		}
+	}
+	for _, aura := range c.Auras {
+		for _, effect := range aura.Effects {
+			effects[effect.Slug] = effect
+		}
+	}
+	extraData["Champion"] = c
+	extraData["Skills"] = len(c.Skills) + len(c.Auras)
+	extraData["Effects"] = effects
+	return tmpl.Execute(output, extraData)
+}
+
 func (c *Champion) GetPageContent(input io.Reader, output io.Writer, extraData map[string]interface{}) error {
 	funcMap := template.FuncMap{
 		"ReviewGrade":  reviewGrade,

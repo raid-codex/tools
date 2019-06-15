@@ -1,0 +1,10 @@
+{{ define "aura" }}
+<div class="row">
+    <div class="col-xs-12">
+        <span class="h4">Aura</span>
+    </div>
+    <div class="col-xs-12">
+        {{ .RawDescription | TrustAsHtml }}
+    </div>
+</div>
+{{ end }}

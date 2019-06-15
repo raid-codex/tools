@@ -1,0 +1,31 @@
+{{ define "skills" }}
+<div class="row">
+    <div class="col-xs-12">
+        <h2>Skills</h2>
+        {{ if gt .Skills 0 }}
+        <a href="/contribution-forms/champion-skills/#champion={{ .Champion.Name }}">
+            <i>Suggest an update</i>
+        </a>
+        {{ end }}
+    </div>
+    <div class="col-xs-12">
+        {{ if eq .Skills 1 }}
+        {{ template "skills-1" . }}
+        {{ else if eq .Skills 2 }}
+        {{ template "skills-2" . }}
+        {{ else if eq .Skills 3 }}
+        {{ template "skills-3" . }}
+        {{ else if eq .Skills 4 }}
+        {{ template "skills-4" . }}
+        {{ else if eq .Skills 5 }}
+        {{ template "skills-5" . }}
+        {{ else if eq .Skills 6 }}
+        {{ template "skills-6" . }}
+        {{ else if eq .Skills 0 }}
+        {{ template "skills-0" . }}
+        {{ else }}
+        Not handled: {{ .Skills }}
+        {{ end }}
+    </div>
+</div>
+{{ end }}

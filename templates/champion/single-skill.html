@@ -1,0 +1,18 @@
+{{ define "single-skill" }}
+<div class="row" style="padding: 10px;">
+    <div class="col-xs-12">
+        <span class="h4">
+            {{ .Name }}
+        </span>
+    </div>
+    {{ if .ImageSlug }}
+    <div class="col-xs-12" style="min-height: 10px; padding: 10px;">
+        <object data="https://raid-codex.com/wp-content/uploads/hashed-img/{{ .ImageSlug }}.png"
+            class="attachment-full size-full" style="max-width: 90px; max-height: 90px"></object>
+    </div>
+    {{ end }}
+    <div class="col-xs-12">
+        {{ .RawDescription | TrustAsHtml }}
+    </div>
+</div>
+{{ end }}

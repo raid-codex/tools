@@ -40,12 +40,12 @@ func (c *Command) Run() {
 	if errPage != nil && !errors.IsNotFound(errPage) {
 		utils.Exit(1, errPage)
 	} else if errPage != nil && errors.IsNotFound(errPage) {
-		errCreate := wp.CreatePage(client, effect, *c.TemplateFile, *c.DataDirectory)
+		errCreate := wp.CreatePage(client, effect, *c.TemplateFile, *c.DataDirectory, nil)
 		if errCreate != nil {
 			utils.Exit(1, errCreate)
 		}
 	} else {
-		errUpdate := wp.UpdatePage(client, page, effect, *c.TemplateFile, *c.DataDirectory)
+		errUpdate := wp.UpdatePage(client, page, effect, *c.TemplateFile, *c.DataDirectory, nil)
 		if errUpdate != nil {
 			utils.Exit(1, errUpdate)
 		}

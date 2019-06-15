@@ -3,6 +3,7 @@ package wp
 import (
 	"bytes"
 	"fmt"
+	"html/template"
 	"os"
 	"strings"
 
@@ -23,7 +24,7 @@ func GetWPClient() *wordpress.Client {
 	return client
 }
 
-func getContent(page paged.Paged, templateFile, dataDirectory string) (string, error) {
+func getContent(page paged.Paged, templateFile, dataDirectory string, tmpl *template.Template) (string, error) {
 	if templateFile == "" {
 		return "", nil
 	}
@@ -31,13 +32,18 @@ func getContent(page paged.Paged, templateFile, dataDirectory string) (string, e
 	if errData != nil {
 		return "", errData
 	}
-	inputFile, errInput := os.Open(templateFile)
-	if errInput != nil {
-		return "", errInput
-	}
-	defer inputFile.Close()
 	buf := bytes.NewBufferString("")
-	errTemplate := page.GetPageContent(inputFile, buf, data)
+	var errTemplate error
+	if tmpl != nil {
+		errTemplate = page.GetPageContent_Templates(tmpl, buf, data)
+	} else {
+		inputFile, errInput := os.Open(templateFile)
+		if errInput != nil {
+			return "", errInput
+		}
+		defer inputFile.Close()
+		errTemplate = page.GetPageContent(inputFile, buf, data)
+	}
 	if errTemplate != nil {
 		return "", errTemplate
 	}
@@ -52,8 +58,8 @@ func getContent(page paged.Paged, templateFile, dataDirectory string) (string, e
 	return s, nil
 }
 
-func CreatePage(client *wordpress.Client, page paged.Paged, templateFile, dataDirectory string) error {
-	content, err := getContent(page, templateFile, dataDirectory)
+func CreatePage(client *wordpress.Client, page paged.Paged, templateFile, dataDirectory string, tmpl *template.Template) error {
+	content, err := getContent(page, templateFile, dataDirectory, tmpl)
 	if err != nil {
 		return errors.Annotatef(err, "error while creating page")
 	}
@@ -74,8 +80,8 @@ func CreatePage(client *wordpress.Client, page paged.Paged, templateFile, dataDi
 	return nil
 }
 
-func UpdatePage(client *wordpress.Client, wpPage *wordpress.Page, page paged.Paged, templateFile, dataDirectory string) error {
-	content, err := getContent(page, templateFile, dataDirectory)
+func UpdatePage(client *wordpress.Client, wpPage *wordpress.Page, page paged.Paged, templateFile, dataDirectory string, tmpl *template.Template) error {
+	content, err := getContent(page, templateFile, dataDirectory, tmpl)
 	if err != nil {
 		return errors.Annotatef(err, "error while creating page")
 	}

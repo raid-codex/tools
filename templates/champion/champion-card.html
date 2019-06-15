@@ -1,0 +1,152 @@
+{{ define "champion-card" }}
+<div class="row">
+    <div class="col-xs-12 col-md-4">
+        <object data="https://raid-codex.com/wp-content/uploads/champions/image-champion-{{.Champion.Slug}}-300x300.jpg"
+            style="max-height: 300px; max-width: 300px;">
+            <img src="https://raid-codex.com/wp-content/uploads/champion-thumbnails/image-champion-small-{{.Champion.Slug}}.jpg"
+                style="max-height: 300px; max-width:300px;">
+        </object>
+    </div>
+    <div class="col-xs-12 col-md-4">
+        <div class="row">
+            <div class="col-xs-12">
+                <h4>Info</h4>
+            </div>
+            <div class="col-xs-12 champion-view-info">
+                <div class="row">
+                    <div class="col-xs-6">
+                        Rarity
+                    </div>
+                    <div class="col-xs-6">
+                        <span class="champion-rarity champion-rarity-{{ .Champion.Rarity | ToLower }}">
+                            {{ .Champion.Rarity }}
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        Faction
+                    </div>
+                    <div class="col-xs-6">
+                        <a href="{{.Champion.Faction.WebsiteLink}}">{{ .Champion.Faction.Name }}</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        Overall rating
+                    </div>
+                    <div class="col-xs-6">
+                        {{ .Champion.Rating.Overall | DisplayGrade }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        Type
+                    </div>
+                    <div class="col-xs-6">
+                        {{ .Champion.Type }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        Element
+                    </div>
+                    <div class="col-xs-6">
+                        {{ .Champion.Element }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div>
+                        <div class="col-xs-12">
+                            <p style="text-align: center;">
+                                <strong>Status effects</strong><br>
+                                {{ range  $effect := .Effects }}{{ $effectData := index $.AllEffects $effect.Slug }}
+                                <a href="{{$effect.WebsiteLink}}">
+                                    <img src="https://raid-codex.com/wp-content/uploads/status-effects/{{$effect.ImageSlug}}.png"
+                                        title="{{ $effectData.RawDescription }}" alt="{{ $effectData.Type }}">
+                                </a>
+                                {{ end }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-md-4">
+        <div class="row">
+            <div class="col-xs-12">
+                <h4>Characteristics</h4>
+            </div>
+            <div class="col-xs-12 champion-view-characteristics">
+                {{ with $characteristics := index .Champion.Characteristics 60 }}
+                <div class="row">
+                    <div class="col-xs-6">
+                        HP
+                    </div>
+                    <div class="col-xs-6">
+                        {{ $characteristics.HP }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        Attack
+                    </div>
+                    <div class="col-xs-6">
+                        {{ $characteristics.Attack }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        Defense
+                    </div>
+                    <div class="col-xs-6">
+                        {{ $characteristics.Defense }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        Critical Rate
+                    </div>
+                    <div class="col-xs-6">
+                        {{ $characteristics.CriticalRate | Percentage }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        Critical Damage
+                    </div>
+                    <div class="col-xs-6">
+                        {{ $characteristics.CriticalDamage | Percentage }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        Speed
+                    </div>
+                    <div class="col-xs-6">
+                        {{ $characteristics.Speed }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        Resistance
+                    </div>
+                    <div class="col-xs-6">
+                        {{ $characteristics.Resistance }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        Accuracy
+                    </div>
+                    <div class="col-xs-6">
+                        {{ $characteristics.Accuracy }}
+                    </div>
+                </div>
+                {{ end }}
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}

@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/juju/errors"
 )
 
 type StatusEffect struct {
@@ -260,6 +262,10 @@ func (se StatusEffect) GetPageContent(input io.Reader, output io.Writer, extraDa
 	extraData["StatusEffect"] = se
 	err = tmpl.Execute(output, extraData)
 	return err
+}
+
+func (_ *StatusEffect) GetPageContent_Templates(tmpl *template.Template, output io.Writer, extraData map[string]interface{}) error {
+	return errors.NotImplementedf("template for faction")
 }
 
 func (se StatusEffect) GetPageExcerpt() string { return se.RawDescription }

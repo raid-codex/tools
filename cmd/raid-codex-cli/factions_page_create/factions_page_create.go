@@ -33,7 +33,7 @@ func (c *Command) Run() {
 	if errPage != nil && !errors.IsNotFound(errPage) {
 		utils.Exit(1, errPage)
 	} else if errPage != nil && errors.IsNotFound(errPage) {
-		errCreate := wp.CreatePage(client, faction, "", "")
+		errCreate := wp.CreatePage(client, faction, "", "", nil)
 		if errCreate != nil {
 			utils.Exit(1, errCreate)
 		}

@@ -1,0 +1,35 @@
+{{ define "skills-6" }}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="row">
+            <div class="col-xs-12 col-md-4">
+                {{ $skill := index .Champion.Skills 0 }}
+                {{ template "single-skill" $skill }}
+            </div>
+            <div class="col-xs-12 col-md-4">
+                {{ $skill := index .Champion.Skills 1 }}
+                {{ template "single-skill" $skill }}
+            </div>
+            <div class="col-xs-12 col-md-4">
+                {{ $skill := index .Champion.Skills 2 }}
+                {{ template "single-skill" $skill }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-4">
+                {{ $skill := index .Champion.Skills 3 }}
+                {{ template "single-skill" $skill }}
+            </div>
+            <div class="col-xs-12 col-md-4">
+                {{ $skill := index .Champion.Skills 4 }}
+                {{ template "single-skill" $skill }}
+            </div>
+            {{ range $aura := .Champion.Auras }}
+            <div class="col-xs-12 col-md-4">
+                {{ template "aura" $aura }}
+            </div>
+            {{ end }}
+        </div>
+    </div>
+</div>
+{{ end }}

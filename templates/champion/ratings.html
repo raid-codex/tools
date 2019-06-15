@@ -1,0 +1,100 @@
+{{ define "ratings" }}
+<div class="row">
+    <div class="col-xs-12">
+        <h2>Ratings</h2>
+    </div>
+    <div class="col-xs-12">
+        <table class="table-hover table">
+            <thead>
+                <tr class="row-header">
+                    <th>Location</th>
+                    <th>Rating</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="height: 65px;">
+                    <td>Campaign</td>
+                    <td class="champion-rating-{{ .Champion.Rating.Campaign }}">
+                        {{ .Champion.Rating.Campaign | DisplayGrade }}
+                    </td>
+                </tr>
+                <tr style="height: 65px;">
+                    <td>Arena</td>
+                    <td>
+                        Offensive: <span class="champion-rating-{{ .Champion.Rating.ArenaOff }}">
+                            {{ .Champion.Rating.ArenaOff | DisplayGrade }}</span>
+                        <br>
+                        Defensive: <span class=" champion-rating-{{ .Champion.Rating.ArenaDef }}">
+                            {{ .Champion.Rating.ArenaDef | DisplayGrade }}</span>
+                    </td>
+                </tr>
+                <tr style="height: 65px;">
+                    <td>Clan boss</td>
+                    <td>
+                        Without GS: <span class="champion-rating-{{ .Champion.Rating.ClanBossWoGS }}">
+                            {{ .Champion.Rating.ClanBossWoGS | DisplayGrade }}
+                        </span><br>
+                        With GS: <span class="champion-rating-{{ .Champion.Rating.ClanBosswGS }}">
+                            {{ .Champion.Rating.ClanBosswGS | DisplayGrade }}
+                        </span>
+                    </td>
+                </tr>
+                <tr style="height: 65px;">
+                    <td>Ice Golem’s Peak</td>
+                    <td class="champion-rating-{{ .Champion.Rating.IceGuardian }}">
+                        {{ .Champion.Rating.IceGuardian | DisplayGrade }}
+                    </td>
+                </tr>
+                <tr style="height: 65px;">
+                    <td>Dragon’s Lair</td>
+                    <td class="champion-rating-{{ .Champion.Rating.Dragon }}">
+                        {{ .Champion.Rating.Dragon | DisplayGrade }}
+                    </td>
+                </tr>
+                <tr style="height: 65px;">
+                    <td>Spider’s Den</td>
+                    <td class="champion-rating-{{ .Champion.Rating.Spider }}">
+                        {{ .Champion.Rating.Spider | DisplayGrade }}
+                    </td>
+                </tr>
+                <tr style="height: 65px;">
+                    <td>Fire Knight’s Castle</td>
+                    <td class="champion-rating-{{ .Champion.Rating.FireKnight }}">
+                        {{ .Champion.Rating.FireKnight | DisplayGrade }}
+                    </td>
+                </tr>
+                <tr style="height: 65px;">
+                    <td>Minotaur’s Labyrinth</td>
+                    <td class="champion-rating-{{ .Champion.Rating.Minotaur }}">
+                        {{ .Champion.Rating.Minotaur | DisplayGrade }}
+                    </td>
+                </tr>
+                <tr style="height: 65px;">
+                    <td>Force Keep</td>
+                    <td class="champion-rating-{{ .Champion.Rating.ForceDungeon }}">
+                        {{ .Champion.Rating.ForceDungeon | DisplayGrade }}
+                    </td>
+                </tr>
+                <tr style="height: 65px;">
+                    <td>Magic Keep</td>
+                    <td class="champion-rating-{{ .Champion.Rating.MagicDungeon }}">
+                        {{ .Champion.Rating.MagicDungeon | DisplayGrade }}
+                    </td>
+                </tr>
+                <tr style="height: 65px;">
+                    <td>Spirit Keep</td>
+                    <td class="champion-rating-{{ .Champion.Rating.SpiritDungeon }}">
+                        {{ .Champion.Rating.SpiritDungeon | DisplayGrade }}
+                    </td>
+                </tr>
+                <tr style="height: 65px;">
+                    <td>Void Keep</td>
+                    <td class="champion-rating-{{ .Champion.Rating.VoidDungeon }}">
+                        {{ .Champion.Rating.VoidDungeon | DisplayGrade }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{{ end }}

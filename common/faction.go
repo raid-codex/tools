@@ -3,9 +3,11 @@ package common
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io"
 	"sort"
 
+	"github.com/juju/errors"
 	"github.com/raid-codex/tools/seo"
 )
 
@@ -87,6 +89,10 @@ func (_ Faction) GetParentPageID() int { return 1730 }
 
 func (_ Faction) GetPageContent(input io.Reader, output io.Writer, extraData map[string]interface{}) error {
 	return nil
+}
+
+func (_ *Faction) GetPageContent_Templates(tmpl *template.Template, output io.Writer, extraData map[string]interface{}) error {
+	return errors.NotImplementedf("template for faction")
 }
 
 func (f Faction) GetPageExcerpt() string { return f.DefaultDescription }

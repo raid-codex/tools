@@ -4,6 +4,13 @@
         <span class="h4">
             {{ .Name }}
         </span>
+        {{ if .Upgrades }}
+        {{ with $lvl1 := index .Upgrades 0 }}
+        {{ if $lvl1.Cooldown }}
+        <br><i>Cooldown: {{ $lvl1.Cooldown }} turn{{ if gt $lvl1.Cooldown 1 }}s{{ end }}</i>
+        {{ end }}
+        {{ end }}
+        {{ end }}
     </div>
     {{ if .ImageSlug }}
     <div class="col-xs-12" style="min-height: 10px; padding: 10px;">

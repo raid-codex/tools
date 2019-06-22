@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io"
 	"io/ioutil"
+	"log"
 	"regexp"
 	"sort"
 	"strconv"
@@ -34,6 +35,7 @@ type Champion struct {
 	RecommendedBuilds  []*Build                  `json:"recommended_builds"`
 	Lore               string                    `json:"lore"`
 	GIID               string                    `json:"giid"`
+	Synergies          []*Synergy                `json:"synergy"`
 }
 
 func (c *Champion) Sanitize() error {
@@ -111,6 +113,17 @@ func (c *Champion) Sanitize() error {
 		errSanitize := aura.Sanitize()
 		if errSanitize != nil {
 			return errSanitize
+		}
+	}
+
+	errSynergy := c.computeSynergy()
+	if errSynergy != nil {
+		return errSynergy
+	}
+	for _, synergy := range c.Synergies {
+		errSanitizeSynergy := synergy.Sanitize()
+		if errSanitizeSynergy != nil {
+			return errSanitizeSynergy
 		}
 	}
 
@@ -439,4 +452,45 @@ func (c *Champion) GetSkillByName(name string) (*Skill, error) {
 		}
 	}
 	return nil, ErrSkillNotFound
+}
+
+func (c *Champion) computeSynergy() error {
+	if err := c.synergyA1Poison(); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Champion) synergyA1Poison() error {
+	switch true {
+	case FilterChampionStatusEffectOnSkill("A1", "poison")(c), FilterChampionStatusEffectOnSkill("A1", "poison-2")(c):
+		break
+	default:
+		log.Println("champion does not have poison")
+		return nil
+	}
+	// A1 poison is good with counterattack
+	counterAttack, errListCounterattack := GetChampions(FilterChampionStatusEffectWithTargets(StatusEffect_CounterAttack, TargetWho_AllAlly, TargetWho_TargetAlly, TargetWho_OtherAlly))
+	if errListCounterattack != nil {
+		return errListCounterattack
+	}
+	if len(counterAttack) > 0 {
+		synergy := c.getSynergy(SynergyContextKey_PoisonCounterattack)
+		synergy.Champions = make([]string, len(counterAttack))
+		for idx, champion := range counterAttack {
+			synergy.Champions[idx] = champion.Slug
+		}
+	}
+	return nil
+}
+
+func (c *Champion) getSynergy(key SynergyContextKey) *Synergy {
+	for _, synergy := range c.Synergies {
+		if synergy.Context.Key == key {
+			return synergy
+		}
+	}
+	synergy := &Synergy{Context: SynergyContext{Key: key}}
+	c.Synergies = append(c.Synergies, synergy)
+	return synergy
 }

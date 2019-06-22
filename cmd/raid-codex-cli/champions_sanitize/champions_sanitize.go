@@ -11,16 +11,22 @@ import (
 )
 
 type Command struct {
-	ChampionFile *string
+	ChampionFile  *string
+	DataDirectory *string
 }
 
 func New(cmd *kingpin.CmdClause) *Command {
 	return &Command{
-		ChampionFile: cmd.Flag("champion-file", "Filename for the champion").Required().String(),
+		ChampionFile:  cmd.Flag("champion-file", "Filename for the champion").Required().String(),
+		DataDirectory: cmd.Flag("data-directory", "Data directory").Required().String(),
 	}
 }
 
 func (c *Command) Run() {
+	errFactory := common.InitFactory(*c.DataDirectory)
+	if errFactory != nil {
+		utils.Exit(1, errFactory)
+	}
 	champion, errChampion := c.getChampion()
 	if errChampion != nil {
 		utils.Exit(1, errChampion)

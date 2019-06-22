@@ -217,6 +217,10 @@ var (
 	}
 )
 
+const (
+	StatusEffect_CounterAttack = "counterattack"
+)
+
 type StatusEffectList []*StatusEffect
 
 func (sl StatusEffectList) Sort() {

@@ -1,0 +1,3 @@
+{{ define "champion-image" }}
+<img src="{{ .Slug | championImageFallback | safeURL }}" alt="{{ .Name }}" title="{{ .Name }}">
+{{ end }}

@@ -4,9 +4,13 @@ import (
 	"fmt"
 	"html/template"
 	"strings"
+
+	"github.com/raid-codex/tools/common"
+	"github.com/raid-codex/tools/utils"
 )
 
 var (
+	rootUrl = "https://raid-codex.com"
 	FuncMap = template.FuncMap{
 		"ReviewGrade":  reviewGrade,
 		"ToLower":      strings.ToLower,
@@ -14,7 +18,73 @@ var (
 		"Percentage":   func(s float64) int64 { return int64(s * 100.0) },
 		"TrustAsHtml":  func(s string) template.HTML { return template.HTML(s) },
 		"dump":         func(v interface{}) string { return fmt.Sprintf("%+v", v) },
+		"synergy_raw_title": func(s common.SynergyContextKey) string {
+			if v, ok := common.SynergyData[s]; ok {
+				return v.Title
+			}
+			panic(fmt.Errorf("synergy Title not found: %s", s))
+		},
+		"synergy_raw_description": func(s common.SynergyContextKey) string {
+			if v, ok := common.SynergyData[s]; ok {
+				return v.RawDescription
+			}
+			panic(fmt.Errorf("synergy RawDescription not found: %s", s))
+		},
+		"getChampions": func(s []string) common.ChampionList {
+			champions, errChampions := common.GetChampions(func(champion *common.Champion) bool {
+				for _, c := range s {
+					if c == champion.Slug {
+						return true
+					}
+				}
+				return false
+			})
+			if errChampions != nil {
+				panic(errChampions)
+			}
+			return champions
+		},
+		"championImage": func(slug string) string {
+			return fmt.Sprintf("%s/wp-content/uploads/champions/image-champion-%s.jpg", rootUrl, slug)
+		},
+		"championThumbnail": func(slug string) string {
+			return fmt.Sprintf("%s/wp-content/uploads/champion-thumbnails/image-champion-small-%s.jpg", rootUrl, slug)
+		},
+		"websiteLink": func(websiteLink string) string {
+			return fmt.Sprintf("%s%s", rootUrl, websiteLink)
+		},
+		"championImageFallback": func(slug string) string {
+			img, err := utils.ImageFallback(
+				fmt.Sprintf("%s/wp-content/uploads/champions/image-champion-%s.jpg", rootUrl, slug),
+				fmt.Sprintf("%s/wp-content/uploads/champion-thumbnails/image-champion-small-%s.jpg", rootUrl, slug),
+				blankImage,
+			)
+			if err != nil {
+				panic(err)
+			}
+			return img
+		},
+		"skillImageFallback": func(slug string) string {
+			img, err := utils.ImageFallback(
+				fmt.Sprintf("%s/wp-content/uploads/hashed-img/%s.png", rootUrl, slug),
+				blankImage,
+			)
+			if err != nil {
+				panic(err)
+			}
+			return img
+		},
+		"safeAttr": func(s string) template.HTMLAttr {
+			return template.HTMLAttr(s)
+		},
+		"safeURL": func(s string) template.URL {
+			return template.URL(s)
+		},
 	}
+)
+
+const (
+	blankImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
 )
 
 var (

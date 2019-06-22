@@ -27,3 +27,15 @@ func (s *Synergy) Sanitize() error {
 	s.Champions = newChampions
 	return nil
 }
+
+var (
+	SynergyData = map[SynergyContextKey]struct {
+		Title          string
+		RawDescription string
+	}{
+		SynergyContextKey_PoisonCounterattack: {
+			Title:          "Poison and Counterattack",
+			RawDescription: "Mixing a champion having A1 applying a Poison debuff, and a champion able to place a counterattack buff on him, is a very good situational synergy that can be impressive during Clan Boss battles.",
+		},
+	}
+)

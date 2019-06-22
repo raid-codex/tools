@@ -1,21 +1,28 @@
 {{ define "single-skill" }}
 <div class="row" style="padding: 10px;">
     <div class="col-xs-12">
-        <span class="h4">
-            {{ .Name }}
-        </span>
-        {{ if .Upgrades }}
-        {{ with $lvl1 := index .Upgrades 0 }}
-        {{ if $lvl1.Cooldown }}
-        <br><i>Cooldown: {{ $lvl1.Cooldown }} turn{{ if gt $lvl1.Cooldown 1 }}s{{ end }}</i>
-        {{ end }}
-        {{ end }}
-        {{ end }}
+        <div class="row">
+            <div class="col-xs-12">
+                <span class="h4">
+                    {{ .Name }}
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12" style="min-height: 22px">
+                {{ if .Upgrades }}
+                {{ with $lvl1 := index .Upgrades 0 }}
+                {{ if $lvl1.Cooldown }}
+                <i>Cooldown: {{ $lvl1.Cooldown }} turn{{ if gt $lvl1.Cooldown 1 }}s{{ end }}</i>
+                {{ end }}
+                {{ end }}
+                {{ end }}
+            </div>
+        </div>
     </div>
     {{ if .ImageSlug }}
     <div class="col-xs-12" style="min-height: 10px; padding: 10px;">
-        <object data="https://raid-codex.com/wp-content/uploads/hashed-img/{{ .ImageSlug }}.png"
-            class="attachment-full size-full" style="max-width: 90px; max-height: 90px"></object>
+        <img src="{{ .ImageSlug | skillImageFallback | safeURL }}" style="max-width: 90px; max-height: 90px;">
     </div>
     {{ end }}
     <div class="col-xs-12">

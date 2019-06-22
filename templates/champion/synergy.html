@@ -1,0 +1,19 @@
+{{ define "synergy" }}
+{{ if .Champion.Synergies }}
+<div class="row">
+    <div class="col-xs-12">
+        <h2>Synergy</h2>
+        <i>This champion's ability can be paired with the following champions for better results.</i>
+    </div>
+    <div class="col-xs-12 related-posts">
+        <div class="row" style="margin-top: 30px;">
+            {{ range $synergy := .Champion.Synergies }}
+            <div class="col-xs-12 col-md-6">
+                {{ template "single-synergy" $synergy }}
+            </div>
+            {{ end }}
+        </div>
+    </div>
+</div>
+{{ end }}
+{{ end }}

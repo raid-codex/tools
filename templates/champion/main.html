@@ -26,6 +26,11 @@
             {{ template "champion-ratings" . }}
         </div>
     </div>
+    <div class="row">
+        <div class="col-xs-12">
+            {{ template "synergy" . }}
+        </div>
+    </div>
 </article>
 {{ range $data := .Champion.SEO.StructuredData }}
 <script type="application/ld+json">

@@ -35,6 +35,10 @@ func New(cmd *kingpin.CmdClause) *Command {
 }
 
 func (c *Command) Run() {
+	errInit := common.InitFactory(*c.DataDirectory)
+	if errInit != nil {
+		utils.Exit(1, errInit)
+	}
 	champion, errChampion := c.getChampion()
 	if errChampion != nil {
 		utils.Exit(1, errChampion)

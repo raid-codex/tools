@@ -1,7 +1,5 @@
 package common
 
-import "sort"
-
 type SynergyContext struct {
 	Key SynergyContextKey `json:"key"`
 }
@@ -19,16 +17,13 @@ const (
 
 func (s *Synergy) Sanitize() error {
 	championsUnique := map[string]bool{}
+	newChampions := make([]string, 0)
 	for _, champion := range s.Champions {
-		championsUnique[champion] = true
+		if !championsUnique[champion] {
+			championsUnique[champion] = true
+			newChampions = append(newChampions, champion)
+		}
 	}
-	newChampions := make([]string, len(championsUnique))
-	idx := 0
-	for champion := range championsUnique {
-		newChampions[idx] = champion
-		idx++
-	}
-	sort.SliceStable(newChampions, func(i, j int) bool { return newChampions[i] < newChampions[j] })
 	s.Champions = newChampions
 	return nil
 }

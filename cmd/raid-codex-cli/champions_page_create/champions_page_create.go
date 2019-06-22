@@ -30,8 +30,12 @@ func New(cmd *kingpin.CmdClause) *Command {
 }
 
 func (c *Command) Run() {
-	client := wp.GetWPClient()
+	errInit := common.InitFactory(*c.DataDirectory)
+	if errInit != nil {
+		utils.Exit(1, errInit)
+	}
 
+	client := wp.GetWPClient()
 	champion, errChampion := c.getChampion()
 	if errChampion != nil {
 		utils.Exit(1, errChampion)

@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"io"
 	"io/ioutil"
-	"log"
 	"regexp"
 	"sort"
 	"strconv"
@@ -116,6 +115,9 @@ func (c *Champion) Sanitize() error {
 		}
 	}
 
+	if c.Synergies == nil {
+		c.Synergies = make([]*Synergy, 0)
+	}
 	errSynergy := c.computeSynergy()
 	if errSynergy != nil {
 		return errSynergy
@@ -466,7 +468,6 @@ func (c *Champion) synergyA1Poison() error {
 	case FilterChampionStatusEffectOnSkill("A1", "poison")(c), FilterChampionStatusEffectOnSkill("A1", "poison-2")(c):
 		break
 	default:
-		log.Println("champion does not have poison")
 		return nil
 	}
 	// A1 poison is good with counterattack

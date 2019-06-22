@@ -289,6 +289,23 @@ func (cl ChampionList) Sort() {
 	})
 }
 
+func (cl ChampionList) Union(oth ChampionList) ChampionList {
+	unique := map[string]*Champion{}
+	for _, c := range cl {
+		unique[c.Slug] = c
+	}
+	for _, c := range oth {
+		unique[c.Slug] = c
+	}
+	newList := make(ChampionList, len(unique))
+	idx := 0
+	for _, champion := range unique {
+		newList[idx] = champion
+		idx++
+	}
+	return newList
+}
+
 var (
 	ratingToRank = map[string]int{
 		"SS": 5,
@@ -460,8 +477,15 @@ func (c *Champion) computeSynergy() error {
 	if err := c.synergyA1Poison(); err != nil {
 		return err
 	}
+	if err := c.synergyCounterAttack(); err != nil {
+		return err
+	}
 	return nil
 }
+
+var (
+	allyCounterattack = FilterChampionStatusEffectWithTargets(StatusEffect_CounterAttack, TargetWho_AllAlly, TargetWho_TargetAlly, TargetWho_OtherAlly)
+)
 
 func (c *Champion) synergyA1Poison() error {
 	switch true {
@@ -471,7 +495,7 @@ func (c *Champion) synergyA1Poison() error {
 		return nil
 	}
 	// A1 poison is good with counterattack
-	counterAttack, errListCounterattack := GetChampions(FilterChampionStatusEffectWithTargets(StatusEffect_CounterAttack, TargetWho_AllAlly, TargetWho_TargetAlly, TargetWho_OtherAlly))
+	counterAttack, errListCounterattack := GetChampions(allyCounterattack)
 	if errListCounterattack != nil {
 		return errListCounterattack
 	}
@@ -479,6 +503,30 @@ func (c *Champion) synergyA1Poison() error {
 		synergy := c.getSynergy(SynergyContextKey_PoisonCounterattack)
 		synergy.Champions = make([]string, len(counterAttack))
 		for idx, champion := range counterAttack {
+			synergy.Champions[idx] = champion.Slug
+		}
+	}
+	return nil
+}
+
+func (c *Champion) synergyCounterAttack() error {
+	if !allyCounterattack(c) {
+		return nil
+	}
+	// Look for A1 poison
+	championsPoison1, errPoison1 := GetChampions(FilterChampionStatusEffectOnSkill("A1", "poison"))
+	if errPoison1 != nil {
+		return errPoison1
+	}
+	championsPoison2, errPoison2 := GetChampions(FilterChampionStatusEffectOnSkill("A1", "poison-2"))
+	if errPoison2 != nil {
+		return errPoison2
+	}
+	championsPoison := championsPoison1.Union(championsPoison2)
+	if len(championsPoison) > 0 {
+		synergy := c.getSynergy(SynergyContextKey_PoisonCounterattack)
+		synergy.Champions = make([]string, len(championsPoison))
+		for idx, champion := range championsPoison {
 			synergy.Champions[idx] = champion.Slug
 		}
 	}

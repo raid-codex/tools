@@ -1,5 +1,7 @@
 package common
 
+import "sort"
+
 type SynergyContext struct {
 	Key SynergyContextKey `json:"key"`
 }
@@ -26,6 +28,7 @@ func (s *Synergy) Sanitize() error {
 		newChampions[idx] = champion
 		idx++
 	}
+	sort.SliceStable(newChampions, func(i, j int) bool { return newChampions[i] < newChampions[j] })
 	s.Champions = newChampions
 	return nil
 }

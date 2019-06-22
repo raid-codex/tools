@@ -2,6 +2,12 @@ package common
 
 type ChampionFilter func(*Champion) bool
 
+func FilterChampionNotSlug(slug string) ChampionFilter {
+	return func(champion *Champion) bool {
+		return champion.Slug != slug
+	}
+}
+
 func FilterChampionFactionSlug(slug string) ChampionFilter {
 	return func(champion *Champion) bool {
 		return champion.FactionSlug == slug

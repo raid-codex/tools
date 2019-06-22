@@ -87,5 +87,6 @@ CHAMPIONS:
 		}
 		cl = append(cl, champion)
 	}
+	cl.Sort()
 	return cl, nil
 }

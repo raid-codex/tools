@@ -303,6 +303,7 @@ func (cl ChampionList) Union(oth ChampionList) ChampionList {
 		newList[idx] = champion
 		idx++
 	}
+	newList.Sort()
 	return newList
 }
 
@@ -495,7 +496,7 @@ func (c *Champion) synergyA1Poison() error {
 		return nil
 	}
 	// A1 poison is good with counterattack
-	counterAttack, errListCounterattack := GetChampions(allyCounterattack)
+	counterAttack, errListCounterattack := GetChampions(allyCounterattack, FilterChampionNotSlug(c.Slug))
 	if errListCounterattack != nil {
 		return errListCounterattack
 	}
@@ -514,11 +515,11 @@ func (c *Champion) synergyCounterAttack() error {
 		return nil
 	}
 	// Look for A1 poison
-	championsPoison1, errPoison1 := GetChampions(FilterChampionStatusEffectOnSkill("A1", "poison"))
+	championsPoison1, errPoison1 := GetChampions(FilterChampionStatusEffectOnSkill("A1", "poison"), FilterChampionNotSlug(c.Slug))
 	if errPoison1 != nil {
 		return errPoison1
 	}
-	championsPoison2, errPoison2 := GetChampions(FilterChampionStatusEffectOnSkill("A1", "poison-2"))
+	championsPoison2, errPoison2 := GetChampions(FilterChampionStatusEffectOnSkill("A1", "poison-2"), FilterChampionNotSlug(c.Slug))
 	if errPoison2 != nil {
 		return errPoison2
 	}

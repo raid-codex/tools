@@ -67,6 +67,13 @@ func (c *Champion) Sanitize() error {
 	}
 	c.Faction = *faction
 	c.FactionSlug = faction.Slug
+	// ensure there's a faction
+	factions, errFactions := GetFactions(FilterFactionSlug(c.FactionSlug))
+	if errFactions != nil {
+		return errFactions
+	} else if len(factions) != 1 {
+		return fmt.Errorf("faction not found: %s", c.FactionSlug)
+	}
 
 	// link
 	c.WebsiteLink = fmt.Sprintf("/champions/%s/", c.Slug)

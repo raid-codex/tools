@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -19,11 +20,13 @@ type Command struct {
 	CSVFile       *string
 	CurrentFolder *string
 	TargetFolder  *string
+	DataDirectory *string
 	NoCurrent     *bool
 }
 
 func New(cmd *kingpin.CmdClause) *Command {
 	command := &Command{
+		DataDirectory: cmd.Flag("data-directory", "Data directory").Required().String(),
 		CSVFile:       cmd.Flag("csv-file", "CSV File").Required().String(),
 		CurrentFolder: cmd.Flag("current-folder", "Folder where current champions are stored").String(),
 		TargetFolder:  cmd.Flag("target-folder", "Folder in which the JSON files with champions data should be created").Required().String(),
@@ -33,6 +36,10 @@ func New(cmd *kingpin.CmdClause) *Command {
 }
 
 func (c *Command) Run() {
+	errInit := common.InitFactory(*c.DataDirectory)
+	if errInit != nil {
+		utils.Exit(1, errInit)
+	}
 	if *c.NoCurrent == false && *c.CurrentFolder == "" {
 		utils.Exit(1, errors.New("if no current folder, then --no-current should be set"))
 	}
@@ -71,7 +78,7 @@ func (c *Command) getSourceFileContent() (*Champions, error) {
 			return nil, fmt.Errorf("line %s has %d parts, not 20", strings.Join(line, ","), len(line))
 		} else if line[0] == "Factions" {
 			if strings.Join(line, ",") != csvSafeguardOrder {
-				return nil, fmt.Errorf("invalid csv")
+				return nil, fmt.Errorf("invalid csv\n'%s'\n'%s'", csvSafeguardOrder, strings.Join(line, ","))
 			}
 			// this is a header line, skip it
 			continue
@@ -85,6 +92,7 @@ func (c *Command) getSourceFileContent() (*Champions, error) {
 		}
 		champion.Faction = common.Faction{Name: line[0]}
 		champion.Name = line[1]
+		log.Printf("champion=%s\n", champion.Name)
 		champion.Rarity = line[2]
 		champion.Element = line[3]
 		champion.Type = line[4]
@@ -144,7 +152,7 @@ func (c *Command) getChampionByName(name string) (*common.Champion, error) {
 }
 
 const (
-	csvSafeguardOrder = `Factions,Champion,Rarity,Element,Typ,Overall,Campaign,Arena-Off,Arena-Deff,CB (- GS),CB (+GS),IceG,Dragon,Spider,FK,Mino,Force,Magic,Spirit,Void`
+	csvSafeguardOrder = `Factions,Champion,Rarity,Element,Typ,Overall,Campaign,Arena-Off,Arena-Deff,CB (-T6),CB (+T6),IceG,Dragon,Spider,FK,Mino,Force,Magic,Spirit,Void`
 )
 
 func (c *Command) exportContent(content *Champions) error {

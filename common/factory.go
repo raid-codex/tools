@@ -90,3 +90,21 @@ CHAMPIONS:
 	cl.Sort()
 	return cl, nil
 }
+
+func GetFactions(filters ...FactionFilter) (FactionList, error) {
+	if factory == nil {
+		return nil, ErrNotInitialized
+	}
+	cl := make(FactionList, 0)
+FACTIONS:
+	for _, faction := range factory.factions {
+		for _, filter := range filters {
+			if !filter(faction) {
+				continue FACTIONS
+			}
+		}
+		cl = append(cl, faction)
+	}
+	cl.Sort()
+	return cl, nil
+}

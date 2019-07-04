@@ -140,6 +140,12 @@ func (c *Champion) Sanitize() error {
 }
 
 func (c *Champion) defaultRating() {
+	if c.Rating == nil {
+		c.Rating = &Rating{}
+	}
+	if c.Reviews == nil {
+		c.Reviews = &Review{}
+	}
 	switch c.Rarity {
 	case "Common", "Uncommon":
 		// set ranking to D overall if no ranking

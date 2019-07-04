@@ -106,6 +106,9 @@ var (
 )
 
 func reviewGrade(gr float64) template.HTML {
+	if gr == 0.0 {
+			return template.HTML(`<span class="champion-rating-none">No ranking yet</span>`)
+	}
 	g := ""
 	for v, r := range ratingToRank {
 		if r == int(gr) {
@@ -122,7 +125,7 @@ func reviewGrade(gr float64) template.HTML {
 
 func grade(grade string) template.HTML {
 	if grade == "" {
-		return `<span class="champion-rating-none">No ranking yet</span>`
+		return template.HTML(`<span class="champion-rating-none">No ranking yet</span>`)
 	}
 	str := fmt.Sprintf(`<span class="champion-rating champion-rating-%s" title="%s">`, grade, gradeTitle(grade))
 	for i := 0; i < 5; i++ {

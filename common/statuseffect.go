@@ -32,7 +32,7 @@ func (se *StatusEffect) Sanitize() error {
 	if se.Slug == "" {
 		se.Slug = GetLinkNameFromSanitizedName(strings.Replace(se.Type, ".", "", -1))
 	}
-	if se.ImageSlug == "" {
+	if se.ImageSlug == "" || se.Type == "Revive on Death" {
 		se.ImageSlug = fmt.Sprintf("image-%s-%s", GetLinkNameFromSanitizedName(se.EffectType), se.Slug)
 	}
 	if se.Extra && !strings.HasSuffix(se.ImageSlug, "-2") {
@@ -74,7 +74,6 @@ var (
 		"Bomb":                  true,
 		"Stun":                  true,
 		"Block Buffs":           true,
-		"Revive on Death":       true,
 		"Heal Reduction":        true,
 		"Leech":                 true,
 	}
@@ -92,6 +91,7 @@ var (
 		"Block Debuffs":      true,
 		"Block Damage":       true,
 		"Increase C. DAMAGE": true,
+		"Revive on Death":    true,
 	}
 	battleEnhancements = map[string]bool{
 		"Ignore Block Damage":                 true,

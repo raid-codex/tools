@@ -50,12 +50,36 @@ var (
 		"championThumbnail": func(slug string) string {
 			return fmt.Sprintf("%s/wp-content/uploads/champion-thumbnails/image-champion-small-%s.jpg", rootUrl, slug)
 		},
+		"championThumbnailFallback": func(slug string) string {
+			champions, _ := common.GetChampions(func(champion *common.Champion) bool {
+				return champion.Slug == slug
+			})
+			if len(champions) != 1 {
+				panic(champions)
+			}
+			img, err := utils.ImageFallback(
+				fmt.Sprintf("%s/wp-content/uploads/hashed-img/%s.png", rootUrl, champions[0].Thumbnail),
+				fmt.Sprintf("%s/wp-content/uploads/champion-thumbnails/image-champion-small-%s.jpg", rootUrl, slug),
+				blankImage,
+			)
+			if err != nil {
+				panic(err)
+			}
+			return img
+		},
 		"websiteLink": func(websiteLink string) string {
 			return fmt.Sprintf("%s%s", rootUrl, websiteLink)
 		},
 		"championImageFallback": func(slug string) string {
+			champions, _ := common.GetChampions(func(champion *common.Champion) bool {
+				return champion.Slug == slug
+			})
+			if len(champions) != 1 {
+				panic(champions)
+			}
 			img, err := utils.ImageFallback(
 				fmt.Sprintf("%s/wp-content/uploads/champions/image-champion-%s.jpg", rootUrl, slug),
+				fmt.Sprintf("%s/wp-content/uploads/hashed-img/%s.png", rootUrl, champions[0].Thumbnail),
 				fmt.Sprintf("%s/wp-content/uploads/champion-thumbnails/image-champion-small-%s.jpg", rootUrl, slug),
 				blankImage,
 			)
@@ -107,7 +131,7 @@ var (
 
 func reviewGrade(gr float64) template.HTML {
 	if gr == 0.0 {
-			return template.HTML(`<span class="champion-rating-none">No ranking yet</span>`)
+		return template.HTML(`<span class="champion-rating-none">No ranking yet</span>`)
 	}
 	g := ""
 	for v, r := range ratingToRank {

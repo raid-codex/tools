@@ -1,6 +1,7 @@
 package common
 
 import (
+	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -35,6 +36,7 @@ type Champion struct {
 	Lore               string                    `json:"lore"`
 	GIID               string                    `json:"giid"`
 	Synergies          []*Synergy                `json:"synergy"`
+	Thumbnail          string                    `json:"thumbnail"`
 }
 
 func (c *Champion) Sanitize() error {
@@ -105,13 +107,27 @@ func (c *Champion) Sanitize() error {
 
 	c.defaultRating()
 
+	passiveCount := 1
+	skillCount := 1
 	for idx, skill := range c.Skills {
 		if c.GIID != "" && skill.GIID == "" {
 			skill.GIID = fmt.Sprintf("%s_s%d", c.GIID, idx+1)
 		}
+		if skill.SkillNumber == "" {
+			if skill.Passive {
+				skill.SkillNumber = fmt.Sprintf("P%d", passiveCount)
+			} else {
+				skill.SkillNumber = fmt.Sprintf("A%d", skillCount)
+			}
+		}
 		errSanitize := skill.Sanitize()
 		if errSanitize != nil {
 			return errSanitize
+		}
+		if skill.Passive {
+			passiveCount++
+		} else {
+			skillCount++
 		}
 	}
 
@@ -134,6 +150,10 @@ func (c *Champion) Sanitize() error {
 		if errSanitizeSynergy != nil {
 			return errSanitizeSynergy
 		}
+	}
+
+	if c.GIID != "" {
+		c.Thumbnail = fmt.Sprintf("%x", md5.Sum([]byte(c.GIID)))
 	}
 
 	return nil

@@ -1,0 +1,10 @@
+{{ define "champion-list" }}
+<div class="row ng-champion-list">
+    <div class="col-xs-12">
+        <div ng-app="websiteApp">
+            <champion-list show-filters="{'name':true,'faction':true,'element':true,'type':true}"
+                filters="{'{{ .StatusEffect.EffectType }}': ['{{ .StatusEffect.Type }}']}"></champion-list>
+        </div>
+    </div>
+</div>
+{{ end }}

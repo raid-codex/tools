@@ -8,8 +8,6 @@ import (
 	"regexp"
 	"sort"
 	"strings"
-
-	"github.com/juju/errors"
 )
 
 type StatusEffect struct {
@@ -268,8 +266,9 @@ func (se StatusEffect) GetPageContent(input io.Reader, output io.Writer, extraDa
 	return err
 }
 
-func (_ *StatusEffect) GetPageContent_Templates(tmpl *template.Template, output io.Writer, extraData map[string]interface{}) error {
-	return errors.NotImplementedf("template for faction")
+func (se *StatusEffect) GetPageContent_Templates(tmpl *template.Template, output io.Writer, extraData map[string]interface{}) error {
+	extraData["StatusEffect"] = se
+	return tmpl.Execute(output, extraData)
 }
 
 func (se StatusEffect) GetPageExcerpt() string { return se.RawDescription }
@@ -277,35 +276,44 @@ func (se StatusEffect) GetPageExcerpt() string { return se.RawDescription }
 func (se *StatusEffect) GetPageExtraData(dataDirectory string) (map[string]interface{}, error) {
 	data := map[string]interface{}{}
 
-	champions, errChampions := fetchChampions(dataDirectory)
-	if errChampions != nil {
-		return nil, errChampions
-	}
-
 	statusList, errStatus := fetchStatusEffects(dataDirectory)
 	if errStatus != nil {
 		return nil, errStatus
 	}
 	potentialUpgrade := fmt.Sprintf("%s-2", se.Slug)
+	data["DescriptionClass"] = "col-xs-12"
 	if _, ok := statusList[potentialUpgrade]; ok {
 		data["UpgradedVersionOfStatusEffect"] = statusList[potentialUpgrade]
+		data["DescriptionClass"] = "col-xs-12 col-md-6"
 	}
 
 	mapChampions := map[string]*Champion{}
 	championEffect := map[string]map[string]*StatusEffect{}
-	for _, champion := range champions {
-		for _, skill := range champion.Skills {
-			for _, effect := range skill.Effects {
-				if se.equals(effect) {
-					mapChampions[champion.Slug] = champion
-					if _, ok := championEffect[champion.Slug]; !ok {
-						championEffect[champion.Slug] = map[string]*StatusEffect{}
-					}
-					championEffect[champion.Slug][effect.Slug] = effect
-				}
-			}
+	cl1, errCL := GetChampions(FilterChampionStatusEffect(se.Slug))
+	if errCL != nil {
+		return nil, errCL
+	}
+	cl2 := make(ChampionList, 0)
+	if data["UpgradedVersionOfStatusEffect"] != nil {
+		cl2, errCL = GetChampions(FilterChampionStatusEffect(data["UpgradedVersionOfStatusEffect"].(*StatusEffect).Slug))
+		if errCL != nil {
+			return nil, errCL
 		}
 	}
+	runner := func(cl ChampionList, statusEffect *StatusEffect) {
+		for _, champion := range cl {
+			mapChampions[champion.Slug] = champion
+			if _, ok := championEffect[champion.Slug]; !ok {
+				championEffect[champion.Slug] = map[string]*StatusEffect{}
+			}
+			championEffect[champion.Slug][statusEffect.Slug] = statusEffect
+		}
+	}
+	runner(cl1, se)
+	if data["UpgradedVersionOfStatusEffect"] != nil {
+		runner(cl2, data["UpgradedVersionOfStatusEffect"].(*StatusEffect))
+	}
+
 	matching := make([]*Champion, len(mapChampions))
 	idx := 0
 	for _, champion := range mapChampions {

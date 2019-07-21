@@ -1,0 +1,28 @@
+{{ define "description" }}
+{{ if or (eq .StatusEffect.EffectType "buff") (eq .StatusEffect.EffectType "debuff") }}
+<div class="row">
+    <div class="{{ .DescriptionClass }} centered">
+        <div class="row">
+            <div class="col-xs-12">
+                {{ .StatusEffect | effectImage }}
+            </div>
+            <div class="col-xs-12" style="font-weight: bold">
+                {{ .StatusEffect.RawDescription }}
+            </div>
+        </div>
+    </div>
+    {{ if .UpgradedVersionOfStatusEffect }}
+    <div class="{{ .DescriptionClass }} centered">
+        <div class="row">
+            <div class="col-xs-12">
+                {{ .UpgradedVersionOfStatusEffect | effectImage }}
+            </div>
+            <div class="col-xs-12" style="font-weight: bold">
+                {{ .UpgradedVersionOfStatusEffect.RawDescription }}
+            </div>
+        </div>
+    </div>
+    {{ end }}
+</div>
+{{ end }}
+{{ end }}

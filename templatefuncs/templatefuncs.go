@@ -75,7 +75,7 @@ var (
 				return champion.Slug == slug
 			})
 			if len(champions) != 1 {
-				panic(champions)
+				panic(fmt.Sprintf("found champions: %+v for slug %s", champions, slug))
 			}
 			img, err := utils.ImageFallback(
 				fmt.Sprintf("%s/wp-content/uploads/champions/image-champion-%s.jpg", rootUrl, slug),
@@ -103,6 +103,18 @@ var (
 		},
 		"safeURL": func(s string) template.URL {
 			return template.URL(s)
+		},
+		"effectImage": func(se *common.StatusEffect) template.HTML {
+			img, err := utils.ImageFallback(
+				fmt.Sprintf("%s/wp-content/uploads/status-effects/%s.png", rootUrl, se.ImageSlug),
+				blankImage,
+			)
+			if err != nil {
+				panic(err)
+			}
+			return template.HTML(fmt.Sprintf(
+				`<img src="%s" title="%s" alt="%s">`, img, se.RawDescription, se.Type,
+			))
 		},
 	}
 )

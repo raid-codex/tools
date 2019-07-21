@@ -63,8 +63,7 @@
                                 <strong>Status effects</strong><br>
                                 {{ range  $effect := .Effects }}{{ $effectData := index $.AllEffects $effect.Slug }}
                                 <a href="{{$effect.WebsiteLink | websiteLink | safeURL }}">
-                                    <img src="https://raid-codex.com/wp-content/uploads/status-effects/{{$effect.ImageSlug}}.png"
-                                        title="{{ $effectData.RawDescription }}" alt="{{ $effectData.Type }}">
+                                    {{ $effect | effectImage }}
                                 </a>
                                 {{ end }}
                             </p>

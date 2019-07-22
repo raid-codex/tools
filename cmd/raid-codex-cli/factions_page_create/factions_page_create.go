@@ -48,12 +48,12 @@ func (c *Command) Run() {
 	if errPage != nil && !errors.IsNotFound(errPage) {
 		utils.Exit(1, errPage)
 	} else if errPage != nil && errors.IsNotFound(errPage) {
-		errCreate := wp.CreatePage(client, faction, "", *c.DataDirectory, tmpl)
+		errCreate := wp.CreatePage(client, faction, "this-is-for-compat", *c.DataDirectory, tmpl)
 		if errCreate != nil {
 			utils.Exit(1, errCreate)
 		}
 	} else {
-		errUpdate := wp.UpdatePage(client, page, faction, "", *c.DataDirectory, tmpl)
+		errUpdate := wp.UpdatePage(client, page, faction, "this-is-for-compat", *c.DataDirectory, tmpl)
 		if errUpdate != nil {
 			utils.Exit(1, errUpdate)
 		}

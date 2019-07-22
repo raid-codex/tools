@@ -47,6 +47,12 @@ func (f *Faction) Sanitize() error {
 		f.DefaultSEO()
 	}
 
+	championList, errChampions := GetChampions(FilterChampionFactionSlug(f.Slug))
+	if errChampions != nil {
+		return errChampions
+	}
+	f.NumberOfChampions = int64(len(championList))
+
 	return nil
 }
 

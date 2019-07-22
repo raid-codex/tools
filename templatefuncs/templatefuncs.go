@@ -116,6 +116,18 @@ var (
 				`<img src="%s" title="%s" alt="%s">`, img, se.RawDescription, se.Type,
 			))
 		},
+		"factionImage": func(faction *common.Faction) template.HTML {
+			img, err := utils.ImageFallback(
+				fmt.Sprintf("%s/wp-content/uploads/factions/%s.png", rootUrl, faction.ImageSlug),
+				blankImage,
+			)
+			if err != nil {
+				panic(err)
+			}
+			return template.HTML(fmt.Sprintf(
+				`<img src="%s" title="%s" alt="%s">`, img, faction.Name, faction.Name,
+			))
+		},
 	}
 )
 

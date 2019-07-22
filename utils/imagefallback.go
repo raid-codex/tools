@@ -43,7 +43,7 @@ func imageFallback(url string) error {
 	if err != nil {
 		return err
 	} else if resp.StatusCode == 404 {
-		return err
+		return fmt.Errorf("404 not found")
 	}
 	return nil
 }

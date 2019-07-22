@@ -7,7 +7,6 @@ import (
 	"io"
 	"sort"
 
-	"github.com/juju/errors"
 	"github.com/raid-codex/tools/seo"
 )
 
@@ -83,7 +82,7 @@ func (f Faction) GetPageTitle() string { return f.Name }
 
 func (f Faction) GetPageSlug() string { return f.Slug }
 
-func (_ Faction) GetPageTemplate() string { return "page-templates/template-faction.php" }
+func (_ Faction) GetPageTemplate() string { return "page-templates/template-champion-generated.php" }
 
 func (_ Faction) GetParentPageID() int { return 1730 }
 
@@ -91,8 +90,14 @@ func (_ Faction) GetPageContent(input io.Reader, output io.Writer, extraData map
 	return nil
 }
 
-func (_ *Faction) GetPageContent_Templates(tmpl *template.Template, output io.Writer, extraData map[string]interface{}) error {
-	return errors.NotImplementedf("template for faction")
+func (f *Faction) GetPageContent_Templates(tmpl *template.Template, output io.Writer, extraData map[string]interface{}) error {
+	extraData["Faction"] = f
+	champions, errChampions := GetChampions(FilterChampionFactionSlug(f.Slug))
+	if errChampions != nil {
+		return errChampions
+	}
+	extraData["AvailableChampions"] = champions
+	return tmpl.Execute(output, extraData)
 }
 
 func (f Faction) GetPageExcerpt() string { return f.DefaultDescription }

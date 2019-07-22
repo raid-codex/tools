@@ -1,4 +1,4 @@
-package champions_page_generate
+package factions_page_generate
 
 import (
 	"bytes"
@@ -16,7 +16,7 @@ import (
 )
 
 type Command struct {
-	ChampionFile   *string
+	FactionFile    *string
 	TemplateFolder *string
 	OutputFile     *string
 	PageTemplate   *string
@@ -25,7 +25,7 @@ type Command struct {
 
 func New(cmd *kingpin.CmdClause) *Command {
 	return &Command{
-		ChampionFile:   cmd.Flag("champion-file", "Filename for the champion").Required().String(),
+		FactionFile:    cmd.Flag("faction-file", "Filename for the faction").Required().String(),
 		DataDirectory:  cmd.Flag("data-directory", "Data directory").Required().String(),
 		TemplateFolder: cmd.Flag("template-folder", "Template folder").Required().String(),
 		OutputFile:     cmd.Flag("output-file", "Output file").Required().String(),
@@ -38,9 +38,9 @@ func (c *Command) Run() {
 	if errInit != nil {
 		utils.Exit(1, errInit)
 	}
-	champion, errChampion := c.getChampion()
-	if errChampion != nil {
-		utils.Exit(1, errChampion)
+	faction, errFaction := c.getFaction()
+	if errFaction != nil {
+		utils.Exit(1, errFaction)
 	}
 	outputFile, errOutput := os.Create(*c.OutputFile)
 	if errOutput != nil {
@@ -51,12 +51,12 @@ func (c *Command) Run() {
 	if errLoad != nil {
 		utils.Exit(1, errLoad)
 	}
-	extraData, errData := champion.GetPageExtraData(*c.DataDirectory)
+	extraData, errData := faction.GetPageExtraData(*c.DataDirectory)
 	if errData != nil {
 		utils.Exit(1, errData)
 	}
 	buf := bytes.NewBufferString("")
-	errTemplate := champion.GetPageContent_Templates(templates, buf, extraData)
+	errTemplate := faction.GetPageContent_Templates(templates, buf, extraData)
 	if errTemplate != nil {
 		utils.Exit(1, errTemplate)
 	}
@@ -86,17 +86,17 @@ func (c *Command) loadTemplates() (*template.Template, error) {
 	return template.New("main.html").Funcs(templatefuncs.FuncMap).ParseFiles(templateFiles...)
 }
 
-func (c *Command) getChampion() (*common.Champion, error) {
-	file, errFile := os.Open(*c.ChampionFile)
+func (c *Command) getFaction() (*common.Faction, error) {
+	file, errFile := os.Open(*c.FactionFile)
 	if errFile != nil {
 		return nil, errors.Annotate(errFile, "cannot open file")
 	}
 	defer file.Close()
 
-	var champion common.Champion
-	errJSON := json.NewDecoder(file).Decode(&champion)
+	var faction common.Faction
+	errJSON := json.NewDecoder(file).Decode(&faction)
 	if errJSON != nil {
 		return nil, errors.Annotate(errJSON, "cannot unmarshal file")
 	}
-	return &champion, nil
+	return &faction, nil
 }

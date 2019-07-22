@@ -3,6 +3,8 @@ package main
 import (
 	"os"
 
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_generate"
+
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_characteristics_parser"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_create"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_generate"
@@ -89,6 +91,9 @@ var (
 	factionsPageCreate    = factionsPage.Command("create", "Create the page for the faction")
 	factionsPageCreateCmd = factions_page_create.New(factionsPageCreate)
 
+	factionsPageGenerate    = factionsPage.Command("generate", "Generate the page for the faction")
+	factionsPageGenerateCmd = factions_page_generate.New(factionsPageGenerate)
+
 	factionsPageSeo              = factionsPage.Command("seo", "Deal with SEO for a faction page")
 	factionsPageSeoSetDefault    = factionsPageSeo.Command("set-default", "Reset SEO settings to default")
 	factionsPageSeoSetDefaultCmd = factions_page_seo.New(factionsPageSeoSetDefault, "set-default")
@@ -139,6 +144,7 @@ var (
 		"champions rebuild-index":         championsRebuildIndexCmd,
 		"factions page seo set-default":   factionsPageSeoSetDefaultCmd,
 		"factions page seo apply":         factionsPageSeoApplyCmd,
+		"factions page generate":          factionsPageGenerateCmd,
 		"champions characteristics parse": championsCharacteristicsParserCmd,
 		"champions sanitize":              championsSanitizeCmd,
 		"factions sanitize":               factionsSanitizeCmd,

@@ -1,0 +1,35 @@
+{{ define "champion-table" }}
+<div class="row">
+    <div class="col-xs-12">
+        <table class="centered table-responsive table-hover table champion-list-table no-header-mobile hidden-xs">
+            <thead>
+                <tr class="row-header">
+                    <th class="table-header-image"></th>
+                    <th class="table-header-name">Name</th>
+                    <th class="table-header-faction">Faction</th>
+                    <th class="table-header-rarity">Rarity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range $champion := .AvailableChampions }}
+                <tr>
+                    <td class="table-col-image">
+                        <!--<img width="150" height="150" src="{{ $champion.Slug | championImageFallback }}"
+                            class="attachment-thumbnail size-thumbnail" alt="">-->
+                    </td>
+                    <td class="table-col-name"><strong><a
+                                href="{{ $champion.WebsiteLink }}">{{ $champion.Name }}</a></strong>
+                    </td>
+                    <td class="table-col-faction"><a
+                            href="{{ $champion.Faction.WebsiteLink }}">{{ $champion.Faction.Name }}</a>
+                    </td>
+                    <td class="table-col-rarity"><span
+                            class="champion-rarity champion-rarity-{{ $champion.Rarity | ToLower }}">{{ $champion.Rarity }}</span>
+                    </td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{ end}}

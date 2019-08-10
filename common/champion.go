@@ -37,6 +37,8 @@ type Champion struct {
 	GIID               string                    `json:"giid"`
 	Synergies          []*Synergy                `json:"synergy"`
 	Thumbnail          string                    `json:"thumbnail"`
+	Tags               []string                  `json:"tags"`
+	Masteries          []*Masteries              `json:"masteries"`
 }
 
 func (c *Champion) Sanitize() error {
@@ -157,6 +159,15 @@ func (c *Champion) Sanitize() error {
 
 	if c.GIID != "" {
 		c.Thumbnail = fmt.Sprintf("%x", md5.Sum([]byte(c.GIID)))
+	}
+
+	if c.Tags == nil {
+		c.Tags = make([]string, 0)
+	}
+	sort.SliceStable(c.Tags, func(i, j int) bool { return c.Tags[i] < c.Tags[j] })
+
+	if c.Masteries == nil {
+		c.Masteries = make([]*Masteries, 0)
 	}
 
 	return nil

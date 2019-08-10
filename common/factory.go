@@ -15,6 +15,7 @@ type Factory struct {
 	champions     ChampionList
 	statusEffects StatusEffectList
 	factions      FactionList
+	fusions       FusionList
 }
 
 func InitFactory(dataDirectory string) error {
@@ -30,6 +31,9 @@ func (f *Factory) init(dataDirectory string) error {
 		return err
 	}
 	if err := f.fetchStatusEffects(fmt.Sprintf("%s/docs/status-effects/current/", dataDirectory)); err != nil {
+		return err
+	}
+	if err := f.fetchFusions(fmt.Sprintf("%s/docs/fusions/current/", dataDirectory)); err != nil {
 		return err
 	}
 	return nil
@@ -72,6 +76,18 @@ func (f *Factory) fetchStatusEffects(dir string) error {
 	}
 	return nil
 }
+func (f *Factory) fetchFusions(dir string) error {
+	file, errOpen := os.Open(fmt.Sprintf("%s/index.json", dir))
+	if errOpen != nil {
+		return errOpen
+	}
+	defer file.Close()
+	errJSON := json.NewDecoder(file).Decode(&f.fusions)
+	if errJSON != nil {
+		return errJSON
+	}
+	return nil
+}
 
 func GetChampions(filters ...ChampionFilter) (ChampionList, error) {
 	if factory == nil {
@@ -104,6 +120,24 @@ FACTIONS:
 			}
 		}
 		cl = append(cl, faction)
+	}
+	cl.Sort()
+	return cl, nil
+}
+
+func GetFusions(filters ...FusionFilter) (FusionList, error) {
+	if factory == nil {
+		return nil, ErrNotInitialized
+	}
+	cl := make(FusionList, 0)
+FUSION:
+	for _, fusion := range factory.fusions {
+		for _, filter := range filters {
+			if !filter(fusion) {
+				continue FUSION
+			}
+		}
+		cl = append(cl, fusion)
 	}
 	cl.Sort()
 	return cl, nil

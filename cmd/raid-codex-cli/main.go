@@ -3,6 +3,9 @@ package main
 import (
 	"os"
 
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_rebuild_index"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_sanitize"
+
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_generate"
 
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_characteristics_parser"
@@ -133,6 +136,14 @@ var (
 	parseFullSheet    = parse.Command("full-sheet", "Parse the full-sheet stuff")
 	parseFullSheetCmd = parse_full_sheet.New(parseFullSheet)
 
+	fusions = app.Command("fusions", "do stuff with fusions")
+
+	fusionsSanitize    = fusions.Command("sanitize", "sanitize fusion file")
+	fusionsSanitizeCmd = fusions_sanitize.New(fusionsSanitize)
+
+	fusionsRebuildIndex    = fusions.Command("rebuild-index", "rebuild faction index")
+	fusionsRebuildIndexCmd = fusions_rebuild_index.New(fusionsRebuildIndex)
+
 	runByCmd = map[string]Runnable{
 		"champions parse":                 championsParseCmd,
 		"factions parse":                  factionsParseCmd,
@@ -157,5 +168,7 @@ var (
 		"status-effect page generate":     statusEffectPageGenerateCmd,
 		"status-effect page create":       statusEffectPageCreateCmd,
 		"parse full-sheet":                parseFullSheetCmd,
+		"fusions sanitize":                fusionsSanitizeCmd,
+		"fusions rebuild-index":           fusionsRebuildIndexCmd,
 	}
 )

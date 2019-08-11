@@ -39,6 +39,12 @@ type Champion struct {
 	Thumbnail          string                    `json:"thumbnail"`
 	Tags               []string                  `json:"tags"`
 	Masteries          []*Masteries              `json:"masteries"`
+	FusionData         []*ChampionFusionData     `json:"fusion_data"`
+}
+
+type ChampionFusionData struct {
+	FusionSlug string `json:"fusion_slug"`
+	FusionType string `json:"fusion_type"`
 }
 
 func (c *Champion) Sanitize() error {
@@ -170,6 +176,31 @@ func (c *Champion) Sanitize() error {
 		c.Masteries = make([]*Masteries, 0)
 	}
 
+	if err := c.lookupFusions(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Champion) lookupFusions() error {
+	fusions, errFusions := GetFusions(func(f *Fusion) bool {
+		if f.hasChampion(c.Slug) {
+			return true
+		}
+		return false
+	})
+	if errFusions != nil {
+		return errFusions
+	}
+	c.FusionData = make([]*ChampionFusionData, 0)
+	for _, fusion := range fusions {
+		if fusion.ChampionSlug == c.Slug {
+			c.FusionData = append(c.FusionData, &ChampionFusionData{FusionSlug: fusion.Slug, FusionType: "fused"})
+		} else if fusion.hasChampionAsIngredient(c.Slug) {
+			c.FusionData = append(c.FusionData, &ChampionFusionData{FusionSlug: fusion.Slug, FusionType: "ingredient"})
+		}
+	}
 	return nil
 }
 
@@ -504,6 +535,26 @@ func (c *Champion) GetPageExtraData(dataDirectory string) (map[string]interface{
 	}
 
 	data["AllEffects"] = statusList
+
+	fusions, errFusions := GetFusions()
+	if errFusions != nil {
+		return nil, errFusions
+	}
+	fusionsM := map[string]*Fusion{}
+	for _, fusion := range fusions {
+		fusionsM[fusion.Slug] = fusion
+	}
+	data["Fusions"] = fusionsM
+
+	champions, errChampions := GetChampions()
+	if errChampions != nil {
+		return nil, errChampions
+	}
+	championsM := map[string]*Champion{}
+	for _, champion := range champions {
+		championsM[champion.Slug] = champion
+	}
+	data["Champions"] = championsM
 
 	return data, nil
 }

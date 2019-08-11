@@ -1,0 +1,22 @@
+{{ define "fusion-card" }}
+{{ $fusion := getRootFusion .Fusions .FusionData.FusionSlug }}
+<div class="col-xs-12 col-md-6 col-lg-4 centered">
+    {{ $champion := index .Champions $fusion.ChampionSlug }}
+    <a href="{( $champion.WebsiteLink }}">
+        <img src="{{ $champion.Slug | championImageFallback }}" style="max-width: 150px; max-height:150px"><br>
+    </a>
+    {{ if eq .FusionData.FusionType "fused" }}
+    {{ if $fusion.Active }}
+    This champion can be fused as part of the <a href="/fusions/{{ $fusion.Slug }}">{{ $fusion.Name }}</a> fusion!
+    {{ else }}
+    This champion used to be fused as part of the <a href="/fusions/{{ $fusion.Slug }}">{{ $fusion.Name }}</a> fusion.
+    {{ end }}
+    {{ else if eq .FusionData.FusionType "ingredient" }}
+    {{ if $fusion.Active }}
+    This champion is an <a href="/fusions/{{ $fusion.Slug}}">ingredient to fuse {{ $champion.Name }}</a>!
+    {{ else }}
+    This champion used to be an <a href="/fusions/{{ $fusion.Slug}}">ingredient to fuse {{ $champion.Name }}</a>.
+    {{ end }}
+    {{ end }}
+</div>
+{{ end }}

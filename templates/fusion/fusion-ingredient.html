@@ -1,0 +1,11 @@
+{{ define "fusion-ingredient" }}
+<div class="row">
+    <div class="col-xs-12" {{ if eq .FusionLevel 33 }} style="border: 1px dashed" {{ end }}>
+        {{ if .Ingredient.Fusion }}
+        {{ template "fusion" dict "Fusion" .Ingredient.Fusion "Champions" .Champions "FusionLevel" (add .FusionLevel 1) "Ingredient" .Ingredient}}
+        {{ else }}
+        {{ template "fusion-champion" dict "ChampionSlug" .Ingredient.ChampionSlug "Ingredient" .Ingredient "Champions" .Champions "FusionLevel" (add .FusionLevel 1)}}
+        {{ end }}
+    </div>
+</div>
+{{ end }}

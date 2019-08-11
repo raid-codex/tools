@@ -1,0 +1,24 @@
+{{ define "fusion-champion" }}
+{{ $champion := index .Champions .ChampionSlug }}
+{{ $level := .FusionLevel }}
+{{ $ingredient := .Ingredient }}
+<div class="row" style="margin-bottom: 25px">
+    <div class="col-xs-12 hidden-lg hidden-md" {{ if gt $level 2 }} style="padding: 20px" {{ end }}>
+        <a href="{{ $champion.WebsiteLink }}"><img src="{{ .ChampionSlug | championThumbnailFallback }}"></a>
+    </div>
+    <div class="col-xs-12 hidden-xs hidden-sm">
+        <a href="{{ $champion.WebsiteLink }}"><img src="{{ .ChampionSlug | championThumbnailFallback }}"></a>
+    </div>
+    <div class="col-xs-12 hidden-xs hidden-sm">
+        {{ $champion.Name }}
+        {{ if $ingredient }}
+        <br>
+        {{ range $idx := repeat $ingredient.Stars }}
+        <i
+            class="champion-star fas fa-star {{ if not (gt $idx $ingredient.AscendedStars) }}champion-star-ascended{{ end }}"></i>
+        {{ end }}
+        ({{ $ingredient.Level }})
+        {{ end }}
+    </div>
+</div>
+{{ end }}

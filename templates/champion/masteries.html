@@ -1,0 +1,54 @@
+{{ define "masteries" }}
+<div class="row">
+    <div class="col-xs-12">
+        <h2>Masteries</h2>
+        <i>Advices regarding the mastery choice for this Champion.</i>
+    </div>
+    <div class="col-xs-12 col-md-6">
+        <div class="row">
+            <div class="col-xs-12">
+                <h3>T6: Warmaster or Giant Slayer?</h3>
+                <div class="row">
+                    <div class="col-xs-12 col-md-6">
+                        <h4>Clan Boss</h4>
+                        {{ $a1 := index .Champion.Skills 0 }}
+                        {{ $hits := $a1 | getHitsOfSkill }}
+                        {{ if eq $hits 0 }}
+                        We don't have enough information about this Champion to determine whether he should have
+                        Warmaster or
+                        Giant
+                        Slayer as T6 mastery.
+                        {{ else if lt $hits 3 }}
+                        We recommend using <strong style="font-size:18px;">Warmaster</strong>, the skill {{ $a1.Name }}
+                        hits
+                        {{ $hits }}
+                        time{{ if eq $hits 2 }}s{{end}}, which will benefit more to Warmaster than Giant Slayer.
+                        {{ else }}
+                        We recommend using <strong style="font-size:18px;">Giant Slayer</strong>, the skill
+                        {{ $a1.Name }} hits
+                        {{ $hits }} times, which
+                        will
+                        benefit more to Giant Slayer than Warmaster.
+                        {{ end }}
+                    </div>
+                    <div class="col-xs-12 col-md-6">
+                        <h4>Arena</h4>
+                        We recommend using <strong style="font-size:18px;">Warmaster</strong> in the Arena, despite the
+                        number
+                        of hits any skill from
+                        this Champion does.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class=" row" style="margin-top: 40px;">
+            <div class="col-xs-12">
+                <i>
+                    This is based on <a href="https://raid-codex.com/guides/warmaster-or-giant-slayer/">
+                        Warmaster or Giant Slayer?
+                    </a>. Please refer to the article for more informations.</i>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}

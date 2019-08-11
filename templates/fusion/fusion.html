@@ -1,0 +1,22 @@
+{{ define "fusion" }}
+{{ $fusion := .Fusion }}
+{{ $champions := .Champions }}
+{{ $level := .FusionLevel}}
+{{ $length := len .Fusion.Ingredients }}
+{{ $ingredient := .Ingredient }}
+<div class="row">
+    <div class="col-xs-12 centered">
+        {{ template "fusion-champion" dict "ChampionSlug" .Fusion.ChampionSlug "Ingredient" $ingredient "Champions" $champions "FusionLevel" $level }}
+    </div>
+    <div class="col-xs-12">
+        <div class="row fusion-ingredients">
+            {{ range $ingredient := .Fusion.Ingredients}}
+            <div
+                class="{{ if eq $level 1 }}fusion-ingredient{{ end }} {{ if eq $length 1}}col-xs-12{{ else if or (eq $length 2) (gt $level 1) }}col-xs-12 col-md-6{{ else if eq $length 3 }}col-xs-4{{ else if eq $length 4 }}col-xs-3{{end}} centered">
+                {{ template "fusion-ingredient" dict "Fusion" $fusion "Ingredient" $ingredient "Champions" $champions "FusionLevel" $level }}
+            </div>
+            {{ end }}
+        </div>
+    </div>
+</div>
+{{ end }}

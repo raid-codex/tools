@@ -1,6 +1,7 @@
 package templatefuncs
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"strings"
@@ -127,6 +128,43 @@ var (
 			return template.HTML(fmt.Sprintf(
 				`<img src="%s" title="%s" alt="%s">`, img, faction.Name, faction.Name,
 			))
+		},
+		"getHitsOfSkill": func(skill *common.Skill) int64 {
+			if len(skill.Upgrades) == 0 {
+				return 0
+			}
+			return skill.Upgrades[len(skill.Upgrades)-1].Hits
+		},
+		"dict": func(values ...interface{}) (map[string]interface{}, error) {
+			if len(values)%2 != 0 {
+				return nil, errors.New("invalid dict call")
+			}
+			dict := make(map[string]interface{}, len(values)/2)
+			for i := 0; i < len(values); i += 2 {
+				key, ok := values[i].(string)
+				if !ok {
+					return nil, errors.New("dict keys must be strings")
+				}
+				dict[key] = values[i+1]
+			}
+			return dict, nil
+		},
+		"add": func(a, b int) int {
+			return a + b
+		},
+		"repeat": func(s int64) []int64 {
+			a := make([]int64, s)
+			for i := int64(0); i < s; i++ {
+				a[i] = i + 1
+			}
+			return a
+		},
+		"getRootFusion": func(fusions map[string]*common.Fusion, fusionSlug string) *common.Fusion {
+			fusion := fusions[fusionSlug]
+			for fusion.ParentFusionSlug != nil {
+				fusion = fusions[*fusion.ParentFusionSlug]
+			}
+			return fusion
 		},
 	}
 )

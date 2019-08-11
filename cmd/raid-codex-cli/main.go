@@ -3,6 +3,9 @@ package main
 import (
 	"os"
 
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_page_create"
+
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_page_generate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_rebuild_index"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_sanitize"
 
@@ -144,6 +147,13 @@ var (
 	fusionsRebuildIndex    = fusions.Command("rebuild-index", "rebuild faction index")
 	fusionsRebuildIndexCmd = fusions_rebuild_index.New(fusionsRebuildIndex)
 
+	fusionsPage            = fusions.Command("page", "do stuff with fusion pages")
+	fusionsPageGenerate    = fusionsPage.Command("generate", "generate page for fusion")
+	fusionsPageGenerateCmd = fusions_page_generate.New(fusionsPageGenerate)
+
+	fusionsPageCreate    = fusionsPage.Command("create", "create page for fusion")
+	fusionsPageCreateCmd = fusions_page_create.New(fusionsPageCreate)
+
 	runByCmd = map[string]Runnable{
 		"champions parse":                 championsParseCmd,
 		"factions parse":                  factionsParseCmd,
@@ -170,5 +180,7 @@ var (
 		"parse full-sheet":                parseFullSheetCmd,
 		"fusions sanitize":                fusionsSanitizeCmd,
 		"fusions rebuild-index":           fusionsRebuildIndexCmd,
+		"fusions page generate":           fusionsPageGenerateCmd,
+		"fusions page create":             fusionsPageCreateCmd,
 	}
 )

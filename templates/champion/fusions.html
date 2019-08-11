@@ -1,0 +1,17 @@
+{{ define "fusions" }}
+{{ $fusions := .Fusions}}
+{{ $champion := .Champion }}
+{{ $champions := .Champions }}
+<div class="row">
+    <div class="col-xs-12">
+        <h2>Fusions</h2>
+    </div>
+    {{ range $fusionData := .Champion.FusionData }}
+    {{ template "fusion-card" dict "Champion" $champion "Fusions" $fusions "FusionData" $fusionData "Champions" $champions }}
+    {{ else }}
+    <div class="col-xs-12">
+        This champion is not part of any fusion
+    </div>
+    {{ end }}
+</div>
+{{ end }}

@@ -11,6 +11,12 @@
                 <div class="row">
                     <div class="col-xs-12 col-md-6">
                         <h4>Clan Boss</h4>
+                        {{ if not .Champion.Skills }}
+                        We don't have enough information about this Champion to determine whether he should have
+                        Warmaster or
+                        Giant
+                        Slayer as T6 mastery.
+                        {{ else }}
                         {{ $a1 := index .Champion.Skills 0 }}
                         {{ $hits := $a1 | getHitsOfSkill }}
                         {{ if eq $hits 0 }}
@@ -29,6 +35,7 @@
                         {{ $hits }} times, which
                         will
                         benefit more to Giant Slayer than Warmaster.
+                        {{ end }}
                         {{ end }}
                     </div>
                     <div class="col-xs-12 col-md-6">

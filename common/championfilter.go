@@ -88,3 +88,7 @@ func FilterChampionStatusEffectWithTargets(effectSlug string, targets ...string)
 func FilterChampionSlug(slug string) ChampionFilter {
 	return func(champion *Champion) bool { return champion.Slug == slug }
 }
+
+func FilterChampionName(name string) ChampionFilter {
+	return func(champion *Champion) bool { return champion.Name == name }
+}

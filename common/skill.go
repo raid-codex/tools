@@ -226,6 +226,11 @@ func getEffectsFromDescription(effects []*StatusEffect, damageBasedOn []string, 
 			}
 		} else if _, ok := stats[val]; ok {
 			basedOn[val] = true
+		} else if _, ok := battleEnhancements[val]; ok {
+			currentEffects[val] = &StatusEffect{
+				EffectType: "battle_enhancement",
+				Type:       val,
+			}
 		} else {
 			return nil, nil, fmt.Errorf("unknown thing: %s (%+v) -- %s", val, m2, rawDescription)
 		}

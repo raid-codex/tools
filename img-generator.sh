@@ -29,8 +29,8 @@ convert -crop 334x350+1000+400 $image $cropped_stats > /dev/null
 echo "Extracting text from title..."
 tesseract $title $title_text 2> /dev/null > /dev/null
 echo "Extracting text from statistics"
-output_stats=$(imgclip -p --lang eng ${cropped_stats} 2> /dev/null | grep Result -A9 | tail -n 7)
-echo $output_stats > "${stats_text}"
+#output_stats=$(imgclip -p --lang eng ${cropped_stats} 2> /dev/null | grep Result -A9 | tail -n 7)
+#echo $output_stats > "${stats_text}"
 
 champion_slug=$(name=$(cat "${title_text}.txt" | egrep -E  -o '[A-Z][a-z]{3,}(\s([a-z]{2,})?|Lvl)' | sed 's/Lvl//g' | tr '\n' ' ' | sed 's/  / /g' | xargs ); jq --arg NAME "$name" -r '.[] | select(.name==$NAME) | .image_slug' $GOPATH/src/github.com/raid-codex/data/docs/champions/current/index.json)
 if [[ "$champion_slug" != "" ]]

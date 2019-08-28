@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_page_create"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/scrap_gameronion_champions"
 
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_page_generate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_rebuild_index"
@@ -111,6 +112,11 @@ var (
 	scrapWikiaCharacteristics    = scrap.Command("wikia-characteristics", "Scrap data from wikia characteristics")
 	scrapWikiaCharacteristicsCmd = scrap_wikia_characteristics.New(scrapWikiaCharacteristics)
 
+	scrapGameronion = scrap.Command("gameronion", "Scrap data from gameronion")
+
+	scrapGameronionChampions    = scrapGameronion.Command("champions", "Scrap champions")
+	scrapGameronionChampionsCmd = scrap_gameronion_champions.New(scrapGameronionChampions)
+
 	website              = app.Command("website", "Stuff for website")
 	websiteCache         = website.Command("cache", "Stuff with website cache")
 	websiteCacheClear    = websiteCache.Command("clear", "Clear cache of website")
@@ -160,6 +166,7 @@ var (
 		"champions page create":           championsPageCreateCmd,
 		"factions page create":            factionsPageCreateCmd,
 		"scrap wikia-characteristics":     scrapWikiaCharacteristicsCmd,
+		"scrap gameronion champions":      scrapGameronionChampionsCmd,
 		"champions page seo set-default":  championsPageSeoSetDefaultCmd,
 		"champions page seo apply":        championsPageSeoApplyCmd,
 		"champions rebuild-index":         championsRebuildIndexCmd,

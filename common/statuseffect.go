@@ -90,8 +90,11 @@ var (
 		"Block Damage":       true,
 		"Increase C. DAMAGE": true,
 		"Revive on Death":    true,
+		"Veil":               true,
+		"Perfect Veil":       true,
 	}
 	battleEnhancements = map[string]bool{
+		"Debuff Spread":                       true,
 		"Ignore Block Damage":                 true,
 		"Ignore Shield":                       true,
 		"Critical Strike":                     true,

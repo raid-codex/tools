@@ -9,6 +9,12 @@
 			"revisionTime": "2018-11-08T20:56:50Z"
 		},
 		{
+			"checksumSHA1": "6C3LYFDsp1HNrgzVxCcBlKCifC0=",
+			"path": "github.com/PuerkitoBio/goquery",
+			"revision": "3dcf72e6c17f694381a21592651ca1464ded0e10",
+			"revisionTime": "2019-01-09T23:07:04Z"
+		},
+		{
 			"checksumSHA1": "KmjnydoAbofMieIWm+it5OWERaM=",
 			"path": "github.com/alecthomas/template",
 			"revision": "a0175ee3bccc567396460bf5acd36800cb10c49c",
@@ -25,6 +31,18 @@
 			"path": "github.com/alecthomas/units",
 			"revision": "2efee857e7cfd4f3d0138cc3cbb1b4966962b93a",
 			"revisionTime": "2015-10-22T06:55:26Z"
+		},
+		{
+			"checksumSHA1": "7DQlhUmi8waYHuk3kvrWiTLVygM=",
+			"path": "github.com/andybalholm/cascadia",
+			"revision": "680b6a57bda4f657485ad44bdea42342ead737bc",
+			"revisionTime": "2018-10-12T15:44:24Z"
+		},
+		{
+			"checksumSHA1": "cvMRKmpMonP8LDkWJG1nZFlwOds=",
+			"path": "github.com/go-test/deep",
+			"revision": "597fd8504439ea8b0a72c2557de5c6cab932e8f0",
+			"revisionTime": "2019-08-18T18:16:32Z"
 		},
 		{
 			"checksumSHA1": "HpnVP25yXZys8uwdVe25MKMIwn8=",
@@ -115,6 +133,18 @@
 			"path": "github.com/yterajima/go-sitemap",
 			"revision": "2eb384a3d049da294e409b7cab88bc9313c7b078",
 			"revisionTime": "2018-09-26T11:32:24Z"
+		},
+		{
+			"checksumSHA1": "vqc3a+oTUGX8PmD0TS+qQ7gmN8I=",
+			"path": "golang.org/x/net/html",
+			"revision": "b6d7b1396ec874c3b00f6c84cd4301a17c56c8ed",
+			"revisionTime": "2016-02-16T13:16:06Z"
+		},
+		{
+			"checksumSHA1": "00eQaGynDYrv3tL+C7l9xH0IDZg=",
+			"path": "golang.org/x/net/html/atom",
+			"revision": "b6d7b1396ec874c3b00f6c84cd4301a17c56c8ed",
+			"revisionTime": "2016-02-16T13:16:06Z"
 		},
 		{
 			"checksumSHA1": "CjDmpbYWUeTzpJBeH5AmfH/my88=",

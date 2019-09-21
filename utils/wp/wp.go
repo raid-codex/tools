@@ -5,13 +5,11 @@ import (
 	"fmt"
 	"html/template"
 	"os"
-	"strings"
 
 	"github.com/juju/errors"
 	"github.com/raid-codex/tools/common/paged"
+	"github.com/raid-codex/tools/utils/minify"
 	"github.com/sogko/go-wordpress"
-	"github.com/tdewolff/minify"
-	"github.com/tdewolff/minify/html"
 )
 
 func GetWPClient() *wordpress.Client {
@@ -47,15 +45,7 @@ func getContent(page paged.Paged, templateFile, dataDirectory string, tmpl *temp
 	if errTemplate != nil {
 		return "", errTemplate
 	}
-	str := buf.String()
-	str = strings.Replace(str, "\n", "", -1)
-	m := minify.New()
-	m.AddFunc("text/html", html.Minify)
-	s, err := m.String("text/html", str)
-	if err != nil {
-		return "", err
-	}
-	return s, nil
+	return minify.HTML(buf.String())
 }
 
 func CreatePage(client *wordpress.Client, page paged.Paged, templateFile, dataDirectory string, tmpl *template.Template) error {

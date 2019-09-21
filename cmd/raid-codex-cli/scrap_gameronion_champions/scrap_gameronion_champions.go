@@ -121,7 +121,9 @@ func (c *Command) Run() {
 			} else {
 				before, _ = json.Marshal(skill)
 			}
-			skill.RawDescription = skillDescription
+			if skillDescription != "" {
+				skill.RawDescription = skillDescription
+			}
 			if passive {
 				skill.Passive = true
 			}

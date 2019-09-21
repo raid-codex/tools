@@ -8,6 +8,8 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/raid-codex/tools/utils/minify"
+
 	"github.com/juju/errors"
 	"github.com/raid-codex/tools/common"
 	"github.com/raid-codex/tools/templatefuncs"
@@ -21,6 +23,7 @@ type Command struct {
 	OutputFile     *string
 	PageTemplate   *string
 	DataDirectory  *string
+	NoPage         *bool
 }
 
 func New(cmd *kingpin.CmdClause) *Command {
@@ -29,7 +32,8 @@ func New(cmd *kingpin.CmdClause) *Command {
 		DataDirectory:  cmd.Flag("data-directory", "Data directory").Required().String(),
 		TemplateFolder: cmd.Flag("template-folder", "Template folder").Required().String(),
 		OutputFile:     cmd.Flag("output-file", "Output file").Required().String(),
-		PageTemplate:   cmd.Flag("page-template", "Page template file").Required().String(),
+		PageTemplate:   cmd.Flag("page-template", "Page template file").String(),
+		NoPage:         cmd.Flag("no-page", "Set this flag to skip page-template parameter. Generates HTML without any header/footer").Bool(),
 	}
 }
 
@@ -42,11 +46,6 @@ func (c *Command) Run() {
 	if errChampion != nil {
 		utils.Exit(1, errChampion)
 	}
-	outputFile, errOutput := os.Create(*c.OutputFile)
-	if errOutput != nil {
-		utils.Exit(1, errOutput)
-	}
-	defer outputFile.Close()
 	templates, errLoad := c.loadTemplates()
 	if errLoad != nil {
 		utils.Exit(1, errLoad)
@@ -60,17 +59,36 @@ func (c *Command) Run() {
 	if errTemplate != nil {
 		utils.Exit(1, errTemplate)
 	}
-	pageTemplate, errPageTemplate := ioutil.ReadFile(*c.PageTemplate)
-	if errPageTemplate != nil {
-		utils.Exit(1, errPageTemplate)
-	}
-	tmpl, errTmpl := template.New("page").Funcs(templatefuncs.FuncMap).Parse(string(pageTemplate))
-	if errTmpl != nil {
-		utils.Exit(1, errTmpl)
-	}
-	errExecute := tmpl.Execute(outputFile, map[string]interface{}{"Page": buf.String()})
-	if errExecute != nil {
-		utils.Exit(1, errExecute)
+	if c.NoPage == nil || !*c.NoPage {
+		if c.PageTemplate == nil || *c.PageTemplate == "" {
+			utils.Exit(1, fmt.Errorf("missing page-template parameter"))
+		}
+		pageTemplate, errPageTemplate := ioutil.ReadFile(*c.PageTemplate)
+		if errPageTemplate != nil {
+			utils.Exit(1, errPageTemplate)
+		}
+		tmpl, errTmpl := template.New("page").Funcs(templatefuncs.FuncMap).Parse(string(pageTemplate))
+		if errTmpl != nil {
+			utils.Exit(1, errTmpl)
+		}
+		outputFile, errOutput := os.Create(*c.OutputFile)
+		if errOutput != nil {
+			utils.Exit(1, errOutput)
+		}
+		defer outputFile.Close()
+		errExecute := tmpl.Execute(outputFile, map[string]interface{}{"Page": buf.String()})
+		if errExecute != nil {
+			utils.Exit(1, errExecute)
+		}
+	} else {
+		mini, errMini := minify.HTML(buf.String())
+		if errMini != nil {
+			utils.Exit(1, errMini)
+		}
+		errWrite := utils.WriteToFile(*c.OutputFile, []byte(mini))
+		if errWrite != nil {
+			utils.Exit(1, errWrite)
+		}
 	}
 }
 

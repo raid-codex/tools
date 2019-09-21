@@ -267,8 +267,9 @@ func GetSanitizedName(name string) (string, error) {
 }
 
 func GetLinkNameFromSanitizedName(name string) string {
+	name = strings.Trim(name, `!`)
 	for _, part := range []string{
-		`'`, `"`, ` `, `_`, `(P)`, `+`, `%`,
+		`'`, `"`, ` `, `_`, `(P)`, `+`, `%`, `!`,
 	} {
 		name = strings.Replace(name, part, "-", -1)
 	}

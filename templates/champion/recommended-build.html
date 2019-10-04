@@ -1,0 +1,34 @@
+{{ define "recommended-build" }}
+{{ $champion := .Champion }}
+{{ $build := .Build }}
+<div class="row">
+    <div class="col-xs-12 build-header">
+        <h5>For {{ if $build.Locations }}
+            {{ joinStrings ($build.Locations | displayLocations) ", " }}
+            {{ else }}
+            everywhere
+            {{ end }}</h5>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <div>
+            <div>
+                <span class="rb-header">Sets</span>
+            </div>
+            <div>
+                <span class="stats">{{ joinStrings ($build.Sets | displaySet) ", " }}</span>
+            </div>
+        </div>
+        {{ template "recommended-build-item" dict "Header" "Weapon" "Item" $build.Stats.Weapon }}
+        {{ template "recommended-build-item" dict "Header" "Helmet" "Item" $build.Stats.Helmet }}
+        {{ template "recommended-build-item" dict "Header" "Shield" "Item" $build.Stats.Shield }}
+        {{ template "recommended-build-item" dict "Header" "Gauntlets" "Item" $build.Stats.Gauntlets }}
+        {{ template "recommended-build-item" dict "Header" "Chestplate" "Item" $build.Stats.Chestplate }}
+        {{ template "recommended-build-item" dict "Header" "Boots" "Item" $build.Stats.Boots }}
+        {{ template "recommended-build-item" dict "Header" "Ring" "Item" $build.Stats.Ring }}
+        {{ template "recommended-build-item" dict "Header" "Amulet" "Item" $build.Stats.Amulet }}
+        {{ template "recommended-build-item" dict "Header" "Banner" "Item" $build.Stats.Banner }}
+    </div>
+</div>
+{{ end }}

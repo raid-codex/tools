@@ -166,6 +166,29 @@ var (
 			}
 			return fusion
 		},
+		"displayLocations": func(locations []string) []string {
+			v := map[string]string{
+				"clan-boss": "Clan Boss",
+				"dungeon":   "Dungeon",
+				"arena":     "Arena",
+				"campaign":  "Campaign",
+			}
+			l := []string{}
+			for _, location := range locations {
+				l = append(l, v[location])
+			}
+			return l
+		},
+		"displaySet": func(sets []string) []string {
+			s := []string{}
+			for _, set := range sets {
+				s = append(s, strings.Title(strings.Replace(set, "-", " ", -1)))
+			}
+			return s
+		},
+		"joinStrings": func(s []string, sep string) string {
+			return strings.Join(s, sep)
+		},
 	}
 )
 

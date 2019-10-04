@@ -1,0 +1,12 @@
+{{ define "recommended-build-item" }}
+{{ $item := .Item }}
+{{ $header := .Header }}
+<div>
+    <div>
+        <span class="rb-header">{{ $header }}</span> (<span class="main-stat">{{ $item.MainStat }}</span>)
+    </div>
+    <div>
+        <span class="stats">{{ joinStrings $item.AdditionalStats ", " }}</span><br>
+    </div>
+</div>
+{{ end }}

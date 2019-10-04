@@ -1,0 +1,15 @@
+{{ define "recommended-builds" }}
+{{ $champion := .Champion }}
+{{ if $champion.RecommendedBuilds }}
+<div class="row">
+    <div class="col-xs-12">
+        <h2>Recommended builds</h2>
+    </div>
+    {{ range $build := $champion.RecommendedBuilds }}
+    <div class="col-xs-12 col-md-6 col-lg-4 recommended-build">
+        {{ template "recommended-build" dict "Champion" $champion "Build" $build }}
+    </div>
+    {{ end }}
+</div>
+{{ end }}
+{{ end }}

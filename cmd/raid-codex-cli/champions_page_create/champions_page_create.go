@@ -3,13 +3,10 @@ package champions_page_create
 import (
 	"encoding/json"
 	"fmt"
-	"html/template"
-	"io/ioutil"
 	"os"
 
 	"github.com/juju/errors"
 	"github.com/raid-codex/tools/common"
-	"github.com/raid-codex/tools/templatefuncs"
 	"github.com/raid-codex/tools/utils"
 	"github.com/raid-codex/tools/utils/wp"
 	"gopkg.in/alecthomas/kingpin.v2"
@@ -24,54 +21,33 @@ type Command struct {
 func New(cmd *kingpin.CmdClause) *Command {
 	return &Command{
 		ChampionFile:   cmd.Flag("champion-file", "Filename for the champion").Required().String(),
-		TemplateFolder: cmd.Flag("template-folder", "Template folder").Required().String(),
-		DataDirectory:  cmd.Flag("data-directory", "Data directory").Required().String(),
+		TemplateFolder: cmd.Flag("template-folder", "Template folder").String(),
+		DataDirectory:  cmd.Flag("data-directory", "Data directory").String(),
 	}
 }
 
 func (c *Command) Run() {
-	errInit := common.InitFactory(*c.DataDirectory)
-	if errInit != nil {
-		utils.Exit(1, errInit)
-	}
-
 	client := wp.GetWPClient()
 	champion, errChampion := c.getChampion()
 	if errChampion != nil {
 		utils.Exit(1, errChampion)
 	}
-	tmpl, errTmpl := c.loadTemplates()
-	if errTmpl != nil {
-		utils.Exit(1, errTmpl)
-	}
+	content := fmt.Sprintf(`[raid-codex-champion-page slug="%s"]`, champion.GetPageSlug())
 	page, errPage := wp.GetPageFromSlug(client, champion.GetPageSlug())
 	if errPage != nil && !errors.IsNotFound(errPage) {
 		utils.Exit(1, errPage)
 	} else if errPage != nil && errors.IsNotFound(errPage) {
-		errCreate := wp.CreatePage(client, champion, *c.TemplateFolder, *c.DataDirectory, tmpl)
+		errCreate := wp.CreatePage_Content(client, champion, content)
 		if errCreate != nil {
 			utils.Exit(1, errCreate)
 		}
 	} else {
-		errUpdate := wp.UpdatePage(client, page, champion, *c.TemplateFolder, *c.DataDirectory, tmpl)
+		errUpdate := wp.UpdatePage_Content(client, page, champion, content)
 		if errUpdate != nil {
 			utils.Exit(1, errUpdate)
 		}
 	}
 }
-
-func (c *Command) loadTemplates() (*template.Template, error) {
-	files, errFiles := ioutil.ReadDir(*c.TemplateFolder)
-	if errFiles != nil {
-		return nil, errFiles
-	}
-	templateFiles := make([]string, 0)
-	for _, file := range files {
-		templateFiles = append(templateFiles, fmt.Sprintf("%s/%s", *c.TemplateFolder, file.Name()))
-	}
-	return template.New("main.html").Funcs(templatefuncs.FuncMap).ParseFiles(templateFiles...)
-}
-
 func (c *Command) getChampion() (*common.Champion, error) {
 	file, errFile := os.Open(*c.ChampionFile)
 	if errFile != nil {

@@ -67,6 +67,13 @@ func (c *Champion) Sanitize() error {
 	if c.RecommendedBuilds == nil {
 		c.RecommendedBuilds = make([]*Build, 0)
 	}
+	for _, build := range c.RecommendedBuilds {
+		errSanitize := build.Sanitize()
+		if errSanitize != nil {
+			return errSanitize
+		}
+	}
+
 	c.Slug = c.LinkName()
 
 	// faction
@@ -642,4 +649,13 @@ func (c *Champion) getSynergy(key SynergyContextKey) *Synergy {
 	synergy := &Synergy{Context: SynergyContext{Key: key}}
 	c.Synergies = append(c.Synergies, synergy)
 	return synergy
+}
+
+func (c *Champion) AddBuild(build *Build) {
+	for _, aBuild := range c.RecommendedBuilds {
+		if aBuild.IsSameThan(build) {
+			return
+		}
+	}
+	c.RecommendedBuilds = append(c.RecommendedBuilds, build)
 }

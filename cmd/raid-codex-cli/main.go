@@ -3,15 +3,6 @@ package main
 import (
 	"os"
 
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_page_create"
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/scrap_gameronion_champions"
-
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_page_generate"
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_rebuild_index"
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_sanitize"
-
-	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_generate"
-
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_characteristics_parser"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_create"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_generate"
@@ -20,13 +11,21 @@ import (
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_rebuild_index"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_sanitize"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_create"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_generate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_seo"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_parser"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_rebuild_index"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_sanitize"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_page_create"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_page_generate"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_rebuild_index"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_sanitize"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/parse_full_sheet"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/schema_validate"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/scrap_ayumilove_champions"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/scrap_gameronion_champions"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/scrap_wikia_characteristics"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/server_run"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_page_create"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_page_generate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_rebuild_index"
@@ -117,6 +116,11 @@ var (
 	scrapGameronionChampions    = scrapGameronion.Command("champions", "Scrap champions")
 	scrapGameronionChampionsCmd = scrap_gameronion_champions.New(scrapGameronionChampions)
 
+	scrapAyumilove = scrap.Command("ayumilove", "Scrap data from ayumilove")
+
+	scrapAyumiloveChampions    = scrapAyumilove.Command("champions", "Scrap champions")
+	scrapAyumiloveChampionsCmd = scrap_ayumilove_champions.New(scrapAyumiloveChampions)
+
 	website              = app.Command("website", "Stuff for website")
 	websiteCache         = website.Command("cache", "Stuff with website cache")
 	websiteCacheClear    = websiteCache.Command("clear", "Clear cache of website")
@@ -160,6 +164,11 @@ var (
 	fusionsPageCreate    = fusionsPage.Command("create", "create page for fusion")
 	fusionsPageCreateCmd = fusions_page_create.New(fusionsPageCreate)
 
+	server = app.Command("server", "Server")
+
+	serverRun    = server.Command("run", "Run the server")
+	serverRunCmd = server_run.New(serverRun)
+
 	runByCmd = map[string]Runnable{
 		"champions parse":                 championsParseCmd,
 		"factions parse":                  factionsParseCmd,
@@ -167,6 +176,7 @@ var (
 		"factions page create":            factionsPageCreateCmd,
 		"scrap wikia-characteristics":     scrapWikiaCharacteristicsCmd,
 		"scrap gameronion champions":      scrapGameronionChampionsCmd,
+		"scrap ayumilove champions":       scrapAyumiloveChampionsCmd,
 		"champions page seo set-default":  championsPageSeoSetDefaultCmd,
 		"champions page seo apply":        championsPageSeoApplyCmd,
 		"champions rebuild-index":         championsRebuildIndexCmd,
@@ -189,5 +199,6 @@ var (
 		"fusions rebuild-index":           fusionsRebuildIndexCmd,
 		"fusions page generate":           fusionsPageGenerateCmd,
 		"fusions page create":             fusionsPageCreateCmd,
+		"server run":                      serverRunCmd,
 	}
 )

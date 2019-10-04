@@ -53,6 +53,10 @@ func CreatePage(client *wordpress.Client, page paged.Paged, templateFile, dataDi
 	if err != nil {
 		return errors.Annotatef(err, "error while creating page")
 	}
+	return CreatePage_Content(client, page, content)
+}
+
+func CreatePage_Content(client *wordpress.Client, page paged.Paged, content string) error {
 	_, _, body, err := client.Pages().Create(&wordpress.Page{
 		Slug:     page.LinkName(),
 		Title:    wordpress.Title{Raw: page.GetPageTitle()},
@@ -75,6 +79,10 @@ func UpdatePage(client *wordpress.Client, wpPage *wordpress.Page, page paged.Pag
 	if err != nil {
 		return errors.Annotatef(err, "error while creating page")
 	}
+	return UpdatePage_Content(client, wpPage, page, content)
+}
+
+func UpdatePage_Content(client *wordpress.Client, wpPage *wordpress.Page, page paged.Paged, content string) error {
 	_, _, body, err := client.Pages().Update(wpPage.ID, &wordpress.Page{
 		Content:  wordpress.Content{Raw: content},
 		Excerpt:  wordpress.Excerpt{Raw: page.GetPageExcerpt()},

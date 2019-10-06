@@ -112,6 +112,7 @@ func (c *Command) Run() {
 			}
 		}
 		if skillName != "Aura" {
+			return
 			//log.Printf("Skill: %s\nPassive: %t\nCooldown: %d\nDescription:\n\t%s\n", skillName, passive, cooldown, strings.Replace(skillDescription, "<br>", "\n\t", -1))
 			var before []byte
 			skill, errSkill := champion.GetSkillByName(skillName)

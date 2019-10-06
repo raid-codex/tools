@@ -39,6 +39,12 @@
 			"revisionTime": "2018-10-12T15:44:24Z"
 		},
 		{
+			"checksumSHA1": "tCGqypUQnjqOdliqb+93aN7zihk=",
+			"path": "github.com/cloudflare/cloudflare-go",
+			"revision": "7182d1eebaaecc52b5f330cf706920be1377989c",
+			"revisionTime": "2019-10-03T16:31:55Z"
+		},
+		{
 			"checksumSHA1": "qlEzrgKgIkh7y0ePm9BNo1cNdXo=",
 			"path": "github.com/gin-contrib/sse",
 			"revision": "43f0f29dbd2b3f0feeebff91fd9cda22db296938",
@@ -219,10 +225,52 @@
 			"revisionTime": "2016-02-16T13:16:06Z"
 		},
 		{
+			"checksumSHA1": "vL6l4FZWitsxht0uqA/GpDNkNNc=",
+			"origin": "github.com/cloudflare/cloudflare-go/vendor/golang.org/x/net/idna",
+			"path": "golang.org/x/net/idna",
+			"revision": "7182d1eebaaecc52b5f330cf706920be1377989c",
+			"revisionTime": "2019-10-03T16:31:55Z"
+		},
+		{
 			"checksumSHA1": "CjDmpbYWUeTzpJBeH5AmfH/my88=",
 			"path": "golang.org/x/net/publicsuffix",
 			"revision": "b6d7b1396ec874c3b00f6c84cd4301a17c56c8ed",
 			"revisionTime": "2016-02-16T13:16:06Z"
+		},
+		{
+			"checksumSHA1": "CbpjEkkOeh0fdM/V8xKDdI0AA88=",
+			"origin": "github.com/cloudflare/cloudflare-go/vendor/golang.org/x/text/secure/bidirule",
+			"path": "golang.org/x/text/secure/bidirule",
+			"revision": "7182d1eebaaecc52b5f330cf706920be1377989c",
+			"revisionTime": "2019-10-03T16:31:55Z"
+		},
+		{
+			"checksumSHA1": "ziMb9+ANGRJSSIuxYdRbA+cDRBQ=",
+			"origin": "github.com/cloudflare/cloudflare-go/vendor/golang.org/x/text/transform",
+			"path": "golang.org/x/text/transform",
+			"revision": "7182d1eebaaecc52b5f330cf706920be1377989c",
+			"revisionTime": "2019-10-03T16:31:55Z"
+		},
+		{
+			"checksumSHA1": "w8kDfZ1Ug+qAcVU0v8obbu3aDOY=",
+			"origin": "github.com/cloudflare/cloudflare-go/vendor/golang.org/x/text/unicode/bidi",
+			"path": "golang.org/x/text/unicode/bidi",
+			"revision": "7182d1eebaaecc52b5f330cf706920be1377989c",
+			"revisionTime": "2019-10-03T16:31:55Z"
+		},
+		{
+			"checksumSHA1": "BCNYmf4Ek93G4lk5x3ucNi/lTwA=",
+			"origin": "github.com/cloudflare/cloudflare-go/vendor/golang.org/x/text/unicode/norm",
+			"path": "golang.org/x/text/unicode/norm",
+			"revision": "7182d1eebaaecc52b5f330cf706920be1377989c",
+			"revisionTime": "2019-10-03T16:31:55Z"
+		},
+		{
+			"checksumSHA1": "z5suoCC9wR9GqMu8Wo1Mp1Lv7iw=",
+			"origin": "github.com/cloudflare/cloudflare-go/vendor/golang.org/x/time/rate",
+			"path": "golang.org/x/time/rate",
+			"revision": "7182d1eebaaecc52b5f330cf706920be1377989c",
+			"revisionTime": "2019-10-03T16:31:55Z"
 		},
 		{
 			"checksumSHA1": "sToCp8GThnMnsBzsHv+L/tBYQrQ=",

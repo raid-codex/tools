@@ -59,6 +59,8 @@ var (
 	statusEffectFromSkillAura     = regexp.MustCompile(`\[([^\]]+)\]`)
 	debuffs                       = map[string]bool{
 		"HP Burn":               true,
+		"Fear":                  true,
+		"True Fear":             true,
 		"Poison":                true,
 		"Decrease DEF":          true,
 		"Decrease ACC":          true,

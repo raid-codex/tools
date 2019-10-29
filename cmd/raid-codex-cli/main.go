@@ -24,6 +24,7 @@ import (
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/schema_validate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/scrap_ayumilove_champions"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/scrap_gameronion_champions"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/scrap_raidshadowlegendspro_champions"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/scrap_wikia_characteristics"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/server_run"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_page_create"
@@ -121,6 +122,11 @@ var (
 	scrapAyumiloveChampions    = scrapAyumilove.Command("champions", "Scrap champions")
 	scrapAyumiloveChampionsCmd = scrap_ayumilove_champions.New(scrapAyumiloveChampions)
 
+	scrapRaidShadowLegendsPro = scrap.Command("raidshadowlegendspro", "Scrap data from raidshadowlegends.pro")
+
+	scrapRaidShadowLegendsProChampions    = scrapRaidShadowLegendsPro.Command("champions", "Scrap champions")
+	scrapRaidShadowLegendsProChampionsCmd = scrap_raidshadowlegendspro_champions.New(scrapRaidShadowLegendsProChampions)
+
 	website              = app.Command("website", "Stuff for website")
 	websiteCache         = website.Command("cache", "Stuff with website cache")
 	websiteCacheClear    = websiteCache.Command("clear", "Clear cache of website")
@@ -170,35 +176,36 @@ var (
 	serverRunCmd = server_run.New(serverRun)
 
 	runByCmd = map[string]Runnable{
-		"champions parse":                 championsParseCmd,
-		"factions parse":                  factionsParseCmd,
-		"champions page create":           championsPageCreateCmd,
-		"factions page create":            factionsPageCreateCmd,
-		"scrap wikia-characteristics":     scrapWikiaCharacteristicsCmd,
-		"scrap gameronion champions":      scrapGameronionChampionsCmd,
-		"scrap ayumilove champions":       scrapAyumiloveChampionsCmd,
-		"champions page seo set-default":  championsPageSeoSetDefaultCmd,
-		"champions page seo apply":        championsPageSeoApplyCmd,
-		"champions rebuild-index":         championsRebuildIndexCmd,
-		"factions page seo set-default":   factionsPageSeoSetDefaultCmd,
-		"factions page seo apply":         factionsPageSeoApplyCmd,
-		"factions page generate":          factionsPageGenerateCmd,
-		"champions characteristics parse": championsCharacteristicsParserCmd,
-		"champions sanitize":              championsSanitizeCmd,
-		"factions sanitize":               factionsSanitizeCmd,
-		"website cache clear":             websiteCacheClearCmd,
-		"champions page generate":         championsPageGenerateCmd,
-		"schema validate":                 schemaValidateCmd,
-		"status-effect sanitize":          statusEffectSanitizeCmd,
-		"status-effect rebuild-index":     statusEffectRebuildIndexCmd,
-		"factions rebuild-index":          factionsRebuildIndexCmd,
-		"status-effect page generate":     statusEffectPageGenerateCmd,
-		"status-effect page create":       statusEffectPageCreateCmd,
-		"parse full-sheet":                parseFullSheetCmd,
-		"fusions sanitize":                fusionsSanitizeCmd,
-		"fusions rebuild-index":           fusionsRebuildIndexCmd,
-		"fusions page generate":           fusionsPageGenerateCmd,
-		"fusions page create":             fusionsPageCreateCmd,
-		"server run":                      serverRunCmd,
+		"champions parse":                      championsParseCmd,
+		"factions parse":                       factionsParseCmd,
+		"champions page create":                championsPageCreateCmd,
+		"factions page create":                 factionsPageCreateCmd,
+		"scrap wikia-characteristics":          scrapWikiaCharacteristicsCmd,
+		"scrap gameronion champions":           scrapGameronionChampionsCmd,
+		"scrap ayumilove champions":            scrapAyumiloveChampionsCmd,
+		"scrap raidshadowlegendspro champions": scrapRaidShadowLegendsProChampionsCmd,
+		"champions page seo set-default":       championsPageSeoSetDefaultCmd,
+		"champions page seo apply":             championsPageSeoApplyCmd,
+		"champions rebuild-index":              championsRebuildIndexCmd,
+		"factions page seo set-default":        factionsPageSeoSetDefaultCmd,
+		"factions page seo apply":              factionsPageSeoApplyCmd,
+		"factions page generate":               factionsPageGenerateCmd,
+		"champions characteristics parse":      championsCharacteristicsParserCmd,
+		"champions sanitize":                   championsSanitizeCmd,
+		"factions sanitize":                    factionsSanitizeCmd,
+		"website cache clear":                  websiteCacheClearCmd,
+		"champions page generate":              championsPageGenerateCmd,
+		"schema validate":                      schemaValidateCmd,
+		"status-effect sanitize":               statusEffectSanitizeCmd,
+		"status-effect rebuild-index":          statusEffectRebuildIndexCmd,
+		"factions rebuild-index":               factionsRebuildIndexCmd,
+		"status-effect page generate":          statusEffectPageGenerateCmd,
+		"status-effect page create":            statusEffectPageCreateCmd,
+		"parse full-sheet":                     parseFullSheetCmd,
+		"fusions sanitize":                     fusionsSanitizeCmd,
+		"fusions rebuild-index":                fusionsRebuildIndexCmd,
+		"fusions page generate":                fusionsPageGenerateCmd,
+		"fusions page create":                  fusionsPageCreateCmd,
+		"server run":                           serverRunCmd,
 	}
 )

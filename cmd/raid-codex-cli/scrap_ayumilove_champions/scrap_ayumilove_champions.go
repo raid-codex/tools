@@ -16,12 +16,14 @@ import (
 type Command struct {
 	ChampionName  *string
 	DataDirectory *string
+	Stats         *bool
 }
 
 func New(cmd *kingpin.CmdClause) *Command {
 	return &Command{
 		DataDirectory: cmd.Flag("data-directory", "Directory containing data").Required().String(),
 		ChampionName:  cmd.Flag("champion-name", "Name of the champion being looked up").Required().String(),
+		Stats:         cmd.Flag("with-stats", "Fetch champion stats and store them").Bool(),
 	}
 }
 
@@ -53,6 +55,85 @@ func (c *Command) Run() {
 	if errDoc != nil {
 		utils.Exit(1, errDoc)
 	}
+	c.parseEquipment(champion, doc)
+	if c.Stats != nil && *c.Stats {
+		c.parseStats(champion, doc)
+	}
+	errSanitize := champion.Sanitize()
+	if errSanitize != nil {
+		utils.Exit(1, errSanitize)
+	}
+	// write champion file
+	errWrite := utils.WriteToFile(fmt.Sprintf("%s/docs/champions/current/%s.json", *c.DataDirectory, champion.Slug), champion)
+	if errWrite != nil {
+		utils.Exit(1, errWrite)
+	}
+}
+
+func (c *Command) parseStats(champion *common.Champion, doc *goquery.Document) {
+	doc.Find(".entry-content table").Each(func(idx int, s *goquery.Selection) {
+		if idx != 0 {
+			// only the first index is interesting for stats
+			return
+		}
+		s.Find("td").Each(func(subIdx int, sc *goquery.Selection) {
+			if subIdx != 2 {
+				// only the 3rd column is for stats
+				return
+			}
+			data := strings.Split(sc.Text(), "\n")
+			chars := champion.Characteristics[60]
+			for _, d := range data {
+				if len(d) == 0 || strings.Contains(d, "Total Stats") {
+					continue
+				}
+				var intField *int64
+				var floatField *float64
+				switch true {
+				case strings.Contains(d, "ATK"):
+					intField = &chars.Attack
+				case strings.Contains(d, "HP"):
+					intField = &chars.HP
+				case strings.Contains(d, "DEF"):
+					intField = &chars.Defense
+				case strings.Contains(d, "ACC"):
+					intField = &chars.Accuracy
+				case strings.Contains(d, "RESIST"):
+					intField = &chars.Resistance
+				case strings.Contains(d, "SPD"):
+					intField = &chars.Speed
+				case strings.Contains(d, "C. Rate"):
+					floatField = &chars.CriticalRate
+				case strings.Contains(d, "C. DMG"):
+					floatField = &chars.CriticalDamage
+				default:
+					utils.Exit(1, fmt.Errorf("cannot parse stats line '%s'", d))
+				}
+				subD := strings.Split(d, " ")
+				lastPart := strings.Replace(strings.Replace(subD[len(subD)-1], "%", "", -1), ",", "", -1)
+				v, errInt := strconv.ParseInt(lastPart, 10, 64)
+				if errInt != nil {
+					utils.Exit(1, fmt.Errorf("invalid number: %s ; %s", lastPart, errInt))
+				}
+				if intField != nil {
+					*intField = v
+				} else if floatField != nil {
+					*floatField = float64(v) / 100.0
+				}
+			}
+			champion.Characteristics[60] = chars
+		})
+	})
+}
+
+var (
+	equipmentPrefixes = []string{"Weapon", "Helmet", "Shield", "Gauntlets", "Chestplate", "Boots", "Ring", "Amulet", "Banner"}
+	mainStatExtracter = regexp.MustCompile(`\((.+)\)$`)
+	knownLocations    = []string{"Arena", "Campaign", "Clan Boss", "Dungeon"}
+	setExtracter      = regexp.MustCompile(`(\d) ([A-Za-z ]+) Set`)
+)
+
+func (c *Command) parseEquipment(champion *common.Champion, doc *goquery.Document) {
 	doc.Find(".entry-content").Each(func(_ int, s *goquery.Selection) {
 		check := 0
 		s.Children().Each(func(_ int, sc *goquery.Selection) {
@@ -82,23 +163,7 @@ func (c *Command) Run() {
 			}
 		})
 	})
-	errSanitize := champion.Sanitize()
-	if errSanitize != nil {
-		utils.Exit(1, errSanitize)
-	}
-	// write champion file
-	errWrite := utils.WriteToFile(fmt.Sprintf("%s/docs/champions/current/%s.json", *c.DataDirectory, champion.Slug), champion)
-	if errWrite != nil {
-		utils.Exit(1, errWrite)
-	}
 }
-
-var (
-	equipmentPrefixes = []string{"Weapon", "Helmet", "Shield", "Gauntlets", "Chestplate", "Boots", "Ring", "Amulet", "Banner"}
-	mainStatExtracter = regexp.MustCompile(`\((.+)\)$`)
-	knownLocations    = []string{"Arena", "Campaign", "Clan Boss", "Dungeon"}
-	setExtracter      = regexp.MustCompile(`(\d) ([A-Za-z ]+) Set`)
-)
 
 func parseEquipment(sc *goquery.Selection, champion *common.Champion) []*common.Build {
 	builds := []*common.Build{}

@@ -154,6 +154,7 @@ var (
 		"Deal ALL Poison":              "Deal all poison DMG",
 		"Remove All Buffs":             "Remove ALL Buffs",
 		"increase DEF":                 "Increase DEF",
+		"Increase C. Rate":             "Increase C. RATE",
 	}
 )
 

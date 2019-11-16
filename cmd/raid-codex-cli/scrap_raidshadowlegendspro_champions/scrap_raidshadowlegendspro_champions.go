@@ -92,6 +92,13 @@ var (
 		"’":                "'",
 		"[Passive Effect]": "Passive Effect",
 		"[Active Effect]":  "Active Effect",
+		" %":               "%",
+		"C. RATE":          "C.RATE",
+		"Increase C.RATE":  "Increase C. RATE",
+	}
+	rexEmpty = []*regexp.Regexp{
+		regexp.MustCompile(`<script[^>]+>.+</script>`),
+		regexp.MustCompile(`<ins[^>]+>.+</ins>`),
 	}
 )
 
@@ -103,6 +110,19 @@ func sanitizeString(str string) string {
 		split := strings.Split(str, "<br>")
 		str = strings.Join(split[0:len(split)-1], "<br>")
 	}
+	for _, regex := range rexEmpty {
+		str = regex.ReplaceAllString(str, "")
+	}
+	split := strings.Split(str, "<br>")
+	new := []string{}
+	for _, v := range split {
+		v = strings.TrimSpace(v)
+		if len(v) > 0 {
+			new = append(new, v)
+		}
+	}
+	str = strings.Join(new, "<br>")
+	str = strings.Replace(str, "<br><br>", "<br>", -1)
 	return str
 }
 

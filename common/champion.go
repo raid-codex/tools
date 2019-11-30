@@ -40,6 +40,7 @@ type Champion struct {
 	Tags               []string                  `json:"tags"`
 	Masteries          []*Masteries              `json:"masteries"`
 	FusionData         []*ChampionFusionData     `json:"fusion_data"`
+	EffectSlugs        []string                  `json:"effect_slugs"`
 }
 
 type ChampionFusionData struct {
@@ -185,6 +186,24 @@ func (c *Champion) Sanitize() error {
 
 	if err := c.lookupFusions(); err != nil {
 		return err
+	}
+
+	effectSlugs := map[string]bool{}
+	for _, skill := range c.Skills {
+		for _, effect := range skill.Effects {
+			effectSlugs[effect.Slug] = true
+		}
+		for _, upgrade := range skill.Upgrades {
+			for _, effect := range upgrade.Effects {
+				effectSlugs[effect.Slug] = true
+			}
+		}
+	}
+	c.EffectSlugs = make([]string, len(effectSlugs))
+	idx := 0
+	for slug := range effectSlugs {
+		c.EffectSlugs[idx] = slug
+		idx++
 	}
 
 	return nil

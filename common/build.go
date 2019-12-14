@@ -63,7 +63,10 @@ func (sp *StatPriority) Sanitize() error {
 func (b *Build) Sanitize() error {
 	sort.SliceStable(b.Locations, func(i, j int) bool { return b.Locations[i] < b.Locations[j] })
 	sort.SliceStable(b.Sets, func(i, j int) bool { return b.Sets[i] < b.Sets[j] })
-	return b.Stats.Sanitize()
+	if b.Stats != nil {
+		return b.Stats.Sanitize()
+	}
+	return nil
 }
 
 func (b *Build) IsSameThan(oth *Build) bool {

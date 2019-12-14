@@ -205,6 +205,7 @@ func (c *Champion) Sanitize() error {
 		c.EffectSlugs[idx] = slug
 		idx++
 	}
+	sort.SliceStable(c.EffectSlugs, func(i, j int) bool { return c.EffectSlugs[i] < c.EffectSlugs[j] })
 
 	return nil
 }

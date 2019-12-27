@@ -38,6 +38,27 @@ type StatPriority struct {
 	AdditionalStats []string `json:"additional_stats"`
 }
 
+var possibleStatsPerPiece = map[string]struct {
+	Main       []string
+	Additional []string
+}{
+	"Weapon": {
+		Main:       []string{"ATK"},
+		Additional: []string{"HP", "HP%", "ATK%", "SPD", "C.RATE", "C.DMG", "RESIST", "ACC"},
+	},
+	"Helmet": {
+		Main:       []string{"HP"},
+		Additional: []string{"HP%", "ATK", "ATK%", "SPD", "C.RATE", "C.DMG", "RESIST", "ACC"},
+	},
+	"Shield": {
+		Main:       []string{"DEF"},
+		Additional: []string{"HP", "HP%", "ATK", "ATK%", "SPD", "C.RATE", "C.DMG", "RESIST", "ACC"},
+	},
+	"Gauntlets": {
+		Main: []string{"C.RATE", "C.DMG", "HP", "HP%", "ATK", "ATK%", "DEF", "DEF%"},
+	},
+}
+
 func (ssp *StatsPriority) Sanitize() error {
 	v := reflect.Indirect(reflect.ValueOf(ssp))
 	for i := 0; i < v.NumField(); i++ {

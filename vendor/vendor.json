@@ -238,6 +238,12 @@
 			"revisionTime": "2016-02-16T13:16:06Z"
 		},
 		{
+			"checksumSHA1": "Yyk1wC7FX8nDQ+TNcPDzbfz9740=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "52ab431487773bc9dd1b0766228b1cf3944126bf",
+			"revisionTime": "2019-11-06T07:41:42Z"
+		},
+		{
 			"checksumSHA1": "CbpjEkkOeh0fdM/V8xKDdI0AA88=",
 			"origin": "github.com/cloudflare/cloudflare-go/vendor/golang.org/x/text/secure/bidirule",
 			"path": "golang.org/x/text/secure/bidirule",

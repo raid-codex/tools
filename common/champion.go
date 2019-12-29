@@ -41,6 +41,7 @@ type Champion struct {
 	Masteries          []*Masteries              `json:"masteries"`
 	FusionData         []*ChampionFusionData     `json:"fusion_data"`
 	EffectSlugs        []string                  `json:"effect_slugs"`
+	Videos             []*Video                  `json:"videos"`
 }
 
 type ChampionFusionData struct {
@@ -206,6 +207,21 @@ func (c *Champion) Sanitize() error {
 		idx++
 	}
 	sort.SliceStable(c.EffectSlugs, func(i, j int) bool { return c.EffectSlugs[i] < c.EffectSlugs[j] })
+
+	if c.Videos == nil {
+		c.Videos = make([]*Video, 0)
+	}
+	for _, video := range c.Videos {
+		if err := video.Sanitize(); err != nil {
+			return err
+		}
+	}
+	sort.SliceStable(c.Videos, func(i, j int) bool {
+		if c.Videos[i].Source == c.Videos[j].Source {
+			return c.Videos[i].ID < c.Videos[j].ID
+		}
+		return c.Videos[i].Source < c.Videos[j].Source
+	})
 
 	return nil
 }

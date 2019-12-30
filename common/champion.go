@@ -223,6 +223,10 @@ func (c *Champion) Sanitize() error {
 		return c.Videos[i].Source < c.Videos[j].Source
 	})
 
+	if err := c.Rating.Sanitize(); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -3,6 +3,7 @@ package common
 import (
 	"crypto/md5"
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 )
@@ -22,6 +23,9 @@ type Skill struct {
 
 func (s *Skill) Sanitize() error {
 	s.Slug = GetLinkNameFromSanitizedName(s.Name)
+	/*if err := s.lookForTurnMeter(); err != nil {
+		return err
+	}*/
 	if s.Effects == nil || len(s.Effects) == 0 {
 		effects, basedOn, err := getEffectsFromDescription(s.Effects, s.DamageBasedOn, s.RawDescription)
 		if err != nil {
@@ -51,6 +55,39 @@ func (s *Skill) Sanitize() error {
 	})
 	if s.GIID != "" {
 		s.ImageSlug = fmt.Sprintf("%x", md5.Sum([]byte(s.GIID)))
+	}
+	return nil
+}
+
+var (
+	decreaseTMRegexp = regexp.MustCompile(`(?i)(Decrea|deplete)([^.<])+Turn Meter`)
+	increaseTMRegexp = regexp.MustCompile(`(?i)(Fill|boost|steal|resets)([^.<])+Turn Meter`)
+	anyTMRegexp      = regexp.MustCompile(`(?i)Turn.*Meter`)
+)
+
+func (s *Skill) lookForTurnMeter() error {
+	for _, effect := range s.Effects {
+		if effect.Slug == "increase-turn-meter" || effect.Slug == "decrease-turn-meter" {
+			return nil
+		}
+	}
+	matched := false
+	if decreaseTMRegexp.MatchString(s.RawDescription) {
+		matched = true
+		s.Effects = append(s.Effects, &StatusEffect{
+			EffectType: "battle_enhancement",
+			Type:       "Decrease Turn Meter",
+		})
+	}
+	if increaseTMRegexp.MatchString(s.RawDescription) {
+		matched = true
+		s.Effects = append(s.Effects, &StatusEffect{
+			EffectType: "battle_enhancement",
+			Type:       "Increase Turn Meter",
+		})
+	}
+	if anyTMRegexp.MatchString(s.RawDescription) && !matched {
+		return fmt.Errorf("matched Turn Meter in skill %s but did not find any increase/decrease\n%s", s.Name, s.RawDescription)
 	}
 	return nil
 }

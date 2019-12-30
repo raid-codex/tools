@@ -1,5 +1,10 @@
 package common
 
+import (
+	"fmt"
+	"reflect"
+)
+
 type Rating struct {
 	Overall       string `json:"overall"`
 	Campaign      string `json:"campaign"`
@@ -16,6 +21,32 @@ type Rating struct {
 	MagicDungeon  string `json:"magic_dungeon"`
 	SpiritDungeon string `json:"spirit_dungeon"`
 	VoidDungeon   string `json:"void_dungeon"`
+	FactionWars   string `json:"faction_wars"`
+}
+
+var (
+	allowedRatings = map[string]bool{
+		"":   true,
+		"A":  true,
+		"B":  true,
+		"C":  true,
+		"D":  true,
+		"S":  true,
+		"SS": true,
+	}
+)
+
+func (r *Rating) Sanitize() error {
+	v := reflect.ValueOf(r)
+	indV := reflect.Indirect(v)
+	for i := 0; i < indV.NumField(); i++ {
+		field := indV.Field(i)
+		value := field.String()
+		if _, ok := allowedRatings[value]; !ok {
+			return fmt.Errorf("unknown rating %s", value)
+		}
+	}
+	return nil
 }
 
 type Review struct {

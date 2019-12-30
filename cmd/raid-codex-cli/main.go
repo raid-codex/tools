@@ -7,6 +7,7 @@ import (
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_create"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_generate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_seo"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_parse_tierlist"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_parser"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_rebuild_index"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_sanitize"
@@ -60,8 +61,8 @@ var (
 	championsSanitize    = champions.Command("sanitize", "sanitize champion file")
 	championsSanitizeCmd = champions_sanitize.New(championsSanitize)
 
-	championsParse    = champions.Command("parse", "parse champions from csv file")
-	championsParseCmd = champions_parser.New(championsParse)
+	championsParser    = champions.Command("parser", "parse champions from csv file")
+	championsParserCmd = champions_parser.New(championsParser)
 
 	championsCharacteristics          = champions.Command("characteristics", "deal with champions characteristics")
 	championsCharacteristicsParser    = championsCharacteristics.Command("parse", "parse champions characteristics")
@@ -82,6 +83,10 @@ var (
 	championsPageSeoSetDefaultCmd = champions_page_seo.New(championsPageSeoSetDefault, "set-default")
 	championsPageSeoApply         = championsPageSeo.Command("apply", "Apply SEO settings to champion page")
 	championsPageSeoApplyCmd      = champions_page_seo.New(championsPageSeoApply, "apply")
+
+	championsParse            = champions.Command("parse", "Parse stuff about champions")
+	championsParseTierList    = championsParse.Command("tier-list", "Tier list")
+	championsParseTierListCmd = champions_parse_tierlist.New(championsParseTierList)
 
 	factions = app.Command("factions", "do stuff with factions")
 
@@ -176,7 +181,8 @@ var (
 	serverRunCmd = server_run.New(serverRun)
 
 	runByCmd = map[string]Runnable{
-		"champions parse":                      championsParseCmd,
+		"champions parser":                     championsParserCmd,
+		"champions parse tier-list":            championsParseTierListCmd,
 		"factions parse":                       factionsParseCmd,
 		"champions page create":                championsPageCreateCmd,
 		"factions page create":                 factionsPageCreateCmd,

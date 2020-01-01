@@ -13,6 +13,7 @@ import (
 type Faction struct {
 	Name               string   `json:"name"`
 	Slug               string   `json:"slug"`
+	DateAdded          string   `json:"date_added"`
 	WebsiteLink        string   `json:"website_link"`
 	ImageSlug          string   `json:"image_slug"`
 	NumberOfChampions  int64    `json:"number_of_champions"`

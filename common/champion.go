@@ -17,6 +17,7 @@ import (
 
 type Champion struct {
 	Name               string                    `json:"name"`
+	DateAdded          string                    `json:"date_added"`
 	Rarity             string                    `json:"rarity"`
 	Element            string                    `json:"element"`
 	Type               string                    `json:"type"`
@@ -218,7 +219,7 @@ func (c *Champion) Sanitize() error {
 	}
 	sort.SliceStable(c.Videos, func(i, j int) bool {
 		if c.Videos[i].Source == c.Videos[j].Source {
-			return c.Videos[i].ID < c.Videos[j].ID
+			return c.Videos[i].DateAdded < c.Videos[j].DateAdded
 		}
 		return c.Videos[i].Source < c.Videos[j].Source
 	})

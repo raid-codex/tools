@@ -11,6 +11,7 @@ import (
 )
 
 type StatusEffect struct {
+	DateAdded      string  `json:"date_added"`
 	EffectType     string  `json:"effect_type"`
 	Type           string  `json:"type"`
 	Value          float64 `json:"value"`

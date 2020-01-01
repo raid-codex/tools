@@ -10,6 +10,7 @@ import (
 )
 
 type Fusion struct {
+	DateAdded        string              `json:"date_added"`
 	TimeStart        *time.Time          `json:"time_start"`
 	TimeEnd          *time.Time          `json:"time_end"`
 	Active           bool                `json:"active"`

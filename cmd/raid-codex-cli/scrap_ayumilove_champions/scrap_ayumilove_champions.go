@@ -247,7 +247,7 @@ func parseMasteries(champion *common.Champion, content string) {
 					utils.Exit(1, fmt.Errorf("mastery %s not found", mastery))
 				} else if len(found) != 1 {
 					panic(fmt.Errorf("mastery %s found %d times", mastery, len(found)))
-					utils.Exit(1, fmt.Errorf("mastery %s found %d times", mastery, len(found)))
+					//utils.Exit(1, fmt.Errorf("mastery %s found %d times", mastery, len(found)))
 				}
 				switch found[0].Tree {
 				case 1:
@@ -311,21 +311,16 @@ func parseEquipment(champion *common.Champion, equipment string) {
 	for idx < len(chunks) {
 		chunk := chunks[idx]
 		if strings.HasPrefix(chunk, "Equipment Set for") {
-			locations := []string{}
-			for _, location := range knownLocations {
-				if strings.Contains(chunk, location) {
-					locations = append(locations, common.GetLinkNameFromSanitizedName(location))
-				}
-			}
 			chunks[idx] = strings.Replace(chunks[idx], "Equipment Set for Campaign, Clan Boss, Dungeon, 1", "Equipment Set for Campaign, Clan Boss, Dungeon: 1", 1)
 			chunk = chunks[idx]
-			if strings.HasPrefix(chunk, "Equipment Set for") && strings.Contains(chunk, ":") {
+			if strings.HasPrefix(chunks[idx], "Equipment Set for") && strings.Contains(chunks[idx], ":") {
 				for strings.HasPrefix(chunks[idx], "Equipment Set for") && strings.Contains(chunks[idx], ":") {
-					builds = append(builds, parseSet(strings.Split(chunks[idx], ":")[1], locations))
+					builds = append(builds, parseSet(strings.Split(chunks[idx], ":")[1], parseLocations(chunks[idx])))
 					idx++
 				}
 				idx--
 			} else {
+				locations := parseLocations(chunk)
 				idx++
 				for !strings.HasPrefix(chunks[idx], "Equipment") {
 					builds = append(builds, parseSet(chunks[idx], locations))
@@ -362,6 +357,17 @@ func parseEquipment(champion *common.Champion, equipment string) {
 		champion.AddBuild(build)
 	}
 }
+
+func parseLocations(chunk string) []string {
+	locations := []string{}
+	for _, location := range knownLocations {
+		if strings.Contains(chunk, location) {
+			locations = append(locations, common.GetLinkNameFromSanitizedName(location))
+		}
+	}
+	return locations
+}
+
 func parseSet(chunk string, locations []string) *common.Build {
 	setsExtract := setExtracter.FindAllStringSubmatch(chunk, -1)
 	sets := []string{}

@@ -58,6 +58,14 @@ func (c *Command) Run() {
 		utils.Exit(1, errDoc)
 	}
 	if c.Builds != nil && *c.Builds {
+		// don't keep ayumilove's builds
+		builds := []*common.Build{}
+		for _, build := range champion.RecommendedBuilds {
+			if build.From != "ayumilove.net" {
+				builds = append(builds, build)
+			}
+		}
+		champion.RecommendedBuilds = builds
 		c.parseEquipment(champion, doc)
 	}
 	if c.Stats != nil && *c.Stats {
@@ -138,17 +146,17 @@ var (
 )
 
 func (c *Command) parseEquipment(champion *common.Champion, doc *goquery.Document) {
+	equipmentContent := []string{}
 	doc.Find(".entry-content").Each(func(_ int, s *goquery.Selection) {
 		check := 0
 		s.Children().Each(func(_ int, sc *goquery.Selection) {
 			switch check {
 			case 1:
-				// equipment guide
-				builds := parseEquipment(sc, champion)
-				for _, build := range builds {
-					champion.AddBuild(build)
+				if strings.HasSuffix(sc.Text(), "Mastery Guide") {
+					check = 2
+				} else {
+					equipmentContent = append(equipmentContent, sc.Text())
 				}
-				check = 0
 			case 2:
 				// mastery guide
 				if sc.Is("table") {
@@ -167,13 +175,16 @@ func (c *Command) parseEquipment(champion *common.Champion, doc *goquery.Documen
 			}
 		})
 	})
+	parseEquipment(champion, strings.Join(equipmentContent, "\n"))
 }
 
-func parseEquipment(sc *goquery.Selection, champion *common.Champion) []*common.Build {
+func parseEquipment(champion *common.Champion, equipment string) {
 	builds := []*common.Build{}
-	chunks := strings.Split(sc.Text(), "\n")
+	chunks := strings.Split(equipment, "\n")
 	statPrio := []string{}
-	for _, chunk := range chunks {
+	idx := 0
+	for idx < len(chunks) {
+		chunk := chunks[idx]
 		if strings.HasPrefix(chunk, "Equipment Set for") {
 			locations := []string{}
 			for _, location := range knownLocations {
@@ -197,8 +208,9 @@ func parseEquipment(sc *goquery.Selection, champion *common.Champion) []*common.
 				Locations: locations,
 				Sets:      sets,
 			})
-		} else if strings.HasPrefix(chunk, "Stat Priority: ") {
-			chunk = strings.Replace(chunk, "Stat Priority: ", "", -1)
+		} else if chunk == "Equipment Stat Priority" {
+			idx++
+			chunk = chunks[idx]
 			miniChunks := strings.Split(chunk, ",")
 			for _, stat := range miniChunks {
 				statPrio = append(statPrio, strings.Trim(stat, " "))
@@ -217,12 +229,13 @@ func parseEquipment(sc *goquery.Selection, champion *common.Champion) []*common.
 				}
 			}
 		}
+		idx++
 	}
 	for _, build := range builds {
 		errSanitize := build.Sanitize()
 		if errSanitize != nil {
 			utils.Exit(1, errSanitize)
 		}
+		champion.AddBuild(build)
 	}
-	return builds
 }

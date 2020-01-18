@@ -185,6 +185,11 @@ func (c *Champion) Sanitize() error {
 	if c.Masteries == nil {
 		c.Masteries = make([]*Masteries, 0)
 	}
+	for _, mastery := range c.Masteries {
+		if err := mastery.Sanitize(); err != nil {
+			return err
+		}
+	}
 
 	if err := c.lookupFusions(); err != nil {
 		return err

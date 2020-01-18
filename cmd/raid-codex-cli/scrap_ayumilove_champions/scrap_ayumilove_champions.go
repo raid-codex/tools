@@ -18,6 +18,7 @@ type Command struct {
 	DataDirectory *string
 	Stats         *bool
 	Builds        *bool
+	Masteries     *bool
 }
 
 func New(cmd *kingpin.CmdClause) *Command {
@@ -26,6 +27,7 @@ func New(cmd *kingpin.CmdClause) *Command {
 		ChampionName:  cmd.Flag("champion-name", "Name of the champion being looked up").Required().String(),
 		Stats:         cmd.Flag("with-stats", "Fetch champion stats and store them").Bool(),
 		Builds:        cmd.Flag("with-builds", "Fetch and store champion's build").Bool(),
+		Masteries:     cmd.Flag("with-masteries", "Fetch and stopre champion's masteries").Bool(),
 	}
 }
 
@@ -67,6 +69,17 @@ func (c *Command) Run() {
 		}
 		champion.RecommendedBuilds = builds
 		c.parseEquipment(champion, doc)
+	}
+	if c.Masteries != nil && *c.Masteries {
+		// don't keep ayumilove's masteries
+		masteries := []*common.ChampionMasteries{}
+		for _, mastery := range champion.Masteries {
+			if mastery.From != "ayumilove.net" {
+				masteries = append(masteries, mastery)
+			}
+		}
+		champion.Masteries = masteries
+		c.parseMasteries(champion, doc)
 	}
 	if c.Stats != nil && *c.Stats {
 		c.parseStats(champion, doc)
@@ -176,6 +189,97 @@ func (c *Command) parseEquipment(champion *common.Champion, doc *goquery.Documen
 		})
 	})
 	parseEquipment(champion, strings.Join(equipmentContent, "\n"))
+}
+
+func (c *Command) parseMasteries(champion *common.Champion, doc *goquery.Document) {
+	content := []string{}
+	doc.Find(".entry-content").Each(func(_ int, s *goquery.Selection) {
+		check := 0
+		s.Children().Each(func(_ int, sc *goquery.Selection) {
+			switch check {
+			case 2:
+				// mastery guide
+				if sc.Is("table") {
+					sc.Find("tr td ol li").Each(func(_ int, mastery *goquery.Selection) {
+						content = append(content, fmt.Sprintf("mastery: %s", mastery.Text()))
+					})
+				} else if sc.Is("h2") {
+					check = 0
+					break
+				} else {
+					content = append(content, sc.Text())
+				}
+			default:
+				check = 0
+				if strings.HasSuffix(sc.Text(), "Mastery Guide") {
+					check = 2
+				}
+			}
+		})
+	})
+	parseMasteries(champion, strings.Join(content, "\n"))
+}
+
+func parseMasteries(champion *common.Champion, content string) {
+	chunks := strings.Split(content, "\n")
+	masteries := []*common.ChampionMasteries{}
+	var currentMastery *common.ChampionMasteries
+	idx := 0
+	for idx < len(chunks) {
+		chunk := chunks[idx]
+		if strings.HasPrefix(chunk, "mastery: ") {
+			mastery := chunk[9:]
+			if mastery != "N/A" {
+				mastery = knownMasteriesReplacement(mastery)
+				found, err := common.GetMasteries(common.FilterMasteryLowercasedName(mastery))
+				if err != nil {
+					utils.Exit(1, fmt.Errorf("mastery %s not found", mastery))
+				} else if len(found) != 1 {
+					utils.Exit(1, fmt.Errorf("mastery %s found %d times", mastery, len(found)))
+				}
+				switch found[0].Tree {
+				case 1:
+					currentMastery.Offense = append(currentMastery.Offense, found[0].Slug)
+				case 2:
+					currentMastery.Defense = append(currentMastery.Defense, found[0].Slug)
+				case 3:
+					currentMastery.Support = append(currentMastery.Support, found[0].Slug)
+				default:
+					utils.Exit(1, fmt.Errorf("invalid tree %d", found[0].Tree))
+				}
+			}
+		} else if len(chunk) > 0 {
+			// where
+			currentMastery = &common.ChampionMasteries{
+				From:      "ayumilove.net",
+				Author:    "ayumilove",
+				Locations: []string{},
+			}
+			for _, location := range knownLocations {
+				if strings.Contains(chunk, location) {
+					currentMastery.Locations = append(currentMastery.Locations, common.GetLinkNameFromSanitizedName(location))
+				}
+			}
+			masteries = append(masteries, currentMastery)
+		}
+		idx++
+	}
+	for _, mastery := range masteries {
+		champion.AddMastery(mastery)
+	}
+}
+
+var (
+	knownMasteriesErrors = map[string]string{
+		"Swam Smiter": "Swarm Smiter",
+	}
+)
+
+func knownMasteriesReplacement(mastery string) string {
+	if v, ok := knownMasteriesErrors[mastery]; ok {
+		return v
+	}
+	return mastery
 }
 
 func parseEquipment(champion *common.Champion, equipment string) {

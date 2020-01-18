@@ -16,6 +16,7 @@ type Factory struct {
 	statusEffects StatusEffectList
 	factions      FactionList
 	fusions       FusionList
+	masteries     MasteryList
 }
 
 func InitFactory(dataDirectory string) error {
@@ -36,6 +37,9 @@ func (f *Factory) init(dataDirectory string) error {
 	if err := f.fetchFusions(fmt.Sprintf("%s/docs/fusions/current/", dataDirectory)); err != nil {
 		return err
 	}
+	if err := f.fetchMasteries(fmt.Sprintf("%s/docs/masteries/current/", dataDirectory)); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -46,6 +50,19 @@ func (f *Factory) fetchChampions(dir string) error {
 	}
 	defer file.Close()
 	errJSON := json.NewDecoder(file).Decode(&f.champions)
+	if errJSON != nil {
+		return errJSON
+	}
+	return nil
+}
+
+func (f *Factory) fetchMasteries(dir string) error {
+	file, errOpen := os.Open(fmt.Sprintf("%s/index.json", dir))
+	if errOpen != nil {
+		return errOpen
+	}
+	defer file.Close()
+	errJSON := json.NewDecoder(file).Decode(&f.masteries)
 	if errJSON != nil {
 		return errJSON
 	}
@@ -141,4 +158,22 @@ FUSION:
 	}
 	cl.Sort()
 	return cl, nil
+}
+
+func GetMasteries(filters ...MasteryFilter) (MasteryList, error) {
+	if factory == nil {
+		return nil, ErrNotInitialized
+	}
+	ml := make(MasteryList, 0)
+MASTERY:
+	for _, mastery := range factory.masteries {
+		for _, filter := range filters {
+			if !filter(mastery) {
+				continue MASTERY
+			}
+		}
+		ml = append(ml, mastery)
+	}
+	ml.Sort()
+	return ml, nil
 }

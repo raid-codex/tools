@@ -39,7 +39,7 @@ type Champion struct {
 	Synergies          []*Synergy                `json:"synergy"`
 	Thumbnail          string                    `json:"thumbnail"`
 	Tags               []string                  `json:"tags"`
-	Masteries          []*Masteries              `json:"masteries"`
+	Masteries          []*ChampionMasteries      `json:"masteries"`
 	FusionData         []*ChampionFusionData     `json:"fusion_data"`
 	EffectSlugs        []string                  `json:"effect_slugs"`
 	Videos             []*Video                  `json:"videos"`
@@ -183,7 +183,7 @@ func (c *Champion) Sanitize() error {
 	sort.SliceStable(c.Tags, func(i, j int) bool { return c.Tags[i] < c.Tags[j] })
 
 	if c.Masteries == nil {
-		c.Masteries = make([]*Masteries, 0)
+		c.Masteries = make([]*ChampionMasteries, 0)
 	}
 	for _, mastery := range c.Masteries {
 		if err := mastery.Sanitize(); err != nil {
@@ -704,4 +704,8 @@ func (c *Champion) AddBuild(build *Build) {
 		}
 	}
 	c.RecommendedBuilds = append(c.RecommendedBuilds, build)
+}
+
+func (c *Champion) AddMastery(mastery *ChampionMasteries) {
+	c.Masteries = append(c.Masteries, mastery)
 }

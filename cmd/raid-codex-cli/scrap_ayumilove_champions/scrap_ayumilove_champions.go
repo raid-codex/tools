@@ -17,6 +17,7 @@ type Command struct {
 	ChampionName  *string
 	DataDirectory *string
 	Stats         *bool
+	Builds        *bool
 }
 
 func New(cmd *kingpin.CmdClause) *Command {
@@ -24,6 +25,7 @@ func New(cmd *kingpin.CmdClause) *Command {
 		DataDirectory: cmd.Flag("data-directory", "Directory containing data").Required().String(),
 		ChampionName:  cmd.Flag("champion-name", "Name of the champion being looked up").Required().String(),
 		Stats:         cmd.Flag("with-stats", "Fetch champion stats and store them").Bool(),
+		Builds:        cmd.Flag("with-builds", "Fetch and store champion's build").Bool(),
 	}
 }
 
@@ -55,7 +57,9 @@ func (c *Command) Run() {
 	if errDoc != nil {
 		utils.Exit(1, errDoc)
 	}
-	c.parseEquipment(champion, doc)
+	if c.Builds != nil && *c.Builds {
+		c.parseEquipment(champion, doc)
+	}
 	if c.Stats != nil && *c.Stats {
 		c.parseStats(champion, doc)
 	}

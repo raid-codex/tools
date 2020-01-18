@@ -42,7 +42,7 @@ func (se *StatusEffect) Sanitize() error {
 			se.Slug = fmt.Sprintf("%s-2", se.Slug)
 		}
 	}
-	se.WebsiteLink = fmt.Sprintf("/%ss/%s", se.EffectType, se.Slug)
+	se.WebsiteLink = fmt.Sprintf("/effects/%s", se.Slug)
 	if strings.HasSuffix(se.WebsiteLink, "-2") {
 		se.WebsiteLink = se.WebsiteLink[:len(se.WebsiteLink)-2]
 	}

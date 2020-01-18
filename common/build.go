@@ -24,7 +24,7 @@ func (b *Build) Set(piece string, stat *StatPriority) {
 
 type StatsPriority struct {
 	Weapon     *StatPriority `json:"weapon"`
-	Helmet     *StatPriority `json:"Helmet"`
+	Helmet     *StatPriority `json:"helmet"`
 	Shield     *StatPriority `json:"shield"`
 	Gauntlets  *StatPriority `json:"gauntlets"`
 	Chestplate *StatPriority `json:"chestplate"`

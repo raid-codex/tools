@@ -43,7 +43,12 @@ func (c *Command) Run() {
 		utils.Exit(1, fmt.Errorf("found %d champions with slug %s", len(champions), *c.ChampionSlug))
 	}
 	champion := champions[0]
-	req, errRequest := http.NewRequest("GET", fmt.Sprintf("https://ayumilove.net/raid-shadow-legends-%s-skill-mastery-equip-guide/", champion.Slug), nil)
+	slugToLookup := champion.Slug
+	switch slugToLookup {
+	case "ma-shalled":
+		slugToLookup = "mashalled"
+	}
+	req, errRequest := http.NewRequest("GET", fmt.Sprintf("https://ayumilove.net/raid-shadow-legends-%s-skill-mastery-equip-guide/", slugToLookup), nil)
 	if errRequest != nil {
 		utils.Exit(1, errRequest)
 	}
@@ -225,6 +230,15 @@ func parseMasteries(champion *common.Champion, content string) {
 	for idx < len(chunks) {
 		chunk := chunks[idx]
 		if strings.HasPrefix(chunk, "mastery: ") {
+			if currentMastery == nil {
+				// assume everywhere
+				currentMastery = &common.ChampionMasteries{
+					From:      "ayumilove.net",
+					Author:    "ayumilove",
+					Locations: []string{},
+				}
+				masteries = append(masteries, currentMastery)
+			}
 			mastery := chunk[9:]
 			if mastery != "N/A" {
 				mastery = knownMasteriesReplacement(mastery)
@@ -232,6 +246,7 @@ func parseMasteries(champion *common.Champion, content string) {
 				if err != nil {
 					utils.Exit(1, fmt.Errorf("mastery %s not found", mastery))
 				} else if len(found) != 1 {
+					panic(fmt.Errorf("mastery %s found %d times", mastery, len(found)))
 					utils.Exit(1, fmt.Errorf("mastery %s found %d times", mastery, len(found)))
 				}
 				switch found[0].Tree {
@@ -268,7 +283,16 @@ func parseMasteries(champion *common.Champion, content string) {
 
 var (
 	knownMasteriesErrors = map[string]string{
-		"Swam Smiter": "Swarm Smiter",
+		"Swam Smiter":              "Swarm Smiter",
+		"Eagle-Eye":                "Eagle Eye",
+		"Blood Thirst":             "Bloodthirst",
+		"Whirldwind of Death":      "Whirlwind of Death",
+		"Subborness":               "Stubborness",
+		"Pintpoint Accuracy":       "Pinpoint Accuracy",
+		"Shiedl Breaker":           "Shield Breaker",
+		"Stubbornness":             "Stubborness",
+		"Delay of Death":           "Delay Death",
+		"Warmaster / Giant Slayer": "Warmaster",
 	}
 )
 
@@ -293,14 +317,21 @@ func parseEquipment(champion *common.Champion, equipment string) {
 					locations = append(locations, common.GetLinkNameFromSanitizedName(location))
 				}
 			}
+			chunks[idx] = strings.Replace(chunks[idx], "Equipment Set for Campaign, Clan Boss, Dungeon, 1", "Equipment Set for Campaign, Clan Boss, Dungeon: 1", 1)
+			chunk = chunks[idx]
 			if strings.HasPrefix(chunk, "Equipment Set for") && strings.Contains(chunk, ":") {
-				builds = append(builds, parseSet(strings.Split(chunk, ":")[1], locations))
+				for strings.HasPrefix(chunks[idx], "Equipment Set for") && strings.Contains(chunks[idx], ":") {
+					builds = append(builds, parseSet(strings.Split(chunks[idx], ":")[1], locations))
+					idx++
+				}
+				idx--
 			} else {
 				idx++
 				for !strings.HasPrefix(chunks[idx], "Equipment") {
 					builds = append(builds, parseSet(chunks[idx], locations))
 					idx++
 				}
+				idx--
 			}
 		} else if chunk == "Equipment Stat Priority" {
 			idx++

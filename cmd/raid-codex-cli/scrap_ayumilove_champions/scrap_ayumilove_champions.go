@@ -14,7 +14,7 @@ import (
 )
 
 type Command struct {
-	ChampionName  *string
+	ChampionSlug  *string
 	DataDirectory *string
 	Stats         *bool
 	Builds        *bool
@@ -24,7 +24,7 @@ type Command struct {
 func New(cmd *kingpin.CmdClause) *Command {
 	return &Command{
 		DataDirectory: cmd.Flag("data-directory", "Directory containing data").Required().String(),
-		ChampionName:  cmd.Flag("champion-name", "Name of the champion being looked up").Required().String(),
+		ChampionSlug:  cmd.Flag("champion-slug", "Slug of the champion being looked up").Required().String(),
 		Stats:         cmd.Flag("with-stats", "Fetch champion stats and store them").Bool(),
 		Builds:        cmd.Flag("with-builds", "Fetch and store champion's build").Bool(),
 		Masteries:     cmd.Flag("with-masteries", "Fetch and stopre champion's masteries").Bool(),
@@ -36,11 +36,11 @@ func (c *Command) Run() {
 	if errFactory != nil {
 		utils.Exit(1, errFactory)
 	}
-	champions, errChampions := common.GetChampions(common.FilterChampionName(*c.ChampionName))
+	champions, errChampions := common.GetChampions(common.FilterChampionSlug(*c.ChampionSlug))
 	if errChampions != nil {
 		utils.Exit(1, errChampions)
 	} else if len(champions) != 1 {
-		utils.Exit(1, fmt.Errorf("found %d champions with name %s", len(champions), *c.ChampionName))
+		utils.Exit(1, fmt.Errorf("found %d champions with slug %s", len(champions), *c.ChampionSlug))
 	}
 	champion := champions[0]
 	req, errRequest := http.NewRequest("GET", fmt.Sprintf("https://ayumilove.net/raid-shadow-legends-%s-skill-mastery-equip-guide/", champion.Slug), nil)

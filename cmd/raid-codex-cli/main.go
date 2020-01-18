@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"runtime/debug"
+	"strings"
 
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_characteristics_parser"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_create"
@@ -42,6 +45,11 @@ type Runnable interface {
 }
 
 func main() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Fprintf(os.Stderr, "recovered from panic while running command '%s'\n%v\n%s\n", strings.Join(os.Args, " "), r, string(debug.Stack()))
+		}
+	}()
 	cmd, err := app.Parse(os.Args[1:])
 	if err != nil {
 		utils.Exit(1, err)

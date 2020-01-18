@@ -154,7 +154,7 @@ func (c *Command) parseStats(champion *common.Champion, doc *goquery.Document) {
 var (
 	equipmentPrefixes = []string{"Weapon", "Helmet", "Shield", "Gauntlets", "Chestplate", "Boots", "Ring", "Amulet", "Banner"}
 	mainStatExtracter = regexp.MustCompile(`\((.+)\)$`)
-	knownLocations    = []string{"Arena", "Campaign", "Clan Boss", "Dungeon"}
+	knownLocations    = []string{"Arena", "Campaign", "Clan Boss", "Dungeon", "Faction Wars"}
 	setExtracter      = regexp.MustCompile(`(\d) ([A-Za-z ]+) Set`)
 )
 
@@ -165,7 +165,7 @@ func (c *Command) parseEquipment(champion *common.Champion, doc *goquery.Documen
 		s.Children().Each(func(_ int, sc *goquery.Selection) {
 			switch check {
 			case 1:
-				if strings.HasSuffix(sc.Text(), "Mastery Guide") {
+				if sc.Is("h2") || strings.HasSuffix(sc.Text(), "Mastery Guide") {
 					check = 2
 				} else {
 					equipmentContent = append(equipmentContent, sc.Text())
@@ -173,9 +173,6 @@ func (c *Command) parseEquipment(champion *common.Champion, doc *goquery.Documen
 			case 2:
 				// mastery guide
 				if sc.Is("table") {
-					sc.Find("tr td ol li").Each(func(_ int, mastery *goquery.Selection) {
-						//log.Printf("%v\n", mastery.Text())
-					})
 					check = 0
 				}
 			default:
@@ -296,29 +293,20 @@ func parseEquipment(champion *common.Champion, equipment string) {
 					locations = append(locations, common.GetLinkNameFromSanitizedName(location))
 				}
 			}
-			setsExtract := setExtracter.FindAllStringSubmatch(chunk, -1)
-			sets := []string{}
-			for _, setExtract := range setsExtract {
-				nbr, _ := strconv.Atoi(setExtract[1])
-				idx := 0
-				for idx < nbr {
+			if strings.HasPrefix(chunk, "Equipment Set for") && strings.Contains(chunk, ":") {
+				builds = append(builds, parseSet(strings.Split(chunk, ":")[1], locations))
+			} else {
+				idx++
+				for !strings.HasPrefix(chunks[idx], "Equipment") {
+					builds = append(builds, parseSet(chunks[idx], locations))
 					idx++
-					sets = append(sets, common.GetLinkNameFromSanitizedName(setExtract[2]))
 				}
 			}
-			builds = append(builds, &common.Build{
-				From:      "ayumilove.net",
-				Author:    "ayumilove",
-				Locations: locations,
-				Sets:      sets,
-			})
 		} else if chunk == "Equipment Stat Priority" {
 			idx++
-			chunk = chunks[idx]
-			miniChunks := strings.Split(chunk, ",")
-			for _, stat := range miniChunks {
-				statPrio = append(statPrio, strings.Trim(stat, " "))
-			}
+			statPrio = parseStatPrio(chunks[idx])
+		} else if strings.HasPrefix(chunk, "Stat Priority: ") {
+			statPrio = parseStatPrio(chunk[14:])
 		} else {
 			for _, prefix := range equipmentPrefixes {
 				if strings.HasPrefix(chunk, prefix) {
@@ -342,4 +330,31 @@ func parseEquipment(champion *common.Champion, equipment string) {
 		}
 		champion.AddBuild(build)
 	}
+}
+func parseSet(chunk string, locations []string) *common.Build {
+	setsExtract := setExtracter.FindAllStringSubmatch(chunk, -1)
+	sets := []string{}
+	for _, setExtract := range setsExtract {
+		nbr, _ := strconv.Atoi(setExtract[1])
+		idx2 := 0
+		for idx2 < nbr {
+			idx2++
+			sets = append(sets, common.GetLinkNameFromSanitizedName(setExtract[2]))
+		}
+	}
+	return &common.Build{
+		From:      "ayumilove.net",
+		Author:    "ayumilove",
+		Locations: locations,
+		Sets:      sets,
+	}
+}
+
+func parseStatPrio(chunk string) []string {
+	statPrio := []string{}
+	miniChunks := strings.Split(chunk, ",")
+	for _, stat := range miniChunks {
+		statPrio = append(statPrio, strings.Trim(stat, " "))
+	}
+	return statPrio
 }

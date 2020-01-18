@@ -698,11 +698,6 @@ func (c *Champion) getSynergy(key SynergyContextKey) *Synergy {
 }
 
 func (c *Champion) AddBuild(build *Build) {
-	for _, aBuild := range c.RecommendedBuilds {
-		if aBuild.IsSameThan(build) {
-			return
-		}
-	}
 	c.RecommendedBuilds = append(c.RecommendedBuilds, build)
 }
 

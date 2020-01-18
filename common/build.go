@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"reflect"
 	"sort"
 )
@@ -86,6 +87,9 @@ func (b *Build) Sanitize() error {
 	sort.SliceStable(b.Sets, func(i, j int) bool { return b.Sets[i] < b.Sets[j] })
 	if b.Stats != nil {
 		return b.Stats.Sanitize()
+	}
+	if b.Sets == nil || len(b.Sets) == 0 {
+		return fmt.Errorf("empty set for build")
 	}
 	return nil
 }

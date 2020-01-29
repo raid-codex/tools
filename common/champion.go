@@ -23,6 +23,7 @@ type Champion struct {
 	Type               string                    `json:"type"`
 	Rating             *Rating                   `json:"rating"`
 	Reviews            *Review                   `json:"reviews"`
+	AllRatings         AllRatings                `json:"all_ratings"`
 	Slug               string                    `json:"slug"`
 	Characteristics    map[int64]Characteristics `json:"characteristics"`
 	Auras              []*Aura                   `json:"auras"`
@@ -229,6 +230,10 @@ func (c *Champion) Sanitize() error {
 		return c.Videos[i].Source < c.Videos[j].Source
 	})
 
+	if c.AllRatings == nil {
+		c.AllRatings = make(AllRatings, 0)
+	}
+	c.Rating = c.AllRatings.Compute()
 	if err := c.Rating.Sanitize(); err != nil {
 		return err
 	}

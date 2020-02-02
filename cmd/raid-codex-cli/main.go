@@ -11,6 +11,7 @@ import (
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_generate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_page_seo"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_parse_tierlist"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_parse_tierlist_hellhades"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_parser"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_rebuild_index"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_sanitize"
@@ -95,6 +96,9 @@ var (
 	championsParse            = champions.Command("parse", "Parse stuff about champions")
 	championsParseTierList    = championsParse.Command("tier-list", "Tier list")
 	championsParseTierListCmd = champions_parse_tierlist.New(championsParseTierList)
+
+	championsParseTierListHellhades    = championsParse.Command("tier-list-hellhades", "Hellhades tier list")
+	championsParseTierListHellhadesCmd = champions_parse_tierlist_hellhades.New(championsParseTierListHellhades)
 
 	factions = app.Command("factions", "do stuff with factions")
 
@@ -191,6 +195,7 @@ var (
 	runByCmd = map[string]Runnable{
 		"champions parser":                     championsParserCmd,
 		"champions parse tier-list":            championsParseTierListCmd,
+		"champions parse tier-list-hellhades":  championsParseTierListHellhadesCmd,
 		"factions parse":                       factionsParseCmd,
 		"champions page create":                championsPageCreateCmd,
 		"factions page create":                 factionsPageCreateCmd,

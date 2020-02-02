@@ -13,7 +13,12 @@ func (ar AllRatings) Compute() *Rating {
 	rating := &Rating{}
 	v := reflect.ValueOf(rating)
 	indV := reflect.Indirect(v)
+	gTotal := 0
+	gDivideBy := 0
 	for i := 0; i < indV.NumField(); i++ {
+		if tag := indV.Type().Field(i).Tag.Get("json"); tag == "overall" {
+			continue
+		}
 		divideBy := 0
 		total := 0
 		for _, r := range ar {
@@ -27,6 +32,11 @@ func (ar AllRatings) Compute() *Rating {
 		if divideBy > 0 {
 			indV.Field(i).SetString(intToRank[int(float32(total)/float32(divideBy))])
 		}
+		gTotal += total
+		gDivideBy += divideBy
+	}
+	if gDivideBy > 0 {
+		rating.Overall = overallRatioToRank(float32(gTotal) / float32(gDivideBy))
 	}
 	return rating
 }

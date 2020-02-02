@@ -74,17 +74,37 @@ func (r *Rating) computeOverall() {
 	total := 0
 	divideBy := 0
 	for i := 0; i < indV.NumField(); i++ {
-		if tag := indV.Type().Field(i).Tag.Get("json"); tag != "" && tag != "overall" {
-			value := indV.Field(i).String()
-			if _, ok := rankToInt[value]; !ok {
-				continue
-			}
-			total += rankToInt[value]
-			divideBy += 1
+		if tag := indV.Type().Field(i).Tag.Get("json"); tag == "overall" {
+			continue
 		}
+		value := indV.Field(i).String()
+		if _, ok := rankToInt[value]; !ok {
+			continue
+		}
+		total += rankToInt[value]
+		divideBy += 1
 	}
 	if divideBy > 0 {
-		r.Overall = intToRank[int(float32(total)/float32(divideBy))]
+		r.Overall = overallRatioToRank(float32(total) / float32(divideBy))
+	}
+}
+
+func overallRatioToRank(val float32) string {
+	switch true {
+	case val <= 0.5:
+		return "D"
+	case val <= 1.5:
+		return "C"
+	case val <= 2.5:
+		return "B"
+	case val <= 3.5:
+		return "A"
+	case val <= 4.5:
+		return "S"
+	case 4.5 < val:
+		return "SS"
+	default:
+		return ""
 	}
 }
 

@@ -233,12 +233,33 @@ func (c *Champion) Sanitize() error {
 	if c.AllRatings == nil {
 		c.AllRatings = make(AllRatings, 0)
 	}
+	for _, r := range c.AllRatings {
+		if err := r.Sanitize(); err != nil {
+			return err
+		}
+	}
+
 	c.Rating = c.AllRatings.Compute()
 	if err := c.Rating.Sanitize(); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (c *Champion) AddRating(source string, rating *Rating, weight int) {
+	for _, src := range c.AllRatings {
+		if src.Source == source {
+			src.Rating = rating
+			src.Weight = weight
+			return
+		}
+	}
+	c.AllRatings = append(c.AllRatings, &RatingSource{
+		Source: source,
+		Rating: rating,
+		Weight: weight,
+	})
 }
 
 func (c *Champion) lookupFusions() error {

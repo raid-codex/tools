@@ -13,6 +13,7 @@ import (
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_parse_tierlist"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_parse_tierlist_hellhades"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_parser"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_rate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_rebuild_index"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_sanitize"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_create"
@@ -66,6 +67,10 @@ var (
 	app = kingpin.New("raid-codex-cli", "help")
 
 	champions = app.Command("champions", "do stuff with champions")
+
+	championsRating                 = champions.Command("rating", "Rate champion")
+	championsRatingAddFromSource    = championsRating.Command("add-from-source", "Add rating from source")
+	championsRatingAddFromSourceCmd = champions_rate.New(championsRatingAddFromSource)
 
 	championsSanitize    = champions.Command("sanitize", "sanitize champion file")
 	championsSanitizeCmd = champions_sanitize.New(championsSanitize)
@@ -193,6 +198,7 @@ var (
 	serverRunCmd = server_run.New(serverRun)
 
 	runByCmd = map[string]Runnable{
+		"champions rating add-from-source":     championsRatingAddFromSourceCmd,
 		"champions parser":                     championsParserCmd,
 		"champions parse tier-list":            championsParseTierListCmd,
 		"champions parse tier-list-hellhades":  championsParseTierListHellhadesCmd,

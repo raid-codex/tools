@@ -96,6 +96,9 @@ var (
 		"Flesh Tearer":     "Flesh-Tearer",
 		"Cannoness":        "Canoness",
 		"Woad Painted":     "Woad-Painted",
+		"Bad-el-Kazaar":    "Bad-el-Kazar",
+		"Big 'Un":          "Big'Un",
+		"Teela Groremane":  "Teela Goremane",
 	}
 )
 

@@ -20,6 +20,7 @@ type Command struct {
 	Builds        *bool
 	Masteries     *bool
 	Ratings       *bool
+	Skills        *bool
 }
 
 func New(cmd *kingpin.CmdClause) *Command {
@@ -30,6 +31,7 @@ func New(cmd *kingpin.CmdClause) *Command {
 		Builds:        cmd.Flag("with-builds", "Fetch and store champion's build").Bool(),
 		Masteries:     cmd.Flag("with-masteries", "Fetch and store champion's masteries").Bool(),
 		Ratings:       cmd.Flag("with-ratings", "Fetch and store champion's rating").Bool(),
+		Skills:        cmd.Flag("with-skills", "Also parse champions' skills").Bool(),
 	}
 }
 
@@ -93,6 +95,9 @@ func (c *Command) Run() {
 	}
 	if c.Ratings != nil && *c.Ratings {
 		c.parseRating(champion, doc)
+	}
+	if c.Skills != nil && *c.Skills {
+		//c.parseSkills(champion, doc)
 	}
 	errSanitize := champion.Sanitize()
 	if errSanitize != nil {

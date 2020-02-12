@@ -192,6 +192,8 @@ var (
 		"Remove All Buffs":             "Remove ALL Buffs",
 		"increase DEF":                 "Increase DEF",
 		"Increase C. Rate":             "Increase C. RATE",
+		"Decrease C.DMG":               "Decrease C. DMG",
+		"Increase C.DMG":               "Increase C. DMG",
 	}
 )
 

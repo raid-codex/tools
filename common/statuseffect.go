@@ -77,6 +77,9 @@ var (
 		"Block Buffs":           true,
 		"Heal Reduction":        true,
 		"Leech":                 true,
+		"Poison Sensitivity":    true,
+		"Decrease C. RATE":      true,
+		"Decrease C. DMG":       true,
 	}
 	buffs = map[string]bool{
 		"Increase C. RATE":   true,
@@ -95,6 +98,9 @@ var (
 		"Revive on Death":    true,
 		"Veil":               true,
 		"Perfect Veil":       true,
+		"Increase C. DMG":    true,
+		"Strengthen":         true,
+		"Increase ACC":       true,
 	}
 	battleEnhancements = map[string]bool{
 		"Debuff Spread":                       true,

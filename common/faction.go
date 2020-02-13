@@ -21,6 +21,7 @@ type Faction struct {
 	SEO                *seo.SEO `json:"seo"`
 	GIID               string   `json:"giid"`
 	RawDescription     string   `json:"raw_description"`
+	ChampionSlugs      []string `json:"champion_slugs"`
 }
 
 func (f *Faction) Sanitize() error {
@@ -53,6 +54,10 @@ func (f *Faction) Sanitize() error {
 		return errChampions
 	}
 	f.NumberOfChampions = int64(len(championList))
+	f.ChampionSlugs = make([]string, len(championList))
+	for idx, champion := range championList {
+		f.ChampionSlugs[idx] = champion.Slug
+	}
 
 	return nil
 }

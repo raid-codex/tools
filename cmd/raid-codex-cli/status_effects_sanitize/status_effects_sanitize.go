@@ -12,15 +12,21 @@ import (
 
 type Command struct {
 	StatusEffectFile *string
+	DataDirectory    *string
 }
 
 func New(cmd *kingpin.CmdClause) *Command {
 	return &Command{
 		StatusEffectFile: cmd.Flag("status-effect-file", "Filename for the status effect").Required().String(),
+		DataDirectory:    cmd.Flag("data-directory", "Data directory").Required().String(),
 	}
 }
 
 func (c *Command) Run() {
+	errFactory := common.InitFactory(*c.DataDirectory)
+	if errFactory != nil {
+		utils.Exit(1, errFactory)
+	}
 	effect, errEffect := c.getEffect()
 	if errEffect != nil {
 		utils.Exit(1, errEffect)

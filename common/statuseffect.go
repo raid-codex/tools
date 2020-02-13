@@ -11,20 +11,22 @@ import (
 )
 
 type StatusEffect struct {
-	DateAdded      string  `json:"date_added"`
-	EffectType     string  `json:"effect_type"`
-	Type           string  `json:"type"`
-	Value          float64 `json:"value"`
-	Chance         float64 `json:"chance"`
-	Turns          int64   `json:"turns"`
-	Target         *Target `json:"target"`
-	ImageSlug      string  `json:"image_slug"`
-	Slug           string  `json:"slug"`
-	WebsiteLink    string  `json:"website_link"`
-	Extra          bool    `json:"extra"`
-	RawDescription string  `json:"raw_description"`
-	PlacesIf       string  `json:"places_if"`
-	Amount         int64   `json:"amount"`
+	DateAdded      string   `json:"date_added"`
+	EffectType     string   `json:"effect_type"`
+	Type           string   `json:"type"`
+	Value          float64  `json:"value"`
+	Chance         float64  `json:"chance"`
+	Turns          int64    `json:"turns"`
+	Target         *Target  `json:"target"`
+	ImageSlug      string   `json:"image_slug"`
+	Slug           string   `json:"slug"`
+	WebsiteLink    string   `json:"website_link"`
+	Extra          bool     `json:"extra"`
+	RawDescription string   `json:"raw_description"`
+	PlacesIf       string   `json:"places_if"`
+	Amount         int64    `json:"amount"`
+	PossibleValues []string `json:"possible_values"`
+	ChampionSlugs  []string `json:"champion_slugs"`
 }
 
 func (se *StatusEffect) Sanitize() error {
@@ -33,6 +35,9 @@ func (se *StatusEffect) Sanitize() error {
 	}
 	if se.ImageSlug == "" || se.Type == "Revive on Death" {
 		se.ImageSlug = fmt.Sprintf("image-%s-%s", GetLinkNameFromSanitizedName(se.EffectType), se.Slug)
+	}
+	if se.Extra && !strings.HasSuffix(se.Slug, "-2") {
+		se.Slug = fmt.Sprintf("%s-2", se.Slug)
 	}
 	if se.Extra && !strings.HasSuffix(se.ImageSlug, "-2") {
 		se.ImageSlug = fmt.Sprintf("%s-2", se.ImageSlug)
@@ -51,6 +56,24 @@ func (se *StatusEffect) Sanitize() error {
 		if errTarget != nil {
 			return errTarget
 		}
+	}
+	if se.PossibleValues == nil {
+		se.PossibleValues = make([]string, 1)
+		se.PossibleValues[0] = se.Type
+		if strings.Contains(se.Type, "C. RATE") {
+			se.PossibleValues = append(se.PossibleValues, strings.Replace(se.Type, "C. RATE", "C.RATE", 1))
+		}
+		if strings.Contains(se.Type, "C. DMG") {
+			se.PossibleValues = append(se.PossibleValues, strings.Replace(se.Type, "C. DMG", "C.DMG", 1))
+		}
+	}
+	champions, errChampions := GetChampions(FilterChampionStatusEffect(se.Slug))
+	if errChampions != nil {
+		return errChampions
+	}
+	se.ChampionSlugs = make([]string, len(champions))
+	for idx, champion := range champions {
+		se.ChampionSlugs[idx] = champion.Slug
 	}
 	return nil
 }
@@ -208,22 +231,29 @@ var (
 		"HP":           true,
 		"SPD":          true,
 		"Enemy MAX HP": true,
+		"Enemy DEF":    true,
 	}
 	buffDebuffRateExtraSlug = map[string]string{
-		"Continuous Heal":  "15%",
-		"Decrease DEF":     "60%",
-		"Ally Protection":  "50%",
-		"Increase ATK":     "50%",
-		"Increase C. RATE": "30%",
-		"Increase SPD":     "30%",
-		"Increase DEF":     "60%",
-		"Reflect Damage":   "30%",
-		"Heal Reduction":   "100%",
-		"Decrease ACC":     "50%",
-		"Decrease ATK":     "50%",
-		"Decrease SPD":     "30%",
-		"Poison":           " 5%",
-		"Weaken":           "25%",
+		"Continuous Heal":    "15%",
+		"Decrease DEF":       "60%",
+		"Ally Protection":    "50%",
+		"Increase ATK":       "50%",
+		"Increase C. RATE":   "30%",
+		"Increase SPD":       "30%",
+		"Increase DEF":       "60%",
+		"Reflect Damage":     "30%",
+		"Heal Reduction":     "100%",
+		"Decrease ACC":       "50%",
+		"Decrease ATK":       "50%",
+		"Decrease SPD":       "30%",
+		"Poison":             " 5%",
+		"Weaken":             "25%",
+		"Decrease C. DMG":    "30%",
+		"Decrease C. RATE":   "30%",
+		"Poison Sensitivity": "50%",
+		"Strengthen":         "25%",
+		"Increase ACC":       "50%",
+		"Increase C. DMG":    "30%",
 	}
 )
 

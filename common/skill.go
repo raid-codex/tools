@@ -23,22 +23,20 @@ type Skill struct {
 
 func (s *Skill) Sanitize() error {
 	s.Slug = GetLinkNameFromSanitizedName(s.Name)
-	/*if err := s.lookForTurnMeter(); err != nil {
+	s.Effects = nil
+	effects, basedOn, err := getEffectsFromDescription(s.Effects, s.DamageBasedOn, s.RawDescription)
+	if err != nil {
 		return err
-	}*/
-	if s.Effects == nil || len(s.Effects) == 0 {
-		effects, basedOn, err := getEffectsFromDescription(s.Effects, s.DamageBasedOn, s.RawDescription)
-		if err != nil {
-			return err
-		}
-		s.Effects = effects
-		s.DamageBasedOn = basedOn
-	} else {
-		for _, effect := range s.Effects {
-			errSanitize := effect.Sanitize()
-			if errSanitize != nil {
-				return errSanitize
-			}
+	}
+	s.Effects = effects
+	if err := s.lookForTurnMeter(); err != nil {
+		return err
+	}
+	s.DamageBasedOn = basedOn
+	for _, effect := range s.Effects {
+		errSanitize := effect.Sanitize()
+		if errSanitize != nil {
+			return errSanitize
 		}
 	}
 	if s.Upgrades == nil {
@@ -72,19 +70,26 @@ func (s *Skill) lookForTurnMeter() error {
 		}
 	}
 	matched := false
-	if decreaseTMRegexp.MatchString(s.RawDescription) {
+	if decreaseTMRegexp.MatchString(s.RawDescription) || strings.Contains(s.RawDescription, "Turn Meters decreased") {
 		matched = true
 		s.Effects = append(s.Effects, &StatusEffect{
 			EffectType: "battle_enhancement",
 			Type:       "Decrease Turn Meter",
 		})
 	}
-	if increaseTMRegexp.MatchString(s.RawDescription) {
+	if increaseTMRegexp.MatchString(s.RawDescription) || strings.Contains(s.RawDescription, "Turn Meter will be increased") {
 		matched = true
 		s.Effects = append(s.Effects, &StatusEffect{
 			EffectType: "battle_enhancement",
 			Type:       "Increase Turn Meter",
 		})
+	}
+	if anyTMRegexp.MatchString(s.RawDescription) && !matched {
+		for _, wl := range []string{"Turn Meter is", "a full Turn Meter", "or have their Turn Meter filled"} {
+			if strings.Contains(s.RawDescription, wl) {
+				matched = true
+			}
+		}
 	}
 	if anyTMRegexp.MatchString(s.RawDescription) && !matched {
 		return fmt.Errorf("matched Turn Meter in skill %s but did not find any increase/decrease\n%s", s.Name, s.RawDescription)
@@ -250,6 +255,7 @@ func getEffectsFromDescription(effects []*StatusEffect, damageBasedOn []string, 
 		switch true {
 		case strings.Contains(m, fmt.Sprintf("is under a [%s]", val)),
 			strings.Contains(m, fmt.Sprintf("is under [%s]", val)),
+			strings.Contains(m, fmt.Sprintf("if the target has a [%s]", val)),
 			strings.Contains(m, fmt.Sprintf("under [%s]", val)):
 			// this is pure garbage
 			continue

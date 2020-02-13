@@ -643,6 +643,18 @@ var (
 	ErrSkillNotFound = fmt.Errorf("skill not found")
 )
 
+func (c *Champion) AddSkill(name string, description string, passive bool) *Skill {
+	skill, err := c.GetSkillByName(name)
+	if err != nil {
+		skill = &Skill{}
+		c.Skills = append(c.Skills, skill)
+	}
+	skill.Name = name
+	skill.RawDescription = description
+	skill.Passive = passive
+	return skill
+}
+
 func (c *Champion) GetSkillByName(name string) (*Skill, error) {
 	for _, skill := range c.Skills {
 		if skill.Name == name {

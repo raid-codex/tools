@@ -97,7 +97,7 @@ func (c *Command) Run() {
 		c.parseRating(champion, doc)
 	}
 	if c.Skills != nil && *c.Skills {
-		//c.parseSkills(champion, doc)
+		c.parseSkills(champion, doc)
 	}
 	errSanitize := champion.Sanitize()
 	if errSanitize != nil {
@@ -142,9 +142,9 @@ func (c *Command) parseStats(champion *common.Champion, doc *goquery.Document) {
 					intField = &chars.Resistance
 				case strings.Contains(d, "SPD"):
 					intField = &chars.Speed
-				case strings.Contains(d, "C. Rate"):
+				case strings.Contains(d, "C. Rate") || strings.Contains(d, "C.RATE"):
 					floatField = &chars.CriticalRate
-				case strings.Contains(d, "C. DMG"):
+				case strings.Contains(d, "C. DMG") || strings.Contains(d, "C.DMG"):
 					floatField = &chars.CriticalDamage
 				default:
 					utils.Exit(1, fmt.Errorf("cannot parse stats line '%s'", d))
@@ -261,6 +261,44 @@ func (c *Command) parseEquipment(champion *common.Champion, doc *goquery.Documen
 		})
 	})
 	parseEquipment(champion, strings.Join(equipmentContent, "\n"))
+}
+
+var (
+	regexpSkillName              = regexp.MustCompile(`^([a-zA-Z ]+)`)
+	regexpSkillCooldown          = regexp.MustCompile(`\(Cooldown: (\d+) turns\)`)
+	regexpSkillDamageIncreasedBy = regexp.MustCompile(`(\[[A-Z]+\])`)
+)
+
+func (c *Command) parseSkills(champion *common.Champion, doc *goquery.Document) {
+	doc.Find(".entry-content").Each(func(_ int, s *goquery.Selection) {
+		check := 0
+		s.Children().Each(func(_ int, sc *goquery.Selection) {
+			switch check {
+			case 1:
+				if !sc.Is("p") {
+					check = 0
+					return
+				}
+				data := strings.Split(sc.Text(), "\n")
+				skillName := strings.TrimSpace(regexpSkillName.FindAllString(data[0], -1)[0])
+				damageIncreasedBy := regexpSkillDamageIncreasedBy.FindAllString(data[0], -1)
+				if len(damageIncreasedBy) > 0 {
+					data[1] = data[1] + "<br>Damage based on: " + strings.Join(damageIncreasedBy, " ")
+				}
+				description := strings.Join(data[1:], "<br>")
+				if skillName != "Aura" {
+					champion.AddSkill(skillName, description, false)
+				} else {
+					champion.SetAura(description)
+				}
+			default:
+				check = 0
+				if strings.HasSuffix(sc.Text(), "Skills") {
+					check = 1
+				}
+			}
+		})
+	})
 }
 
 func (c *Command) parseMasteries(champion *common.Champion, doc *goquery.Document) {

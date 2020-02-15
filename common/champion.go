@@ -244,6 +244,19 @@ func (c *Champion) Sanitize() error {
 		return err
 	}
 
+	// don't store champion slugs on factions / effects
+	c.Faction.ChampionSlugs = []string{}
+	for _, skill := range c.Skills {
+		for _, effect := range skill.Effects {
+			effect.ChampionSlugs = []string{}
+		}
+		for _, upgrade := range skill.Upgrades {
+			for _, effect := range upgrade.Effects {
+				effect.ChampionSlugs = []string{}
+			}
+		}
+	}
+
 	return nil
 }
 

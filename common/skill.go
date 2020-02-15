@@ -58,7 +58,7 @@ func (s *Skill) Sanitize() error {
 }
 
 var (
-	decreaseTMRegexp = regexp.MustCompile(`(?i)(Decrea|deplete)([^.<])+Turn Meter`)
+	decreaseTMRegexp = regexp.MustCompile(`(?i)(Decrea|deplete|depleting)([^.<])+Turn Meter`)
 	increaseTMRegexp = regexp.MustCompile(`(?i)(Fill|boost|steal|resets)([^.<])+Turn Meter`)
 	anyTMRegexp      = regexp.MustCompile(`(?i)Turn.*Meter`)
 )

@@ -21,6 +21,7 @@ type Command struct {
 	Masteries     *bool
 	Ratings       *bool
 	Skills        *bool
+	Lore          *bool
 }
 
 func New(cmd *kingpin.CmdClause) *Command {
@@ -31,9 +32,17 @@ func New(cmd *kingpin.CmdClause) *Command {
 		Builds:        cmd.Flag("with-builds", "Fetch and store champion's build").Bool(),
 		Masteries:     cmd.Flag("with-masteries", "Fetch and store champion's masteries").Bool(),
 		Ratings:       cmd.Flag("with-ratings", "Fetch and store champion's rating").Bool(),
-		Skills:        cmd.Flag("with-skills", "Also parse champions' skills").Bool(),
+		Skills:        cmd.Flag("with-skills", "Also parse champion's skills").Bool(),
+		Lore:          cmd.Flag("with-lore", "Also parse champion's lore").Bool(),
 	}
 }
+
+var (
+	slugTranslation = map[string]string{
+		"ma-shalled": "mashalled",
+		"khoronar":   "kohronar",
+	}
+)
 
 func (c *Command) Run() {
 	errFactory := common.InitFactory(*c.DataDirectory)
@@ -48,9 +57,8 @@ func (c *Command) Run() {
 	}
 	champion := champions[0]
 	slugToLookup := champion.Slug
-	switch slugToLookup {
-	case "ma-shalled":
-		slugToLookup = "mashalled"
+	if v, ok := slugTranslation[slugToLookup]; ok {
+		slugToLookup = v
 	}
 	req, errRequest := http.NewRequest("GET", fmt.Sprintf("https://ayumilove.net/raid-shadow-legends-%s-skill-mastery-equip-guide/", slugToLookup), nil)
 	if errRequest != nil {
@@ -99,6 +107,9 @@ func (c *Command) Run() {
 	if c.Skills != nil && *c.Skills {
 		c.parseSkills(champion, doc)
 	}
+	if c.Lore != nil && *c.Lore {
+		c.parseStoryline(champion, doc)
+	}
 	errSanitize := champion.Sanitize()
 	if errSanitize != nil {
 		utils.Exit(1, errSanitize)
@@ -108,6 +119,27 @@ func (c *Command) Run() {
 	if errWrite != nil {
 		utils.Exit(1, errWrite)
 	}
+}
+
+func (c *Command) parseStoryline(champion *common.Champion, doc *goquery.Document) {
+	doc.Find(".entry-content").Each(func(_ int, s *goquery.Selection) {
+		check := 0
+		s.Children().Each(func(_ int, sc *goquery.Selection) {
+			switch check {
+			case 1:
+				if !sc.Is("p") {
+					check = 0
+					return
+				}
+				champion.Lore = fmt.Sprintf("<p>%s</p>", sc.Text())
+			default:
+				check = 0
+				if strings.HasSuffix(sc.Text(), "Storyline") {
+					check = 1
+				}
+			}
+		})
+	})
 }
 
 func (c *Command) parseStats(champion *common.Champion, doc *goquery.Document) {

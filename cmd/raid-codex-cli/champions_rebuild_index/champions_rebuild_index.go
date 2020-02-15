@@ -61,6 +61,8 @@ func (c *Command) fetchChampions() (common.ChampionList, error) {
 		if err != nil {
 			return nil, err
 		}
+		// set lore to empty string in the index, otherwise the file is too big
+		champion.Lore = ""
 		champions = append(champions, &champion)
 	}
 	return champions, nil

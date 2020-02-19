@@ -35,12 +35,8 @@ var (
 )
 
 func (a *Aura) Sanitize() error {
-	if a.Stats == nil {
-		a.Stats = make([]string, 0)
-	}
-	if a.Locations == nil {
-		a.Locations = make([]string, 0)
-	}
+	a.Stats = make([]string, 0)
+	a.Locations = make([]string, 0)
 	for _, repl := range auraReplacements {
 		a.RawDescription = strings.Replace(a.RawDescription, repl.lookFor, repl.replaceBy, -1)
 	}
@@ -53,6 +49,8 @@ func (a *Aura) Sanitize() error {
 	if strings.HasSuffix(matches[3], "%") {
 		a.Percentage = true
 		matches[3] = matches[3][0 : len(matches[3])-1]
+	} else {
+		a.Percentage = false
 	}
 	value, err := strconv.ParseInt(matches[3], 10, 64)
 	if err != nil {

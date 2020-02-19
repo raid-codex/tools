@@ -16,6 +16,7 @@ type Skill struct {
 	Effects        []*StatusEffect `json:"effects"`
 	DamageBasedOn  []string        `json:"damaged_based_on"`
 	GIID           string          `json:"giid"`
+	Cooldown       int64           `json:"cooldown"`
 	Upgrades       []*SkillData    `json:"upgrades"`
 	ImageSlug      string          `json:"image_slug"`
 	SkillNumber    string          `json:"skill_number"`
@@ -51,6 +52,10 @@ func (s *Skill) Sanitize() error {
 	sort.SliceStable(s.Upgrades, func(i, j int) bool {
 		return s.Upgrades[i].Level < s.Upgrades[j].Level
 	})
+	// no cooldown yet, fetch from upgrades
+	if s.Cooldown == 0 && !s.Passive && s.SkillNumber != "A1" && len(s.Upgrades) > 0 {
+		s.Cooldown = s.Upgrades[0].Cooldown
+	}
 	if s.GIID != "" {
 		s.ImageSlug = fmt.Sprintf("%x", md5.Sum([]byte(s.GIID)))
 	}

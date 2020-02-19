@@ -297,11 +297,12 @@ func (c *Command) parseEquipment(champion *common.Champion, doc *goquery.Documen
 
 var (
 	regexpSkillName              = regexp.MustCompile(`^([a-zA-Z ]+)`)
-	regexpSkillCooldown          = regexp.MustCompile(`\(Cooldown: (\d+) turns\)`)
+	regexpSkillCooldown          = regexp.MustCompile(`\(Cooldown: ([0-9]+) turns\)`)
 	regexpSkillDamageIncreasedBy = regexp.MustCompile(`(\[[A-Z]+\])`)
 )
 
 func (c *Command) parseSkills(champion *common.Champion, doc *goquery.Document) {
+	skillNumber := 1
 	doc.Find(".entry-content").Each(func(_ int, s *goquery.Selection) {
 		check := 0
 		s.Children().Each(func(_ int, sc *goquery.Selection) {
@@ -317,9 +318,30 @@ func (c *Command) parseSkills(champion *common.Champion, doc *goquery.Document) 
 				if len(damageIncreasedBy) > 0 {
 					data[1] = data[1] + "<br>Damage based on: " + strings.Join(damageIncreasedBy, " ")
 				}
+				cooldown := regexpSkillCooldown.FindAllStringSubmatch(data[0], -1)
 				description := strings.Join(data[1:], "<br>")
 				if skillName != "Aura" {
-					champion.AddSkill(skillName, description, false)
+					skill := champion.AddSkill(skillName, description, false)
+					currentSkillNumber := 0
+					for idx := range champion.Skills {
+						if skill == champion.Skills[idx] {
+							currentSkillNumber = idx + 1
+							break
+						}
+					}
+					if currentSkillNumber != skillNumber {
+						utils.Exit(1, fmt.Errorf("weird: skill %s should be A%d but we got A%d", skill.Name, skillNumber, currentSkillNumber))
+					}
+					if skill, errSkill := champion.GetSkillByName(skillName); errSkill == nil {
+						if len(cooldown) == 1 {
+							if intV, err := strconv.ParseInt(cooldown[0][1], 10, 64); err != nil {
+								utils.Exit(1, err)
+							} else {
+								skill.Cooldown = intV
+							}
+						}
+					}
+					skillNumber++
 				} else {
 					champion.SetAura(description)
 				}

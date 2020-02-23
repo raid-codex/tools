@@ -3,6 +3,7 @@ package common
 import (
 	"crypto/md5"
 	"fmt"
+	"log"
 	"regexp"
 	"sort"
 	"strings"
@@ -34,6 +35,9 @@ func (s *Skill) Sanitize() error {
 		return err
 	}
 	s.DamageBasedOn = basedOn
+	/*	if err := s.parseRawSkill(); err != nil {
+		return err
+	}*/
 	for _, effect := range s.Effects {
 		errSanitize := effect.Sanitize()
 		if errSanitize != nil {
@@ -241,27 +245,68 @@ func (sd *SkillData) AddEffect(effect string, who string, turns int64, chance fl
 	sd.Effects = ne
 }
 
-func getEffectsFromDescription(effects []*StatusEffect, damageBasedOn []string, rawDescription string) ([]*StatusEffect, []string, error) {
+func (s *Skill) parseRawSkill() error {
+	split := strings.Split(s.RawDescription, "<br>")
+	split2 := make([]string, 0)
+	for _, s := range split {
+		split3 := strings.Split(s, ".")
+		for _, s3 := range split3 {
+			if s3 == "" {
+				continue
+			}
+			split2 = append(split2, s3)
+		}
+	}
 	currentEffects := map[string]*StatusEffect{}
-	/*	for _, effect := range effects {
-		currentEffects[effect.Type] = effect
-	}*/
 	basedOn := map[string]bool{}
-	/*	for _, stat := range damageBasedOn {
-		basedOn[stat] = true
-	}*/
-	extract := statusEffectFromSkillAuraMore.FindAllString(rawDescription, -1)
+	for _, sentence := range split2 {
+		if strings.HasPrefix(sentence, "Lvl") || strings.HasPrefix(sentence, "Level") {
+			break
+		}
+		log.Printf("sentence: %s\n", sentence)
+		if err := parseStatusEffectsFromSkillDescription(sentence, currentEffects, basedOn); err != nil {
+			return err
+		}
+		if err := parseTargetsOfAttack(sentence); err != nil {
+			return err
+		}
+	}
+	log.Printf("%+v\n", currentEffects)
+	return nil
+}
+
+var (
+	parseTargetsAttack = regexp.MustCompile(`Attacks (\d+|all) enem`)
+)
+
+func parseTargetsOfAttack(sentence string) error {
+	matches := parseTargetsAttack.FindAllStringSubmatch(sentence, -1)
+	for _, m := range matches {
+		if len(m) != 2 {
+			return fmt.Errorf("wtf %+v", m)
+		}
+		targets := m[1]
+		log.Printf("targets: %s\n", targets)
+	}
+	return nil
+}
+
+func parseStatusEffectsFromSkillDescription(sentence string, currentEffects map[string]*StatusEffect, basedOn map[string]bool) error {
+	extract := statusEffectFromSkillAuraMore.FindAllString(sentence, -1)
 	for _, m := range extract {
 		m2 := statusEffectFromSkillAura.FindAllStringSubmatch(m, -1)
 		if len(m2) != 1 {
-			panic(fmt.Sprintf("wtf %+v", m2))
+			return fmt.Errorf("wtf %+v", m2)
 		}
 		val := translateEffect(m2[0][1])
 		switch true {
 		case strings.Contains(m, fmt.Sprintf("is under a [%s]", val)),
 			strings.Contains(m, fmt.Sprintf("is under [%s]", val)),
 			strings.Contains(m, fmt.Sprintf("if the target has a [%s]", val)),
-			strings.Contains(m, fmt.Sprintf("under [%s]", val)):
+			strings.Contains(m, fmt.Sprintf("under [%s]", val)),
+			strings.Contains(m, fmt.Sprintf("under an [%s]", val)),
+			strings.Contains(m, fmt.Sprintf("under a [%s]", val)),
+			strings.Contains(m, fmt.Sprintf("from all [%s]", val)):
 			// this is pure garbage
 			continue
 		}
@@ -283,11 +328,20 @@ func getEffectsFromDescription(effects []*StatusEffect, damageBasedOn []string, 
 				Type:       val,
 			}
 		} else {
-			return nil, nil, fmt.Errorf("unknown thing: %s (%+v) -- %s", val, m2, rawDescription)
+			return fmt.Errorf("unknown thing: %s (%+v) -- %s", val, m2, sentence)
 		}
 		if v, ok := buffDebuffRateExtraSlug[val]; ok && strings.Contains(m, v) {
 			currentEffects[val].Extra = true
 		}
+	}
+	return nil
+}
+
+func getEffectsFromDescription(effects []*StatusEffect, damageBasedOn []string, rawDescription string) ([]*StatusEffect, []string, error) {
+	currentEffects := map[string]*StatusEffect{}
+	basedOn := map[string]bool{}
+	if err := parseStatusEffectsFromSkillDescription(rawDescription, currentEffects, basedOn); err != nil {
+		return nil, nil, err
 	}
 	newEffects := make([]*StatusEffect, len(currentEffects))
 	idx := 0

@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+type StatusEffectFilter func(*StatusEffect) bool
+
 type StatusEffect struct {
 	DateAdded      string   `json:"date_added"`
 	EffectType     string   `json:"effect_type"`

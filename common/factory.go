@@ -124,6 +124,24 @@ CHAMPIONS:
 	return cl, nil
 }
 
+func GetStatuseffects(filters ...StatusEffectFilter) (StatusEffectList, error) {
+	if factory == nil {
+		return nil, ErrNotInitialized
+	}
+	sel := make(StatusEffectList, 0)
+STATUSEFFECTS:
+	for _, statusEffect := range factory.statusEffects {
+		for _, filter := range filters {
+			if !filter(statusEffect) {
+				continue STATUSEFFECTS
+			}
+		}
+		sel = append(sel, statusEffect)
+	}
+	sel.Sort()
+	return sel, nil
+}
+
 func GetFactions(filters ...FactionFilter) (FactionList, error) {
 	if factory == nil {
 		return nil, ErrNotInitialized

@@ -245,7 +245,7 @@ func (sd *SkillData) AddEffect(effect string, who string, turns int64, chance fl
 	sd.Effects = ne
 }
 
-func (s *Skill) parseRawSkill() error {
+func (s *Skill) getSentencesFromRawDescription() []string {
 	split := strings.Split(s.RawDescription, "<br>")
 	split2 := make([]string, 0)
 	for _, s := range split {
@@ -257,9 +257,13 @@ func (s *Skill) parseRawSkill() error {
 			split2 = append(split2, s3)
 		}
 	}
+	return split2
+}
+
+func (s *Skill) parseRawSkill() error {
 	currentEffects := map[string]*StatusEffect{}
 	basedOn := map[string]bool{}
-	for _, sentence := range split2 {
+	for _, sentence := range s.getSentencesFromRawDescription() {
 		if strings.HasPrefix(sentence, "Lvl") || strings.HasPrefix(sentence, "Level") {
 			break
 		}

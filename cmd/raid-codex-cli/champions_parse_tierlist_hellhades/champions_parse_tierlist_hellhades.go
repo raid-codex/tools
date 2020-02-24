@@ -15,6 +15,8 @@ import (
 
 // https://docs.google.com/spreadsheets/d/1YjETkvBMVKZr7CPDjL_iIy_Wa6-psHob6so6fgKLX7c/edit#gid=0
 // https://spreadsheets.google.com/feeds/download/spreadsheets/Export?key=1YjETkvBMVKZr7CPDjL_iIy_Wa6-psHob6so6fgKLX7c&exportFormat=csv
+// https://docs.google.com/spreadsheets/d/1YjETkvBMVKZr7CPDjL_iIy_Wa6-psHob6so6fgKLX7c/htmlview?sle=true#gid=0
+// https://spreadsheets.google.com/feeds/download/spreadsheets/Export?key=1YjETkvBMVKZr7CPDjL_iIy_Wa6-psHob6so6fgKLX7c&exportFormat=csv
 
 type Command struct {
 	CSVFile       *string
@@ -45,16 +47,25 @@ func (c *Command) Run() {
 		utils.Exit(1, errRead)
 	}
 	champions := make([]*common.Champion, 0)
+	errs := make([]error, 0)
 	for idx, line := range content {
 		if idx == 0 {
-			if strings.Join(line, ",") != safeGuard {
+			ok := false
+			for _, sg := range safeGuard {
+				if strings.Join(line, ",") == sg {
+					ok = true
+					break
+				}
+			}
+			if !ok {
 				utils.Exit(1, fmt.Errorf("invalid first line: %s", strings.Join(line, ",")))
 			}
 			continue
 		}
 		champion, errChampion := c.getChampion(line[1])
 		if errChampion != nil {
-			utils.Exit(1, errChampion)
+			errs = append(errs, errChampion)
+			continue
 		}
 		rating := &common.Rating{}
 		rating.ArenaDef = sanitizeRating(line[rating_ArenaDef])
@@ -67,6 +78,9 @@ func (c *Command) Run() {
 		rating.FireKnight = sanitizeRating(line[rating_FireKnight])
 		champion.AddRating("hellhades-tier-list", rating, 5)
 		champions = append(champions, champion)
+	}
+	if len(errs) > 0 {
+		utils.Exit(1, fmt.Errorf("got multiple errors: %+v", errs))
 	}
 	for _, champion := range champions {
 		if err := champion.Sanitize(); err != nil {
@@ -90,19 +104,31 @@ var (
 		0: "D",
 	}
 	championReplacement = map[string]string{
-		"Allure":           "Alure",
-		"Lutheia":          "Luthiea",
-		"InfernalBaroness": "Infernal Baroness",
-		"Flesh Tearer":     "Flesh-Tearer",
-		"Cannoness":        "Canoness",
-		"Woad Painted":     "Woad-Painted",
-		"Bad-el-Kazaar":    "Bad-el-Kazar",
-		"Big 'Un":          "Big'Un",
-		"Teela Groremane":  "Teela Goremane",
+		"Allure":             "Alure",
+		"Lutheia":            "Luthiea",
+		"InfernalBaroness":   "Infernal Baroness",
+		"Flesh Tearer":       "Flesh-Tearer",
+		"Cannoness":          "Canoness",
+		"Woad Painted":       "Woad-Painted",
+		"Bad-el-Kazaar":      "Bad-el-Kazar",
+		"Big 'Un":            "Big'Un",
+		"Teela Groremane":    "Teela Goremane",
+		"Painkeeper":         "Pain Keeper",
+		"Bloodhord":          "Bloodhorn",
+		"Amaratine Skeleton": "Amarantine Skeleton",
+		"Lameller":           "Lamellar",
+		"Steadfast Marshall": "Steadfast Marshal",
+		"Furystroker":        "Furystoker",
+		"Tormenter":          "Tormentor",
+		"Houndspawn":         "Hound Spawn",
+		"Arablaster":         "Arbalester",
 	}
 )
 
 func sanitizeRating(rating string) string {
+	if rating == "" {
+		return rating
+	}
 	intV, err := strconv.Atoi(rating)
 	if err != nil {
 		panic(err)
@@ -146,8 +172,14 @@ func (c *Command) saveChampion(champion *common.Champion) error {
 	return nil
 }
 
+var (
+	safeGuard = []string{
+		`Rank,Champion,Faction,Affinity,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide`,
+		`Overall,Champion,Faction,Affinity,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide`,
+	}
+)
+
 const (
-	safeGuard           = `Overall,Champion,Faction,Affinity,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average`
 	rating_ArenaOff     = 9
 	rating_ArenaDef     = 10
 	rating_ClanBossWOGS = 4

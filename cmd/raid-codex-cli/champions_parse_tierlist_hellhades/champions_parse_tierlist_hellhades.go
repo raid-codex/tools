@@ -104,24 +104,27 @@ var (
 		0: "D",
 	}
 	championReplacement = map[string]string{
-		"Allure":             "Alure",
-		"Lutheia":            "Luthiea",
-		"InfernalBaroness":   "Infernal Baroness",
-		"Flesh Tearer":       "Flesh-Tearer",
-		"Cannoness":          "Canoness",
-		"Woad Painted":       "Woad-Painted",
-		"Bad-el-Kazaar":      "Bad-el-Kazar",
-		"Big 'Un":            "Big'Un",
-		"Teela Groremane":    "Teela Goremane",
-		"Painkeeper":         "Pain Keeper",
-		"Bloodhord":          "Bloodhorn",
-		"Amaratine Skeleton": "Amarantine Skeleton",
-		"Lameller":           "Lamellar",
-		"Steadfast Marshall": "Steadfast Marshal",
-		"Furystroker":        "Furystoker",
-		"Tormenter":          "Tormentor",
-		"Houndspawn":         "Hound Spawn",
-		"Arablaster":         "Arbalester",
+		"Allure":               "Alure",
+		"Lutheia":              "Luthiea",
+		"InfernalBaroness":     "Infernal Baroness",
+		"Flesh Tearer":         "Flesh-Tearer",
+		"Cannoness":            "Canoness",
+		"Woad Painted":         "Woad-Painted",
+		"Bad-el-Kazaar":        "Bad-el-Kazar",
+		"Big 'Un":              "Big'Un",
+		"Teela Groremane":      "Teela Goremane",
+		"Painkeeper":           "Pain Keeper",
+		"Bloodhord":            "Bloodhorn",
+		"Amaratine Skeleton":   "Amarantine Skeleton",
+		"Lameller":             "Lamellar",
+		"Steadfast Marshall":   "Steadfast Marshal",
+		"Furystroker":          "Furystoker",
+		"Tormenter":            "Tormentor",
+		"Houndspawn":           "Hound Spawn",
+		"Arablaster":           "Arbalester",
+		"Siphi the lost bride": "Siphi the Lost Bride",
+		"Rotos the lost groom": "Rotos the Lost Groom",
+		"Ursine IceCrusher":    "Ursine Icecrusher",
 	}
 )
 
@@ -176,6 +179,8 @@ var (
 	safeGuard = []string{
 		`Rank,Champion,Faction,Affinity,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide`,
 		`Overall,Champion,Faction,Affinity,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide`,
+		`Overall,Champion,Faction,Affinity,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,,,,,,,,,,,`,
+		`Rank,Champion,Faction,Affinity,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,,,,,,,,,,,`,
 	}
 )
 

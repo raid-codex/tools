@@ -310,7 +310,10 @@ func parseStatusEffectsFromSkillDescription(sentence string, currentEffects map[
 			strings.Contains(m, fmt.Sprintf("under [%s]", val)),
 			strings.Contains(m, fmt.Sprintf("under an [%s]", val)),
 			strings.Contains(m, fmt.Sprintf("under a [%s]", val)),
-			strings.Contains(m, fmt.Sprintf("from all [%s]", val)):
+			strings.Contains(m, fmt.Sprintf("from all [%s]", val)),
+			strings.Contains(m, fmt.Sprintf("removes any [%s]", val)),
+			strings.Contains(m, fmt.Sprintf("an enemy places a [%s]", val)),
+			strings.Contains(m, fmt.Sprintf("an ally receives a [%s]", val)):
 			// this is pure garbage
 			continue
 		}

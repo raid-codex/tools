@@ -296,7 +296,7 @@ func (c *Command) parseEquipment(champion *common.Champion, doc *goquery.Documen
 }
 
 var (
-	regexpSkillName              = regexp.MustCompile(`^([a-zA-Z ]+)`)
+	regexpSkillName              = regexp.MustCompile(`^([a-zA-Z '’]+)`)
 	regexpSkillCooldown          = regexp.MustCompile(`\(Cooldown: ([0-9]+) turns\)`)
 	regexpSkillDamageIncreasedBy = regexp.MustCompile(`(\[[A-Z]+\])`)
 )
@@ -330,7 +330,7 @@ func (c *Command) parseSkills(champion *common.Champion, doc *goquery.Document) 
 						}
 					}
 					if currentSkillNumber != skillNumber {
-						utils.Exit(1, fmt.Errorf("weird: skill %s should be A%d but we got A%d", skill.Name, skillNumber, currentSkillNumber))
+						utils.Exit(1, fmt.Errorf("weird: skill %s (slug=%s) should be A%d but we got A%d", skill.Name, common.GetLinkNameFromSanitizedName(skill.Name), skillNumber, currentSkillNumber))
 					}
 					if skill, errSkill := champion.GetSkillByName(skillName); errSkill == nil {
 						if len(cooldown) == 1 {

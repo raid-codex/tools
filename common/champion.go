@@ -363,7 +363,7 @@ func GetSanitizedName(name string) (string, error) {
 func GetLinkNameFromSanitizedName(name string) string {
 	name = strings.Trim(name, `!`)
 	for _, part := range []string{
-		`'`, `"`, ` `, `_`, `(P)`, `+`, `%`, `!`,
+		`'`, `"`, ` `, `_`, `(P)`, `+`, `%`, `!`, `’`,
 	} {
 		name = strings.Replace(name, part, "-", -1)
 	}
@@ -661,13 +661,25 @@ var (
 func (c *Champion) AddSkill(name string, description string, passive bool) *Skill {
 	skill, err := c.GetSkillByName(name)
 	if err != nil {
-		skill = &Skill{}
-		c.Skills = append(c.Skills, skill)
+		skill, err = c.GetSkillBySlug(GetLinkNameFromSanitizedName(name))
+		if err != nil {
+			skill = &Skill{}
+			c.Skills = append(c.Skills, skill)
+		}
 	}
 	skill.Name = name
 	skill.RawDescription = description
 	skill.Passive = passive
 	return skill
+}
+
+func (c *Champion) GetSkillBySlug(slug string) (*Skill, error) {
+	for _, skill := range c.Skills {
+		if skill.Slug == slug {
+			return skill, nil
+		}
+	}
+	return nil, ErrSkillNotFound
 }
 
 func (c *Champion) GetSkillByName(name string) (*Skill, error) {

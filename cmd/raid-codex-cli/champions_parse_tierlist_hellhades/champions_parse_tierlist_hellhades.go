@@ -139,6 +139,16 @@ func sanitizeRating(rating string) string {
 	return intToRank[intV]
 }
 
+func (c *Command) getChampionWithFilter(filter common.ChampionFilter) (*common.Champion, error) {
+	champions, err := common.GetChampions(filter)
+	if err != nil {
+		return nil, err
+	} else if len(champions) != 1 {
+		return nil, fmt.Errorf("found %d champions", len(champions))
+	}
+	return champions[0], nil
+}
+
 func (c *Command) getChampion(name string) (*common.Champion, error) {
 	nameOk, errSanitize := common.GetSanitizedName(name)
 	if errSanitize != nil {
@@ -147,23 +157,24 @@ func (c *Command) getChampion(name string) (*common.Champion, error) {
 	if v, ok := championReplacement[nameOk]; ok {
 		nameOk = v
 	}
-	champions, err := common.GetChampions(common.FilterChampionName(nameOk))
+	champion, err := c.getChampionWithFilter(common.FilterChampionName(nameOk))
 	if err != nil {
-		return nil, err
-	} else if len(champions) != 1 {
-		return nil, fmt.Errorf("found %d champions with name %s", len(champions), nameOk)
+		champion, err = c.getChampionWithFilter(common.FilterChampionSlug(common.GetLinkNameFromSanitizedName(nameOk)))
+		if err != nil {
+			return nil, fmt.Errorf("error while looking up champion %s: %v", nameOk, err)
+		}
 	}
-	file, errFile := os.Open(fmt.Sprintf("%s/docs/champions/current/%s.json", *c.DataDirectory, champions[0].Slug))
+	file, errFile := os.Open(fmt.Sprintf("%s/docs/champions/current/%s.json", *c.DataDirectory, champion.Slug))
 	if errFile != nil {
 		return nil, errFile
 	}
 	defer file.Close()
-	var champion common.Champion
-	errDecode := json.NewDecoder(file).Decode(&champion)
+	champion = &common.Champion{}
+	errDecode := json.NewDecoder(file).Decode(champion)
 	if errDecode != nil {
 		return nil, errDecode
 	}
-	return &champion, nil
+	return champion, nil
 }
 
 func (c *Command) saveChampion(champion *common.Champion) error {

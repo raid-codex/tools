@@ -3,10 +3,11 @@ package common
 import (
 	"crypto/md5"
 	"fmt"
-	"log"
 	"regexp"
 	"sort"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Skill struct {
@@ -26,6 +27,9 @@ type Skill struct {
 func (s *Skill) Sanitize() error {
 	s.Slug = GetLinkNameFromSanitizedName(s.Name)
 	s.Effects = nil
+	if err := s.parseRawSkill(); err != nil {
+		return err
+	}
 	effects, basedOn, err := getEffectsFromDescription(s.Effects, s.DamageBasedOn, s.RawDescription)
 	if err != nil {
 		return err
@@ -35,9 +39,6 @@ func (s *Skill) Sanitize() error {
 		return err
 	}
 	s.DamageBasedOn = basedOn
-	/*	if err := s.parseRawSkill(); err != nil {
-		return err
-	}*/
 	for _, effect := range s.Effects {
 		errSanitize := effect.Sanitize()
 		if errSanitize != nil {
@@ -263,25 +264,51 @@ func (s *Skill) getSentencesFromRawDescription() []string {
 
 func (s *Skill) parseRawSkill() error {
 	currentEffects := map[string]*StatusEffect{}
-	basedOn := map[string]bool{}
 	for _, sentence := range s.getSentencesFromRawDescription() {
 		if strings.HasPrefix(sentence, "Lvl") || strings.HasPrefix(sentence, "Level") {
 			break
 		}
-		log.Printf("sentence: %s\n", sentence)
-		if err := parseStatusEffectsFromSkillDescription(sentence, currentEffects, basedOn); err != nil {
-			return err
-		}
+		logrus.Debugf("sentence: %s\n", sentence)
+		/*if err := parseStatusEffectsFromSkillDescription(sentence, currentEffects, basedOn); err != nil {
+			return nil, err
+		}*/
 		if err := parseTargetsOfAttack(sentence); err != nil {
 			return err
 		}
+		for _, matcher := range regexpMatchers {
+			if matcher.Regexp.MatchString(sentence) {
+				currentEffects[matcher.Type] = &StatusEffect{
+					EffectType: matcher.EffectType,
+					Type:       matcher.Type,
+				}
+			}
+		}
 	}
-	log.Printf("%+v\n", currentEffects)
+	logrus.Debugf("%+v\n", currentEffects)
+	for _, effect := range currentEffects {
+		s.Effects = append(s.Effects, effect)
+	}
 	return nil
 }
 
 var (
 	parseTargetsAttack = regexp.MustCompile(`Attacks (\d+|all) enem`)
+	regexpMatchers     = []struct {
+		Regexp     *regexp.Regexp
+		EffectType string
+		Type       string
+	}{
+		{
+			Regexp:     regexp.MustCompile(`([iI]ncreas|[eE]xtend).+the duration.+ debuff`),
+			EffectType: "battle_enhancement",
+			Type:       "Debuff extend",
+		},
+		{
+			Regexp:     regexp.MustCompile(`([iI]ncreas|[eE]xtend).+the duration.+ buff`),
+			EffectType: "battle_enhancement",
+			Type:       "Buff extend",
+		},
+	}
 )
 
 func parseTargetsOfAttack(sentence string) error {
@@ -291,7 +318,7 @@ func parseTargetsOfAttack(sentence string) error {
 			return fmt.Errorf("wtf %+v", m)
 		}
 		targets := m[1]
-		log.Printf("targets: %s\n", targets)
+		logrus.Debugf("targets: %s\n", targets)
 	}
 	return nil
 }
@@ -347,6 +374,9 @@ func parseStatusEffectsFromSkillDescription(sentence string, currentEffects map[
 
 func getEffectsFromDescription(effects []*StatusEffect, damageBasedOn []string, rawDescription string) ([]*StatusEffect, []string, error) {
 	currentEffects := map[string]*StatusEffect{}
+	for _, effect := range effects {
+		currentEffects[effect.Type] = effect
+	}
 	basedOn := map[string]bool{}
 	if err := parseStatusEffectsFromSkillDescription(rawDescription, currentEffects, basedOn); err != nil {
 		return nil, nil, err

@@ -39,6 +39,7 @@ import (
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/status_effects_sanitize"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/website_cache_clear"
 	"github.com/raid-codex/tools/utils"
+	_ "github.com/raid-codex/tools/utils/logger" // init logger
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 

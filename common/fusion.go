@@ -20,6 +20,7 @@ type Fusion struct {
 	Slug             string              `json:"slug"`
 	Ingredients      []*FusionIngredient `json:"ingredients"`
 	ParentFusionSlug *string             `json:"parent_fusion_slug"`
+	Schedule         *FusionSchedule     `json:"schedule"`
 }
 
 type FusionList []*Fusion
@@ -82,6 +83,13 @@ func (f *Fusion) Sanitize() error {
 	} else if f.TimeStart == nil && f.TimeEnd == nil {
 		// unlimited
 		f.Active = true
+	}
+	if f.Schedule != nil {
+		f.Schedule.DateStart = f.TimeStart.Format("2006-01-02")
+		f.Schedule.DateEnd = f.TimeEnd.Format("2006-01-02")
+		if err := f.Schedule.Sanitize(); err != nil {
+			return err
+		}
 	}
 	return nil
 }

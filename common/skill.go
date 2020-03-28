@@ -308,6 +308,11 @@ var (
 			EffectType: "battle_enhancement",
 			Type:       "Buff extend",
 		},
+		{
+			Regexp:     regexp.MustCompile(` [hH]eal`),
+			EffectType: "battle_enhancement",
+			Type:       "Heal",
+		},
 	}
 )
 

@@ -77,6 +77,7 @@ func (se *StatusEffect) Sanitize() error {
 	for idx, champion := range champions {
 		se.ChampionSlugs[idx] = champion.Slug
 	}
+	sort.Strings(se.ChampionSlugs)
 	return nil
 }
 

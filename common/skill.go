@@ -95,7 +95,7 @@ func (s *Skill) lookForTurnMeter() error {
 		})
 	}
 	if anyTMRegexp.MatchString(s.RawDescription) && !matched {
-		for _, wl := range []string{"Turn Meter is", "a full Turn Meter", "or have their Turn Meter filled"} {
+		for _, wl := range []string{"Turn Meter is", "a full Turn Meter", "or have their Turn Meter filled", "Revives Skullsworn with 50% HP and 50% Turn Meter"} {
 			if strings.Contains(s.RawDescription, wl) {
 				matched = true
 			}

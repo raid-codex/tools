@@ -255,7 +255,7 @@ func (c *Command) parseRating(champion *common.Champion, doc *goquery.Document) 
 			}
 		})
 	})
-	champion.AddRating("ayumilove", rating, 5)
+	champion.AddRating("ayumilove", rating, 2)
 }
 
 var (

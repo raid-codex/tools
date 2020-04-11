@@ -48,5 +48,9 @@ type RatingSource struct {
 }
 
 func (rs *RatingSource) Sanitize() error {
+	switch rs.Source {
+	case "ayumilove":
+		rs.Weight = 2
+	}
 	return rs.Rating.Sanitize()
 }

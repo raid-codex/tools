@@ -3,6 +3,7 @@ package scrap_ayumilove_champions
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -42,7 +43,50 @@ var (
 		"ma-shalled": "mashalled",
 		"khoronar":   "kohronar",
 	}
+	ErrNotFound = fmt.Errorf("not found")
 )
+
+func (c *Command) requestUrl(url string) (*goquery.Document, error) {
+	req, errRequest := http.NewRequest("GET", url, nil)
+	if errRequest != nil {
+		return nil, errRequest
+	}
+	resp, errResponse := http.DefaultClient.Do(req)
+	if errResponse != nil {
+		return nil, errResponse
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 404 {
+			return nil, ErrNotFound
+		}
+		return nil, fmt.Errorf("request %v returned %d", req, resp.StatusCode)
+	}
+	return goquery.NewDocumentFromReader(resp.Body)
+}
+
+func (c *Command) getDoc(champion *common.Champion) (*goquery.Document, error) {
+	slugToLookup := champion.Slug
+	if v, ok := slugTranslation[slugToLookup]; ok {
+		slugToLookup = v
+	}
+	doc, errDoc := c.requestUrl(fmt.Sprintf("https://ayumilove.net/raid-shadow-legends-%s-skill-mastery-equip-guide/", slugToLookup))
+	if errDoc != nil {
+		if errDoc == ErrNotFound {
+			doc, errDoc = c.requestUrl(fmt.Sprintf("https://ayumilove.net/?s=%s", url.PathEscape(champion.Name)))
+			if errDoc != nil {
+				return nil, errDoc
+			}
+			sel := doc.Find(".entry-content ol li").First()
+			if sel == nil {
+				return nil, fmt.Errorf("champion not found in search")
+			}
+			href, _ := sel.Find("a").First().Attr("href")
+			doc, errDoc = c.requestUrl(href)
+		}
+	}
+	return doc, errDoc
+}
 
 func (c *Command) Run() {
 	errFactory := common.InitFactory(*c.DataDirectory)
@@ -56,23 +100,7 @@ func (c *Command) Run() {
 		utils.Exit(1, fmt.Errorf("found %d champions with slug %s", len(champions), *c.ChampionSlug))
 	}
 	champion := champions[0]
-	slugToLookup := champion.Slug
-	if v, ok := slugTranslation[slugToLookup]; ok {
-		slugToLookup = v
-	}
-	req, errRequest := http.NewRequest("GET", fmt.Sprintf("https://ayumilove.net/raid-shadow-legends-%s-skill-mastery-equip-guide/", slugToLookup), nil)
-	if errRequest != nil {
-		utils.Exit(1, errRequest)
-	}
-	resp, errResponse := http.DefaultClient.Do(req)
-	if errResponse != nil {
-		utils.Exit(1, errResponse)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		utils.Exit(1, fmt.Errorf("request %v returned %d", req, resp.StatusCode))
-	}
-	doc, errDoc := goquery.NewDocumentFromReader(resp.Body)
+	doc, errDoc := c.getDoc(champion)
 	if errDoc != nil {
 		utils.Exit(1, errDoc)
 	}

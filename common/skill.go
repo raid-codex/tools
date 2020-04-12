@@ -275,8 +275,14 @@ func (s *Skill) parseRawSkill() error {
 		if err := parseTargetsOfAttack(sentence); err != nil {
 			return err
 		}
+	MAINLOOP:
 		for _, matcher := range regexpMatchers {
 			if matcher.Regexp.MatchString(sentence) {
+				for _, negMatcher := range matcher.NegativeRegexps {
+					if negMatcher.MatchString(sentence) {
+						continue MAINLOOP
+					}
+				}
 				currentEffects[matcher.Type] = &StatusEffect{
 					EffectType: matcher.EffectType,
 					Type:       matcher.Type,
@@ -294,9 +300,10 @@ func (s *Skill) parseRawSkill() error {
 var (
 	parseTargetsAttack = regexp.MustCompile(`Attacks (\d+|all) enem`)
 	regexpMatchers     = []struct {
-		Regexp     *regexp.Regexp
-		EffectType string
-		Type       string
+		Regexp          *regexp.Regexp
+		EffectType      string
+		Type            string
+		NegativeRegexps []*regexp.Regexp
 	}{
 		{
 			Regexp:     regexp.MustCompile(`([iI]ncreas|[eE]xtend).+the duration.+ debuff`),
@@ -307,6 +314,9 @@ var (
 			Regexp:     regexp.MustCompile(`([iI]ncreas|[eE]xtend).+the duration.+ buff`),
 			EffectType: "battle_enhancement",
 			Type:       "Buff extend",
+			NegativeRegexps: []*regexp.Regexp{
+				regexp.MustCompile(`([iI]ncreas|[eE]xtend).+the duration.+ debuff.+ under .+buff`),
+			},
 		},
 		{
 			Regexp:     regexp.MustCompile(` [hH]eal`),

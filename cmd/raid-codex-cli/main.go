@@ -16,6 +16,7 @@ import (
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_rate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_rebuild_index"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_sanitize"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/champions_video_add"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_create"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_generate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/factions_page_seo"
@@ -68,6 +69,10 @@ var (
 	app = kingpin.New("raid-codex-cli", "help")
 
 	champions = app.Command("champions", "do stuff with champions")
+
+	championsVideo       = champions.Command("video", "Video")
+	championsVideoAdd    = championsVideo.Command("add", "Add video to champion")
+	championsVideoAddCmd = champions_video_add.New(championsVideoAdd)
 
 	championsRating                 = champions.Command("rating", "Rate champion")
 	championsRatingAddFromSource    = championsRating.Command("add-from-source", "Add rating from source")
@@ -218,6 +223,7 @@ var (
 		"factions page generate":               factionsPageGenerateCmd,
 		"champions characteristics parse":      championsCharacteristicsParserCmd,
 		"champions sanitize":                   championsSanitizeCmd,
+		"champions video add":                  championsVideoAddCmd,
 		"factions sanitize":                    factionsSanitizeCmd,
 		"website cache clear":                  websiteCacheClearCmd,
 		"champions page generate":              championsPageGenerateCmd,

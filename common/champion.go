@@ -217,20 +217,9 @@ func (c *Champion) Sanitize() error {
 	}
 	sort.SliceStable(c.EffectSlugs, func(i, j int) bool { return c.EffectSlugs[i] < c.EffectSlugs[j] })
 
-	if c.Videos == nil {
-		c.Videos = make([]*Video, 0)
+	if err := c.sanitizeVideos(); err != nil {
+		return err
 	}
-	for _, video := range c.Videos {
-		if err := video.Sanitize(); err != nil {
-			return err
-		}
-	}
-	sort.SliceStable(c.Videos, func(i, j int) bool {
-		if c.Videos[i].Source == c.Videos[j].Source {
-			return c.Videos[i].DateAdded < c.Videos[j].DateAdded
-		}
-		return c.Videos[i].Source < c.Videos[j].Source
-	})
 
 	if c.AllRatings == nil {
 		c.AllRatings = make(AllRatings, 0)
@@ -259,6 +248,39 @@ func (c *Champion) Sanitize() error {
 		}
 	}
 
+	return nil
+}
+
+func (c *Champion) sanitizeVideos() error {
+	if c.Videos == nil {
+		c.Videos = make([]*Video, 0)
+	}
+	videos := make(map[string]*Video)
+	for _, video := range c.Videos {
+		if err := video.Sanitize(); err != nil {
+			return err
+		}
+		key := fmt.Sprintf("%s-%s", video.Source, video.ID)
+		if _, ok := videos[key]; ok {
+			if videos[key].DateAdded > video.DateAdded {
+				videos[key] = video
+			}
+		} else {
+			videos[key] = video
+		}
+	}
+	c.Videos = make([]*Video, len(videos))
+	idx := 0
+	for _, video := range videos {
+		c.Videos[idx] = video
+		idx++
+	}
+	sort.SliceStable(c.Videos, func(i, j int) bool {
+		if c.Videos[i].Source == c.Videos[j].Source {
+			return c.Videos[i].DateAdded < c.Videos[j].DateAdded
+		}
+		return c.Videos[i].Source < c.Videos[j].Source
+	})
 	return nil
 }
 

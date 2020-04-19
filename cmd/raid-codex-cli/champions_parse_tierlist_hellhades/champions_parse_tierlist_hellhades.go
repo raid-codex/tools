@@ -125,6 +125,7 @@ var (
 		"Siphi the lost bride": "Siphi the Lost Bride",
 		"Rotos the lost groom": "Rotos the Lost Groom",
 		"Ursine IceCrusher":    "Ursine Icecrusher",
+		"Lordly Legionaire":    "Lordly Legionary",
 	}
 )
 

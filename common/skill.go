@@ -319,7 +319,7 @@ var (
 			},
 		},
 		{
-			Regexp:     regexp.MustCompile(` [hH]eal`),
+			Regexp:     regexp.MustCompile(` [hH]eal[^\]]`),
 			EffectType: "battle_enhancement",
 			Type:       "Heal",
 		},

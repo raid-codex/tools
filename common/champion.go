@@ -277,6 +277,9 @@ func (c *Champion) sanitizeVideos() error {
 	}
 	sort.SliceStable(c.Videos, func(i, j int) bool {
 		if c.Videos[i].Source == c.Videos[j].Source {
+			if c.Videos[i].DateAdded == c.Videos[j].DateAdded {
+				return c.Videos[i].ID < c.Videos[j].ID
+			}
 			return c.Videos[i].DateAdded < c.Videos[j].DateAdded
 		}
 		return c.Videos[i].Source < c.Videos[j].Source

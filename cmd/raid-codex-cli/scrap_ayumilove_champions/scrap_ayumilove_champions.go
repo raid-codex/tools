@@ -241,8 +241,9 @@ var (
 func (c *Command) parseRating(champion *common.Champion, doc *goquery.Document) {
 	rating := &common.Rating{}
 	doc.Find(".entry-content table").Each(func(idx int, s *goquery.Selection) {
-		if idx != 1 {
-			// only the second index is interesting for stats
+		if idx > 1 {
+			// only the first and second index is interesting for stats
+			// if already found, then stop treating
 			return
 		}
 		s.Find("td").Each(func(subIdx int, sc *goquery.Selection) {

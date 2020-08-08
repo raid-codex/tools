@@ -240,11 +240,15 @@ var (
 
 func (c *Command) parseRating(champion *common.Champion, doc *goquery.Document) {
 	rating := &common.Rating{}
+	found := false
 	doc.Find(".entry-content table").Each(func(idx int, s *goquery.Selection) {
-		if idx > 1 {
+		if idx > 1 || found {
 			// only the first and second index is interesting for stats
 			// if already found, then stop treating
 			return
+		}
+		if idx == 0 && strings.Contains(s.Text(), "Grinding") {
+			found = true // don't keep checking after since it may alter ratings. if we found "Grinding" then we have our ratings on this array.
 		}
 		s.Find("td").Each(func(subIdx int, sc *goquery.Selection) {
 			data := strings.Split(sc.Text(), "\n")

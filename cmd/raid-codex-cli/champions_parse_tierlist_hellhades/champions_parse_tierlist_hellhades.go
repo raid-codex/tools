@@ -190,6 +190,8 @@ func (c *Command) saveChampion(champion *common.Champion) error {
 var (
 	safeGuard = []string{
 		`Overall,Champion,Faction,Affinity,Need Books?,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,Masteries,Stats,Gear Sets,,,,,,,,`,
+		`Overall,Champion,Faction,Affinity,Need Books?,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,Masteries,Stats,Gear Sets,,,,,,,`,
+		`Rank,Champion,Faction,Affinity,Need Books?,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,Masteries,Stats,Gear Sets,,,,,,,,`,
 	}
 )
 

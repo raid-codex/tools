@@ -185,12 +185,10 @@ func (c *Command) parseStats(champion *common.Champion, doc *goquery.Document) {
 			chars := champion.Characteristics[60]
 			isStats := false
 			for _, d := range data {
-				if !isStats {
-					continue
-				} else if strings.Contains(d, "Total Stats") {
+				if strings.Contains(d, "Total Stats") {
 					isStats = true
 					continue
-				} else if len(d) == 0 {
+				} else if len(d) == 0 || !isStats {
 					continue
 				}
 				var intField *int64

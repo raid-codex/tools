@@ -189,20 +189,17 @@ func (c *Command) saveChampion(champion *common.Champion) error {
 
 var (
 	safeGuard = []string{
-		`Rank,Champion,Faction,Affinity,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide`,
-		`Overall,Champion,Faction,Affinity,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide`,
-		`Overall,Champion,Faction,Affinity,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,,,,,,,,,,,`,
-		`Rank,Champion,Faction,Affinity,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,,,,,,,,,,,`,
+		`Overall,Champion,Faction,Affinity,Need Books?,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,Masteries,Stats,Gear Sets,,,,,,,,`,
 	}
 )
 
 const (
-	rating_ArenaOff     = 9
-	rating_ArenaDef     = 10
-	rating_ClanBossWOGS = 4
-	rating_ClanBossWGS  = 4
-	rating_IceGolem     = 7
-	rating_Dragon       = 5
-	rating_Spider       = 6
-	rating_FireKnight   = 8
+	rating_ArenaOff     = 10
+	rating_ArenaDef     = 11
+	rating_ClanBossWOGS = 5
+	rating_ClanBossWGS  = 5
+	rating_IceGolem     = 8
+	rating_Dragon       = 6
+	rating_Spider       = 7
+	rating_FireKnight   = 9
 )

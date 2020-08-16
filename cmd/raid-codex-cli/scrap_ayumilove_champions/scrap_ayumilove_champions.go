@@ -177,14 +177,20 @@ func (c *Command) parseStats(champion *common.Champion, doc *goquery.Document) {
 			return
 		}
 		s.Find("td").Each(func(subIdx int, sc *goquery.Selection) {
-			if subIdx != 2 {
-				// only the 3rd column is for stats
+			if subIdx != 1 {
+				// only the 2nd column is for stats
 				return
 			}
 			data := strings.Split(sc.Text(), "\n")
 			chars := champion.Characteristics[60]
+			isStats := false
 			for _, d := range data {
-				if len(d) == 0 || strings.Contains(d, "Total Stats") {
+				if !isStats {
+					continue
+				} else if strings.Contains(d, "Total Stats") {
+					isStats = true
+					continue
+				} else if len(d) == 0 {
 					continue
 				}
 				var intField *int64

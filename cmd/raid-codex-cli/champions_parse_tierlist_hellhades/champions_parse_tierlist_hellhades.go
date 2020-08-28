@@ -62,6 +62,10 @@ func (c *Command) Run() {
 			}
 			continue
 		}
+		if line[1] == "" {
+			// skip empty lines
+			continue
+		}
 		champion, errChampion := c.getChampion(line[1])
 		if errChampion != nil {
 			errs = append(errs, errChampion)
@@ -162,7 +166,7 @@ func (c *Command) getChampion(name string) (*common.Champion, error) {
 	if err != nil {
 		champion, err = c.getChampionWithFilter(common.FilterChampionSlug(common.GetLinkNameFromSanitizedName(nameOk)))
 		if err != nil {
-			return nil, fmt.Errorf("error while looking up champion %s: %v", nameOk, err)
+			return nil, fmt.Errorf("error while looking up champion %s: %w", nameOk, err)
 		}
 	}
 	file, errFile := os.Open(fmt.Sprintf("%s/docs/champions/current/%s.json", *c.DataDirectory, champion.Slug))

@@ -22,3 +22,4 @@ fi
 
 champion_file="${champion_path}/${champion_slug}.json"
 cat $champion_file | jq --arg GIID "$giid" '.giid = $GIID' | sponge $champion_file
+cat $champion_file | jq '.thumbnail = ""' | sponge $champion_file

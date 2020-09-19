@@ -336,6 +336,10 @@ var (
 	regexpSkillName              = regexp.MustCompile(`^([a-zA-Z '’]+)`)
 	regexpSkillCooldown          = regexp.MustCompile(`\(Cooldown: ([0-9]+) turns\)`)
 	regexpSkillDamageIncreasedBy = regexp.MustCompile(`(\[[A-Z]+\])`)
+	skillDescriptionReplace      = map[string]string{
+		"[Active Effect]":  "(Active Effect)",
+		"[Passive Effect]": "(Passive Effect)",
+	}
 )
 
 func (c *Command) parseSkills(champion *common.Champion, doc *goquery.Document) {
@@ -357,6 +361,9 @@ func (c *Command) parseSkills(champion *common.Champion, doc *goquery.Document) 
 				}
 				cooldown := regexpSkillCooldown.FindAllStringSubmatch(data[0], -1)
 				description := strings.Join(data[1:], "<br>")
+				for find, rep := range skillDescriptionReplace {
+					description = strings.Replace(description, find, rep, -1)
+				}
 				if skillName != "Aura" {
 					skill := champion.AddSkill(skillName, description, false)
 					currentSkillNumber := 0

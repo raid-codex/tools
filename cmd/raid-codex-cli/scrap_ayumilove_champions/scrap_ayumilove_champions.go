@@ -82,6 +82,9 @@ func (c *Command) getDoc(champion *common.Champion) (*goquery.Document, error) {
 			if sel == nil {
 				return nil, fmt.Errorf("champion not found in search")
 			}
+			if !strings.Contains(sel.Text(), champion.Name) {
+				return nil, fmt.Errorf("champion not found in search")
+			}
 			href, _ := sel.Find("a").First().Attr("href")
 			doc, errDoc = c.requestUrl(href)
 		}
@@ -216,9 +219,12 @@ func (c *Command) parseStats(champion *common.Champion, doc *goquery.Document) {
 				}
 				subD := strings.Split(d, " ")
 				lastPart := strings.Replace(strings.Replace(subD[len(subD)-1], "%", "", -1), ",", "", -1)
+				if lastPart == "?" {
+					continue
+				}
 				v, errInt := strconv.ParseInt(lastPart, 10, 64)
 				if errInt != nil {
-					utils.Exit(1, fmt.Errorf("invalid number: %s ; %s", lastPart, errInt))
+					utils.Exit(1, fmt.Errorf("invalid number in stats %s: %s ; %s", d, lastPart, errInt))
 				}
 				if intField != nil {
 					*intField = v

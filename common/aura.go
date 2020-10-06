@@ -30,6 +30,7 @@ var (
 		{"Defense", "DEF"},
 		{"Speed", "SPD"},
 		{"Critical Rate", "C.RATE"},
+		{"C. RATE", "C.RATE"},
 		{"Resist", "RESIST"},
 	}
 )

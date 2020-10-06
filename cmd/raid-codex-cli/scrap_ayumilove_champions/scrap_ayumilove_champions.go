@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/raid-codex/tools/common"
 	"github.com/raid-codex/tools/utils"
 	"gopkg.in/alecthomas/kingpin.v2"
@@ -337,8 +338,14 @@ var (
 	regexpSkillCooldown          = regexp.MustCompile(`\(Cooldown: ([0-9]+) turns\)`)
 	regexpSkillDamageIncreasedBy = regexp.MustCompile(`(\[[A-Z]+\])`)
 	skillDescriptionReplace      = map[string]string{
-		"[Active Effect]":  "(Active Effect)",
-		"[Passive Effect]": "(Passive Effect)",
+		"[Active Effect]":                   "(Active Effect)",
+		"[Passive Effect]":                  "(Passive Effect)",
+		"[Shieid]":                          "[Shield]",
+		"[Block Heal]":                      "[Heal Reduction]",
+		"[Does not occur with Spiderlings]": "(Does not occur with Spiderlings)",
+		"[Only available when Sikara is on the same team]": "(Only available when Sikara is on the same team)",
+		"[Cannot decrease a single Champion’s MAX HP by more than 60% in one Battle. Cannot increase this Champion’s MAX HP by more than 60,000. Does not decrease Boss’ MAX HP. This Champion’s MAX HP will be increased by 15,000 when this Skill is used against Bosses]": "(Cannot decrease a single Champion’s MAX HP by more than 60% in one Battle. Cannot increase this Champion’s MAX HP by more than 60,000. Does not decrease Boss’ MAX HP. This Champion’s MAX HP will be increased by 15,000 when this Skill is used against Bosses)",
+		"[Does not work against Bosses]": "(Does not work against Bosses)",
 	}
 )
 
@@ -374,6 +381,7 @@ func (c *Command) parseSkills(champion *common.Champion, doc *goquery.Document) 
 						}
 					}
 					if currentSkillNumber != skillNumber {
+						spew.Dump(champion.Skills)
 						utils.Exit(1, fmt.Errorf("weird: skill %s (slug=%s) should be A%d but we got A%d", skill.Name, common.GetLinkNameFromSanitizedName(skill.Name), skillNumber, currentSkillNumber))
 					}
 					if skill, errSkill := champion.GetSkillByName(skillName); errSkill == nil {

@@ -8,6 +8,7 @@ require (
 	github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf // indirect
 	github.com/andybalholm/cascadia v1.0.1-0.20181012154424-680b6a57bda4 // indirect
 	github.com/cloudflare/cloudflare-go v0.10.4-0.20191003163155-7182d1eebaae
+	github.com/davecgh/go-spew v1.1.1
 	github.com/elazarl/goproxy v0.0.0-20200315184450-1f3cb6622dad // indirect
 	github.com/gin-contrib/sse v0.1.1-0.20190905051334-43f0f29dbd2b // indirect
 	github.com/gin-gonic/gin v1.4.1-0.20190924141841-9b9f4fab34cc

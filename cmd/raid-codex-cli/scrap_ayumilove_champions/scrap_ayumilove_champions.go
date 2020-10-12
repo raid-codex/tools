@@ -604,7 +604,7 @@ func parseEquipment2(champion *common.Champion, chunks []string) []*common.Build
 	nChunks := []string{}
 	for _, str := range chunks {
 		if str != "" {
-			fmt.Printf("%s\n", str)
+			//fmt.Printf("%s\n", str)
 			nChunks = append(nChunks, str)
 		}
 	}

@@ -509,17 +509,27 @@ func parseMasteries(champion *common.Champion, content string) {
 
 var (
 	knownMasteriesErrors = map[string]string{
-		"Swam Smiter":              "Swarm Smiter",
-		"Eagle-Eye":                "Eagle Eye",
-		"Blood Thirst":             "Bloodthirst",
-		"Whirldwind of Death":      "Whirlwind of Death",
-		"Subborness":               "Stubborness",
-		"Pintpoint Accuracy":       "Pinpoint Accuracy",
-		"Shiedl Breaker":           "Shield Breaker",
-		"Stubbornness":             "Stubborness",
-		"Delay of Death":           "Delay Death",
-		"Warmaster / Giant Slayer": "Warmaster",
-		"Brint it Down":            "Bring it Down",
+		"Swam Smiter":                       "Swarm Smiter",
+		"Eagle-Eye":                         "Eagle Eye",
+		"Blood Thirst":                      "Bloodthirst",
+		"Whirldwind of Death":               "Whirlwind of Death",
+		"Subborness":                        "Stubborness",
+		"Pintpoint Accuracy":                "Pinpoint Accuracy",
+		"Shiedl Breaker":                    "Shield Breaker",
+		"Stubbornness":                      "Stubborness",
+		"Delay of Death":                    "Delay Death",
+		"Warmaster / Giant Slayer":          "Warmaster",
+		"Brint it Down":                     "Bring it Down",
+		"Whrilwind of Death":                "Whirlwind of Death",
+		"Charge Focus":                      "Charged Focus",
+		"Blast Proof":                       "Blastproof",
+		"Whirlwind Strike":                  "Whirlwind of Death",
+		"Hart of Glory":                     "Heart of Glory",
+		"Shieldbreaker":                     "Shield Breaker",
+		"DeadlyPrecision":                   "Deadly Precision",
+		"Kill Strreak":                      "Kill Streak",
+		"Giant Slayer / Flawless Execution": "Giant Slayer",
+		"Rapid Resposne":                    "Rapid Response",
 	}
 )
 
@@ -594,6 +604,7 @@ func parseEquipment2(champion *common.Champion, chunks []string) []*common.Build
 	nChunks := []string{}
 	for _, str := range chunks {
 		if str != "" {
+			fmt.Printf("%s\n", str)
 			nChunks = append(nChunks, str)
 		}
 	}
@@ -604,6 +615,7 @@ func parseEquipment2(champion *common.Champion, chunks []string) []*common.Build
 	buildsPerSlots := [][]*common.Build{}
 	var statPrio []string
 	for idx < len(nChunks) {
+		//fmt.Printf("[before] idx:%d: '%s'\n", idx, nChunks[idx])
 		if step == 1 {
 			if nChunks[idx] != "Equipment Set" {
 				slots = append(slots, nChunks[idx])
@@ -631,6 +643,19 @@ func parseEquipment2(champion *common.Champion, chunks []string) []*common.Build
 			}
 		}
 		if step == 3 {
+			if nChunks[idx] == "Equipment Set" { // special case (like miscreated monster) where the builds are messy...
+				idx++
+				locations := parseLocations(slots[slotIdx+1%len(slots)])
+				currentSlot := []*common.Build{}
+				for nChunks[idx] != "Equipment Set" && nChunks[idx] != "Equipment Stat Priority" {
+					build := parseSet(nChunks[idx], locations)
+					builds = append(builds, build)
+					currentSlot = append(currentSlot, build)
+					idx++
+				}
+				buildsPerSlots = append(buildsPerSlots, currentSlot)
+				idx--
+			}
 			if nChunks[idx] == "Equipment Stat Priority" {
 				idx++
 				slotIdx++
@@ -650,6 +675,7 @@ func parseEquipment2(champion *common.Champion, chunks []string) []*common.Build
 				}
 			}
 		}
+		//fmt.Printf("[after] idx:%d: '%s'\n", idx, nChunks[idx])
 		idx++
 	}
 	return builds

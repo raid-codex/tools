@@ -357,7 +357,11 @@ func parseStatusEffectsFromSkillDescription(sentence string, currentEffects map[
 			strings.Contains(m, fmt.Sprintf("removes any [%s]", val)),
 			strings.Contains(m, fmt.Sprintf("an enemy places a [%s]", val)),
 			strings.Contains(m, fmt.Sprintf("except [%s]", val)),
-			strings.Contains(m, fmt.Sprintf("an ally receives a [%s]", val)):
+			strings.Contains(m, fmt.Sprintf("an ally receives a [%s]", val)),
+			strings.Contains(m, fmt.Sprintf("Ignores [%s]", val)),
+			strings.Contains(sentence, fmt.Sprintf("Ignores [Shield] and [%s]", val)), // special case for basileus roanas
+			strings.Contains(m, fmt.Sprintf("Will ignore [%s]", val)),
+			strings.Contains(sentence, fmt.Sprintf("Will ignore [Shield] and [%s]", val)): // special for crypt witch
 			// this is pure garbage
 			continue
 		}

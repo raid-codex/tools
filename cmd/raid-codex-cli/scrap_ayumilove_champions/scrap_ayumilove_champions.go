@@ -319,7 +319,9 @@ func (c *Command) parseEquipment(champion *common.Champion, doc *goquery.Documen
 				if sc.Is("h2") || strings.HasSuffix(sc.Text(), "Mastery Guide") {
 					check = 2
 				} else {
-					equipmentContent = append(equipmentContent, sc.Text())
+					if text := strings.Trim(sc.Text(), " "); text != "" {
+						equipmentContent = append(equipmentContent, text)
+					}
 				}
 			case 2:
 				// mastery guide
@@ -351,7 +353,10 @@ var (
 		"[Does not occur with Spiderlings]": "(Does not occur with Spiderlings)",
 		"[Only available when Sikara is on the same team]": "(Only available when Sikara is on the same team)",
 		"[Cannot decrease a single Champion’s MAX HP by more than 60% in one Battle. Cannot increase this Champion’s MAX HP by more than 60,000. Does not decrease Boss’ MAX HP. This Champion’s MAX HP will be increased by 15,000 when this Skill is used against Bosses]": "(Cannot decrease a single Champion’s MAX HP by more than 60% in one Battle. Cannot increase this Champion’s MAX HP by more than 60,000. Does not decrease Boss’ MAX HP. This Champion’s MAX HP will be increased by 15,000 when this Skill is used against Bosses)",
-		"[Does not work against Bosses]": "(Does not work against Bosses)",
+		"[Does not work against Bosses]":                    "(Does not work against Bosses)",
+		"[Only available when Cupidus is on the same team]": "(Only available when Cupidus is on the same team)",
+		"[Only available when Venus is on the same team]":   "(Only available when Venus is on the same team)",
+		"[Has a 75% chance of placing a [Bomb] debuff that will detonate after 3 turns when Fenax is on the same team]": "(Has a 75% chance of placing a [Bomb] debuff that will detonate after 3 turns when Fenax is on the same team)",
 	}
 )
 
@@ -378,7 +383,8 @@ func (c *Command) parseSkills(champion *common.Champion, doc *goquery.Document) 
 					description = strings.Replace(description, find, rep, -1)
 				}
 				if skillName != "Aura" {
-					skill := champion.AddSkill(skillName, description, false)
+					passive := strings.Contains(data[0], "[Passive]")
+					skill := champion.AddSkill(skillName, description, passive)
 					currentSkillNumber := 0
 					for idx := range champion.Skills {
 						if skill == champion.Skills[idx] {
@@ -513,6 +519,7 @@ var (
 		"Stubbornness":             "Stubborness",
 		"Delay of Death":           "Delay Death",
 		"Warmaster / Giant Slayer": "Warmaster",
+		"Brint it Down":            "Bring it Down",
 	}
 )
 
@@ -523,9 +530,9 @@ func knownMasteriesReplacement(mastery string) string {
 	return mastery
 }
 
-func parseEquipment(champion *common.Champion, equipment string) {
+func parseEquipment(champion *common.Champion, data string) {
 	builds := []*common.Build{}
-	chunks := strings.Split(equipment, "\n")
+	chunks := strings.Split(data, "\n")
 	statPrio := []string{}
 	idx := 0
 	for idx < len(chunks) {
@@ -569,6 +576,10 @@ func parseEquipment(champion *common.Champion, equipment string) {
 		}
 		idx++
 	}
+	if len(builds) == 0 {
+		// other way to parse then, the old way?
+		builds = parseEquipment2(champion, chunks)
+	}
 	for _, build := range builds {
 		errSanitize := build.Sanitize()
 		if errSanitize != nil {
@@ -576,6 +587,72 @@ func parseEquipment(champion *common.Champion, equipment string) {
 		}
 		champion.AddBuild(build)
 	}
+}
+
+func parseEquipment2(champion *common.Champion, chunks []string) []*common.Build {
+	builds := []*common.Build{}
+	nChunks := []string{}
+	for _, str := range chunks {
+		if str != "" {
+			nChunks = append(nChunks, str)
+		}
+	}
+	idx := 0
+	slots := []string{}
+	step := 1
+	slotIdx := -1
+	buildsPerSlots := [][]*common.Build{}
+	var statPrio []string
+	for idx < len(nChunks) {
+		if step == 1 {
+			if nChunks[idx] != "Equipment Set" {
+				slots = append(slots, nChunks[idx])
+			} else {
+				step = 2
+			}
+		}
+		if step == 2 {
+			if nChunks[idx] == "Equipment Set" {
+				idx++
+				slotIdx++
+				locations := parseLocations(slots[slotIdx%len(slots)])
+				currentSlot := []*common.Build{}
+				for nChunks[idx] != "Equipment Set" && nChunks[idx] != "Equipment Stat Priority" {
+					build := parseSet(nChunks[idx], locations)
+					builds = append(builds, build)
+					currentSlot = append(currentSlot, build)
+					idx++
+				}
+				buildsPerSlots = append(buildsPerSlots, currentSlot)
+				idx--
+			} else {
+				step = 3
+				slotIdx = -1
+			}
+		}
+		if step == 3 {
+			if nChunks[idx] == "Equipment Stat Priority" {
+				idx++
+				slotIdx++
+				statPrio = parseStatPrio(nChunks[idx])
+			} else {
+				for _, prefix := range equipmentPrefixes {
+					if strings.HasPrefix(nChunks[idx], prefix) {
+						mainStatExtract := mainStatExtracter.FindStringSubmatch(nChunks[idx])
+						for _, build := range buildsPerSlots[slotIdx] {
+							sp := &common.StatPriority{
+								MainStat:        mainStatExtract[1],
+								AdditionalStats: statPrio[:],
+							}
+							build.Set(prefix, sp)
+						}
+					}
+				}
+			}
+		}
+		idx++
+	}
+	return builds
 }
 
 func parseLocations(chunk string) []string {

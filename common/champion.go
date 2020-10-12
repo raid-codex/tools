@@ -52,6 +52,9 @@ type ChampionFusionData struct {
 }
 
 func (c *Champion) Sanitize() error {
+	if strings.HasPrefix(c.Lore, "<p>") && strings.HasSuffix(c.Lore, "</p>") {
+		c.Lore = c.Lore[3 : len(c.Lore)-4]
+	}
 	sanitizedName, errName := GetSanitizedName(c.Name)
 	if errName != nil {
 		return errName

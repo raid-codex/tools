@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
+	"strings"
 )
 
 type Build struct {
@@ -35,7 +36,8 @@ type StatsPriority struct {
 }
 
 type StatPriority struct {
-	MainStat        string   `json:"main_stat"`
+	MainStat        string   `json:"main_stat,omitempty"`
+	MainStats       []string `json:"main_stats"`
 	AdditionalStats []string `json:"additional_stats"`
 }
 
@@ -70,15 +72,86 @@ func (ssp *StatsPriority) Sanitize() error {
 	return nil
 }
 
+var (
+	statPartsToRemove = []string{
+		"Stat/Substat: ",
+	}
+	statReplacement = map[string]string{
+		"Attack%":          "ATK%",
+		"Critical Damage":  "C.DMG",
+		"Critical Rate":    "C.RATE",
+		"Speed":            "SPD",
+		"Accuracy":         "ACC",
+		"Resistance":       "RES",
+		"Defense%":         "DEF%",
+		"Defense":          "DEF",
+		"Critical Rate%":   "C.RATE",
+		"Attack":           "ATK",
+		"Atack":            "ATK",
+		"Resist":           "RES",
+		"Crittical Damage": "C.DMG",
+		"RESIST":           "RES",
+		"Critical Damge":   "C.DMG",
+		"Defense%%":        "DEF%",
+	}
+	knownStatErrs = map[string][]string{
+		"HP% Critical Rate": []string{"HP%", "C.RATE"},
+		"Accuracy/Resist":   []string{"ACC", "RES"},
+		"HP% Speed":         []string{"HP%", "SPD"},
+	}
+)
+
 func (sp *StatPriority) Sanitize() error {
+	if sp.MainStat != "" {
+		sp.MainStats = []string{}
+		for _, str := range strings.Split(sp.MainStat, "/") {
+			str = strings.Trim(str, " ")
+			sp.MainStats = append(sp.MainStats, str)
+		}
+		sp.MainStat = "" // remove it
+	}
 	n := make([]string, 0)
 	for _, stat := range sp.AdditionalStats {
-		if stat == sp.MainStat {
-			continue
+		for _, toRemove := range statPartsToRemove {
+			if strings.Contains(stat, toRemove) {
+				stat = strings.Replace(stat, toRemove, "", 1)
+			}
+		}
+		if stats, ok := knownStatErrs[stat]; ok {
+			n = append(n, stats...)
+		} else {
+			n = append(n, stat)
+		}
+	}
+	sp.AdditionalStats = n
+	n = make([]string, 0)
+loop_stat:
+	for _, stat := range sp.AdditionalStats {
+		for _, mainStat := range sp.MainStats {
+			if mainStat == stat {
+				continue loop_stat
+			}
+		}
+		if v, ok := statReplacement[stat]; ok {
+			stat = v
 		}
 		n = append(n, stat)
 	}
 	sp.AdditionalStats = n
+	for idx, stat := range sp.MainStats {
+		if strings.Contains(stat, "/") && stat != "N/A" {
+			stats := strings.Split(stat, "/")
+			stat = stats[0]
+			sp.MainStats = append(sp.MainStats, stats[1:]...)
+		}
+		if v, ok := statReplacement[stat]; ok {
+			stat = v
+		}
+		sp.MainStats[idx] = stat
+	}
+	if len(sp.MainStats) == 2 && sp.MainStats[0] == "N" && sp.MainStats[1] == "A" {
+		sp.MainStats = []string{"N/A"}
+	}
 	return nil
 }
 

@@ -93,11 +93,15 @@ var (
 		"RESIST":           "RES",
 		"Critical Damge":   "C.DMG",
 		"Defense%%":        "DEF%",
+		"C.RATE%":          "C.RATE",
+		"Crit Rate":        "C.RATE",
 	}
 	knownStatErrs = map[string][]string{
 		"HP% Critical Rate": []string{"HP%", "C.RATE"},
 		"Accuracy/Resist":   []string{"ACC", "RES"},
 		"HP% Speed":         []string{"HP%", "SPD"},
+		"ATK% C.RATE":       []string{"ATK%", "C.RATE"},
+		"C.DMG SPD":         []string{"C.DMG", "SPD"},
 	}
 )
 

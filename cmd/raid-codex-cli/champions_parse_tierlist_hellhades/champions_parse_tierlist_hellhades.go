@@ -130,6 +130,7 @@ var (
 		"Rotos the lost groom": "Rotos the Lost Groom",
 		"Ursine IceCrusher":    "Ursine Icecrusher",
 		"Lordly Legionaire":    "Lordly Legionary",
+		"Avir the Alchmage": "Avir the Alchemage",
 	}
 )
 
@@ -197,6 +198,7 @@ var (
 		`Overall,Champion,Faction,Affinity,Need Books?,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,Masteries,Stats,Gear Sets,,,,,,,,`,
 		`Overall,Champion,Faction,Affinity,Need Books?,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,Masteries,Stats,Gear Sets,,,,,,,`,
 		`Rank,Champion,Faction,Affinity,Need Books?,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,Masteries,Stats,Gear Sets,,,,,,,,`,
+		`Rank,Champion,Faction,Affinity,Need Books?,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,Masteries,Stats,Gear Sets,,,,,,,,,`,
 	}
 )
 

@@ -179,7 +179,7 @@ func (c *Champion) Sanitize() error {
 
 	if c.GIID != "" && c.Thumbnail != "unknown" {
 		c.Thumbnail = fmt.Sprintf("%x", md5.Sum([]byte(c.GIID)))
-	} else {
+	} else if c.Thumbnail == "" { // do not replace value that has been set already
 		c.Thumbnail = "unknown"
 	}
 

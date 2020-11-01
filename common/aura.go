@@ -33,6 +33,7 @@ var (
 		{"C. RATE", "C.RATE"},
 		{"Resist", "RES"},
 		{"RESIST", "RES"},
+		{"Arena Battles", "Arena"},
 	}
 )
 

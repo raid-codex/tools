@@ -323,6 +323,15 @@ var (
 			EffectType: "battle_enhancement",
 			Type:       "Heal",
 		},
+		{
+			Regexp: regexp.MustCompile(`[^\[][Rr]evive[^\]]`),
+			EffectType: "battle_enhancement",
+			Type: "Revive",
+			NegativeRegexps: []*regexp.Regexp{
+				regexp.MustCompile(`be revived`),
+				regexp.MustCompile(`[Rr]evives this Champion`),
+			},
+		},
 	}
 )
 

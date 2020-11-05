@@ -357,6 +357,7 @@ var (
 		"[Only available when Cupidus is on the same team]": "(Only available when Cupidus is on the same team)",
 		"[Only available when Venus is on the same team]":   "(Only available when Venus is on the same team)",
 		"[Has a 75% chance of placing a [Bomb] debuff that will detonate after 3 turns when Fenax is on the same team]": "(Has a 75% chance of placing a [Bomb] debuff that will detonate after 3 turns when Fenax is on the same team)",
+		"[Will not heal from damage inflicted by Masteries]":                                                            "(Will not heal from damage inflicted by Masteries)",
 	}
 )
 

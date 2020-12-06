@@ -1,32 +1,38 @@
 package champions_parse_tierlist_hellhades
 
 import (
-	"encoding/csv"
-	"encoding/json"
 	"fmt"
-	"os"
+	"net/http"
 	"strconv"
 	"strings"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/raid-codex/tools/common"
 	"github.com/raid-codex/tools/utils"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
-// https://docs.google.com/spreadsheets/d/1YjETkvBMVKZr7CPDjL_iIy_Wa6-psHob6so6fgKLX7c/edit#gid=0
-// https://spreadsheets.google.com/feeds/download/spreadsheets/Export?key=1YjETkvBMVKZr7CPDjL_iIy_Wa6-psHob6so6fgKLX7c&exportFormat=csv
-// https://docs.google.com/spreadsheets/d/1YjETkvBMVKZr7CPDjL_iIy_Wa6-psHob6so6fgKLX7c/htmlview?sle=true#gid=0
-// https://spreadsheets.google.com/feeds/download/spreadsheets/Export?key=1YjETkvBMVKZr7CPDjL_iIy_Wa6-psHob6so6fgKLX7c&exportFormat=csv
+//
 
 type Command struct {
 	CSVFile       *string
 	DataDirectory *string
 }
 
+var (
+	ErrNotFound = fmt.Errorf("not found")
+	nameReplace = map[string]string{
+		"Centurian":          "Centurion",
+		"Steadfast Marshall": "Steadfast Marshal",
+		"Woad Painted":       "Woad-Painted",
+		"Ma’Shalled":         "Ma'Shalled",
+		"Big ‘Un":            "Big'Un",
+	}
+)
+
 func New(cmd *kingpin.CmdClause) *Command {
 	command := &Command{
 		DataDirectory: cmd.Flag("data-directory", "Data directory").Required().String(),
-		CSVFile:       cmd.Flag("csv-file", "CSV File").Required().String(),
 	}
 	return command
 }
@@ -36,179 +42,130 @@ func (c *Command) Run() {
 	if errInit != nil {
 		utils.Exit(1, errInit)
 	}
-	file, errFile := os.Open(*c.CSVFile)
-	if errFile != nil {
-		utils.Exit(1, errFile)
+	doc, errDoc := c.requestUrl("https://www.hellhades.com/raid-shadow-legends-tier-list/")
+	if errDoc != nil {
+		utils.Exit(1, errDoc)
 	}
-	defer file.Close()
-	reader := csv.NewReader(file)
-	content, errRead := reader.ReadAll()
-	if errRead != nil {
-		utils.Exit(1, errRead)
-	}
+	errors := make([]error, 0)
 	champions := make([]*common.Champion, 0)
-	errs := make([]error, 0)
-	for idx, line := range content {
+	doc.Find("#ptp_e354b992b162333e_1 tr").Each(func(idx int, s *goquery.Selection) {
 		if idx == 0 {
-			ok := false
-			for _, sg := range safeGuard {
-				if strings.Join(line, ",") == sg {
-					ok = true
-					break
+			if s.Text() != `NameRarityFactionOverall RatingClan BossFaction WarsSpiderDragonFire KnightIce GolemArena DefArena Atk` {
+				utils.Exit(1, fmt.Errorf("invalid safe guard"))
+			}
+			return
+		}
+		var champion *common.Champion
+		var rating common.Rating
+		var name string
+		s.Find("td").Each(func(cIdx int, cS *goquery.Selection) {
+			switch cIdx {
+			case col_Name:
+				name = cS.Text()
+				if nameReplace[name] != "" {
+					name = nameReplace[name]
 				}
+				champions, errChampion := common.GetChampions(func(c *common.Champion) bool {
+					return strings.ToLower(c.Name) == strings.ToLower(name)
+				})
+				if errChampion != nil {
+					utils.Exit(1, errChampion)
+				} else if len(champions) == 1 {
+					champion = champions[0]
+				}
+			case col_ClanBoss:
+				rating.ClanBossWoGS = sanitizeRating(cS.Text())
+				rating.ClanBosswGS = sanitizeRating(cS.Text())
+			case col_FactionWars:
+				rating.FactionWars = sanitizeRating(cS.Text())
+			case col_Spider:
+				rating.Spider = sanitizeRating(cS.Text())
+			case col_Dragon:
+				rating.Dragon = sanitizeRating(cS.Text())
+			case col_FireKnight:
+				rating.FireKnight = sanitizeRating(cS.Text())
+			case col_Golem:
+				rating.IceGuardian = sanitizeRating(cS.Text())
+			case col_ArenaDef:
+				rating.ArenaDef = sanitizeRating(cS.Text())
+			case col_ArenaOff:
+				rating.ArenaOff = sanitizeRating(cS.Text())
 			}
-			if !ok {
-				utils.Exit(1, fmt.Errorf("invalid first line: %s", strings.Join(line, ",")))
-			}
-			continue
+		})
+		if champion == nil {
+			errors = append(errors, fmt.Errorf("no champion named %s", name))
+			return
 		}
-		if line[1] == "" {
-			// skip empty lines
-			continue
+		champion.AddRating("hellhades-tier-list", &rating, 5)
+		if errSanitize := champion.Sanitize(); errSanitize != nil {
+			errors = append(errors, errSanitize)
 		}
-		champion, errChampion := c.getChampion(line[1])
-		if errChampion != nil {
-			errs = append(errs, errChampion)
-			continue
-		}
-		rating := &common.Rating{}
-		rating.ArenaDef = sanitizeRating(line[rating_ArenaDef])
-		rating.ArenaOff = sanitizeRating(line[rating_ArenaOff])
-		rating.ClanBossWoGS = sanitizeRating(line[rating_ClanBossWOGS])
-		rating.ClanBosswGS = sanitizeRating(line[rating_ClanBossWGS])
-		rating.IceGuardian = sanitizeRating(line[rating_IceGolem])
-		rating.Dragon = sanitizeRating(line[rating_Dragon])
-		rating.Spider = sanitizeRating(line[rating_Spider])
-		rating.FireKnight = sanitizeRating(line[rating_FireKnight])
-		champion.AddRating("hellhades-tier-list", rating, 5)
 		champions = append(champions, champion)
-	}
-	if len(errs) > 0 {
-		utils.Exit(1, fmt.Errorf("got multiple errors: %+v", errs))
-	}
-	for _, champion := range champions {
-		if err := champion.Sanitize(); err != nil {
-			utils.Exit(1, fmt.Errorf("cannot sanitize champion %s: %s", champion.Name, err))
-		}
+	})
+	if len(errors) > 0 {
+		utils.Exit(1, fmt.Errorf("%v", errors))
 	}
 	for _, champion := range champions {
-		if err := c.saveChampion(champion); err != nil {
-			utils.Exit(1, fmt.Errorf("cannot save champion %s: %s", champion.Name, err))
+		errWrite := utils.WriteToFile(fmt.Sprintf("%s/docs/champions/current/%s.json", *c.DataDirectory, champion.Slug), champion)
+		if errWrite != nil {
+			utils.Exit(1, errWrite)
 		}
 	}
 }
 
-var (
-	intToRank = map[int]string{
-		5: "SS",
-		4: "S",
-		3: "A",
-		2: "B",
-		1: "C",
-		0: "D",
-	}
-	championReplacement = map[string]string{
-		"Allure":               "Alure",
-		"Lutheia":              "Luthiea",
-		"InfernalBaroness":     "Infernal Baroness",
-		"Flesh Tearer":         "Flesh-Tearer",
-		"Cannoness":            "Canoness",
-		"Woad Painted":         "Woad-Painted",
-		"Bad-el-Kazaar":        "Bad-el-Kazar",
-		"Big 'Un":              "Big'Un",
-		"Teela Groremane":      "Teela Goremane",
-		"Painkeeper":           "Pain Keeper",
-		"Bloodhord":            "Bloodhorn",
-		"Amaratine Skeleton":   "Amarantine Skeleton",
-		"Lameller":             "Lamellar",
-		"Steadfast Marshall":   "Steadfast Marshal",
-		"Furystroker":          "Furystoker",
-		"Tormenter":            "Tormentor",
-		"Houndspawn":           "Hound Spawn",
-		"Arablaster":           "Arbalester",
-		"Siphi the lost bride": "Siphi the Lost Bride",
-		"Rotos the lost groom": "Rotos the Lost Groom",
-		"Ursine IceCrusher":    "Ursine Icecrusher",
-		"Lordly Legionaire":    "Lordly Legionary",
-		"Avir the Alchmage": "Avir the Alchemage",
-	}
+const (
+	col_Name        = 0
+	col_Rarity      = 1
+	col_Faction     = 2
+	col_Overall     = 3
+	col_ClanBoss    = 4
+	col_FactionWars = 5
+	col_Spider      = 6
+	col_Dragon      = 7
+	col_FireKnight  = 8
+	col_Golem       = 9
+	col_ArenaDef    = 10
+	col_ArenaOff    = 11
 )
 
 func sanitizeRating(rating string) string {
 	if rating == "" {
 		return rating
 	}
-	intV, err := strconv.Atoi(rating)
+	v, err := strconv.ParseFloat(rating, 64)
 	if err != nil {
 		panic(err)
 	}
-	return intToRank[intV]
+	switch true {
+	case v >= 4.5:
+		return "SS"
+	case v >= 4.0:
+		return "S"
+	case v >= 3.5:
+		return "A"
+	case v >= 2.5:
+		return "B"
+	case v >= 1.5:
+		return "C"
+	}
+	return "D"
 }
 
-func (c *Command) getChampionWithFilter(filter common.ChampionFilter) (*common.Champion, error) {
-	champions, err := common.GetChampions(filter)
-	if err != nil {
-		return nil, err
-	} else if len(champions) != 1 {
-		return nil, fmt.Errorf("found %d champions", len(champions))
+func (c *Command) requestUrl(url string) (*goquery.Document, error) {
+	req, errRequest := http.NewRequest("GET", url, nil)
+	if errRequest != nil {
+		return nil, errRequest
 	}
-	return champions[0], nil
-}
-
-func (c *Command) getChampion(name string) (*common.Champion, error) {
-	nameOk, errSanitize := common.GetSanitizedName(name)
-	if errSanitize != nil {
-		return nil, errSanitize
+	resp, errResponse := http.DefaultClient.Do(req)
+	if errResponse != nil {
+		return nil, errResponse
 	}
-	if v, ok := championReplacement[nameOk]; ok {
-		nameOk = v
-	}
-	champion, err := c.getChampionWithFilter(common.FilterChampionName(nameOk))
-	if err != nil {
-		champion, err = c.getChampionWithFilter(common.FilterChampionSlug(common.GetLinkNameFromSanitizedName(nameOk)))
-		if err != nil {
-			return nil, fmt.Errorf("error while looking up champion %s: %w", nameOk, err)
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 404 {
+			return nil, ErrNotFound
 		}
+		return nil, fmt.Errorf("request %v returned %d", req, resp.StatusCode)
 	}
-	file, errFile := os.Open(fmt.Sprintf("%s/docs/champions/current/%s.json", *c.DataDirectory, champion.Slug))
-	if errFile != nil {
-		return nil, errFile
-	}
-	defer file.Close()
-	champion = &common.Champion{}
-	errDecode := json.NewDecoder(file).Decode(champion)
-	if errDecode != nil {
-		return nil, errDecode
-	}
-	return champion, nil
+	return goquery.NewDocumentFromReader(resp.Body)
 }
-
-func (c *Command) saveChampion(champion *common.Champion) error {
-	filename := champion.Filename()
-	errWrite := utils.WriteToFile(fmt.Sprintf("%s/docs/champions/current/%s", *c.DataDirectory, filename), champion)
-	if errWrite != nil {
-		return errWrite
-	}
-	return nil
-}
-
-var (
-	safeGuard = []string{
-		`d,Champion,Faction,Affinity,Need Books?,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,Masteries,Stats,Gear Sets,,,,,,,,`,
-		`Overall,Champion,Faction,Affinity,Need Books?,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,Masteries,Stats,Gear Sets,,,,,,,,`,
-		`Overall,Champion,Faction,Affinity,Need Books?,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,Masteries,Stats,Gear Sets,,,,,,,`,
-		`Rank,Champion,Faction,Affinity,Need Books?,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,Masteries,Stats,Gear Sets,,,,,,,,`,
-		`Rank,Champion,Faction,Affinity,Need Books?,Clan Boss,Dragon,Spider,Ice Golem,FireKnight,Arena Off,Arena Def,Total Score,Average,Guide,Masteries,Stats,Gear Sets,,,,,,,,,`,
-	}
-)
-
-const (
-	rating_ArenaOff     = 10
-	rating_ArenaDef     = 11
-	rating_ClanBossWOGS = 5
-	rating_ClanBossWGS  = 5
-	rating_IceGolem     = 8
-	rating_Dragon       = 6
-	rating_Spider       = 7
-	rating_FireKnight   = 9
-)

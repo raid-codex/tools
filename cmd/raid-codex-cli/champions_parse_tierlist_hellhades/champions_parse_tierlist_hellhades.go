@@ -137,15 +137,15 @@ func sanitizeRating(rating string) string {
 		panic(err)
 	}
 	switch true {
-	case v >= 4.5:
+	case v >= 5.0:
 		return "SS"
 	case v >= 4.0:
 		return "S"
-	case v >= 3.5:
+	case v >= 3.0:
 		return "A"
-	case v >= 2.5:
+	case v >= 2.0:
 		return "B"
-	case v >= 1.5:
+	case v >= 1.0:
 		return "C"
 	}
 	return "D"

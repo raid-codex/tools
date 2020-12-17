@@ -33,6 +33,16 @@ func (f *Faction) Sanitize() error {
 	f.Slug = GetLinkNameFromSanitizedName(f.Name)
 	f.WebsiteLink = fmt.Sprintf("/factions/%s/", f.Slug)
 	f.ImageSlug = fmt.Sprintf("image-faction-%s", f.Slug)
+	championList, errChampions := GetChampions(FilterChampionFactionSlug(f.Slug))
+	if errChampions != nil {
+		return errChampions
+	}
+	f.NumberOfChampions = int64(len(championList))
+	f.ChampionSlugs = make([]string, len(championList))
+	for idx, champion := range championList {
+		f.ChampionSlugs[idx] = champion.Slug
+	}
+
 	if f.NumberOfChampions > 0 {
 		f.DefaultDescription = fmt.Sprintf(
 			"%s is a faction from RAID Shadow Legends composed of %d champions",
@@ -47,16 +57,6 @@ func (f *Faction) Sanitize() error {
 	}
 	if f.SEO == nil {
 		f.DefaultSEO()
-	}
-
-	championList, errChampions := GetChampions(FilterChampionFactionSlug(f.Slug))
-	if errChampions != nil {
-		return errChampions
-	}
-	f.NumberOfChampions = int64(len(championList))
-	f.ChampionSlugs = make([]string, len(championList))
-	for idx, champion := range championList {
-		f.ChampionSlugs[idx] = champion.Slug
 	}
 
 	return nil

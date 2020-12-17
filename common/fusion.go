@@ -91,6 +91,9 @@ func (f *Fusion) Sanitize() error {
 			return err
 		}
 	}
+	if f.ParentFusionSlug != nil && *f.ParentFusionSlug == f.Slug {
+		return fmt.Errorf("self referencing fusion")
+	}
 	return nil
 }
 

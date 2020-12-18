@@ -19,7 +19,7 @@ type Aura struct {
 }
 
 var (
-	regexpAura       = regexp.MustCompile(`^Increases.+(?P<Stat>ATK|DEF|ACC|SPD|RES|C\.RATE|HP) in (?P<Location>.+) by (?P<Value>\d+%?)`)
+	regexpAura       = regexp.MustCompile(`^Increases?.+(?P<Stat>ATK|DEF|ACC|SPD|RES|C\.RATE|HP) in (?P<Location>.+) by (?P<Value>\d+%?)`)
 	auraReplacements = []struct {
 		lookFor   string
 		replaceBy string

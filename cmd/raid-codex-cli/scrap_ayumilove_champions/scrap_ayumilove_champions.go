@@ -194,6 +194,8 @@ func (c *Command) parseStats(champion *common.Champion, doc *goquery.Document) {
 					continue
 				} else if len(d) == 0 || !isStats {
 					continue
+				} else if d == "Additional Information" {
+					break
 				}
 				var intField *int64
 				var floatField *float64
@@ -346,6 +348,9 @@ var (
 	regexpSkillCooldown          = regexp.MustCompile(`\(Cooldown: ([0-9]+) turns\)`)
 	regexpSkillDamageIncreasedBy = regexp.MustCompile(`(\[[A-Z]+\])`)
 	skillDescriptionReplace      = map[string]string{
+		"[Not Of This World]":               "(Not Of This World)",
+		"[Hex]":                             "(Hex)", // skipped for now as we don't know what this is
+		"[Decrease C.RATE]":                 "[Decrease C. RATE]",
 		"[Active Effect]":                   "(Active Effect)",
 		"[Passive Effect]":                  "(Passive Effect)",
 		"[Shieid]":                          "[Shield]",
@@ -356,8 +361,9 @@ var (
 		"[Does not work against Bosses]":                    "(Does not work against Bosses)",
 		"[Only available when Cupidus is on the same team]": "(Only available when Cupidus is on the same team)",
 		"[Only available when Venus is on the same team]":   "(Only available when Venus is on the same team)",
-		"[Has a 75% chance of placing a [Bomb] debuff that will detonate after 3 turns when Fenax is on the same team]": "(Has a 75% chance of placing a [Bomb] debuff that will detonate after 3 turns when Fenax is on the same team)",
-		"[Will not heal from damage inflicted by Masteries]":                                                            "(Will not heal from damage inflicted by Masteries)",
+		"[Has a 75% chance of placing a [Bomb] debuff that will detonate after 3 turns when Fenax is on the same team]":                                                          "(Has a 75% chance of placing a [Bomb] debuff that will detonate after 3 turns when Fenax is on the same team)",
+		"[Will not heal from damage inflicted by Masteries]":                                                                                                                     "(Will not heal from damage inflicted by Masteries)",
+		"[Cannot decrease a single Champion’s MAX HP by more than 25% in one Battle. Will not decrease Bosses MAX HP. Cannot increase this Champion’s MAX HP by more than 50%.]": "(Cannot decrease a single Champion’s MAX HP by more than 25% in one Battle. Will not decrease Bosses MAX HP. Cannot increase this Champion’s MAX HP by more than 50%.)",
 	}
 )
 

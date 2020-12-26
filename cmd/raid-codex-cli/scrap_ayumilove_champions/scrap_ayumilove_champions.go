@@ -174,6 +174,10 @@ func (c *Command) parseStoryline(champion *common.Champion, doc *goquery.Documen
 	})
 }
 
+var (
+	regexpNbr = regexp.MustCompile("([0-9]+)")
+)
+
 func (c *Command) parseStats(champion *common.Champion, doc *goquery.Document) {
 	doc.Find(".entry-content table").Each(func(idx int, s *goquery.Selection) {
 		if idx != 0 {
@@ -185,7 +189,11 @@ func (c *Command) parseStats(champion *common.Champion, doc *goquery.Document) {
 				// only the 2nd column is for stats
 				return
 			}
-			data := strings.Split(sc.Text(), "\n")
+			html, err := sc.Html()
+			if err != nil {
+				utils.Exit(1, err)
+			}
+			data := strings.Split(html, "<br/>")
 			chars := champion.Characteristics[60]
 			isStats := false
 			for _, d := range data {
@@ -224,7 +232,8 @@ func (c *Command) parseStats(champion *common.Champion, doc *goquery.Document) {
 				if lastPart == "?" {
 					continue
 				}
-				v, errInt := strconv.ParseInt(lastPart, 10, 64)
+				m := regexpNbr.FindAllStringSubmatch(lastPart, -1)
+				v, errInt := strconv.ParseInt(m[0][1], 10, 64)
 				if errInt != nil {
 					utils.Exit(1, fmt.Errorf("invalid number in stats %s: %s ; %s", d, lastPart, errInt))
 				}
@@ -344,10 +353,11 @@ func (c *Command) parseEquipment(champion *common.Champion, doc *goquery.Documen
 }
 
 var (
-	regexpSkillName              = regexp.MustCompile(`^([a-zA-Z '’]+)`)
+	regexpSkillName              = regexp.MustCompile(`^<strong>([a-zA-Z '’]+)`)
 	regexpSkillCooldown          = regexp.MustCompile(`\(Cooldown: ([0-9]+) turns\)`)
 	regexpSkillDamageIncreasedBy = regexp.MustCompile(`(\[[A-Z]+\])`)
 	skillDescriptionReplace      = map[string]string{
+		"[Gleam of Avarice]":                "(Gleam of Avarice)",
 		"[Not Of This World]":               "(Not Of This World)",
 		"[Hex]":                             "(Hex)", // skipped for now as we don't know what this is
 		"[Decrease C.RATE]":                 "[Decrease C. RATE]",
@@ -355,6 +365,7 @@ var (
 		"[Passive Effect]":                  "(Passive Effect)",
 		"[Shieid]":                          "[Shield]",
 		"[Block Heal]":                      "[Heal Reduction]",
+		"[continuous heal]":                 "[Continuous Heal]",
 		"[Does not occur with Spiderlings]": "(Does not occur with Spiderlings)",
 		"[Only available when Sikara is on the same team]": "(Only available when Sikara is on the same team)",
 		"[Cannot decrease a single Champion’s MAX HP by more than 60% in one Battle. Cannot increase this Champion’s MAX HP by more than 60,000. Does not decrease Boss’ MAX HP. This Champion’s MAX HP will be increased by 15,000 when this Skill is used against Bosses]": "(Cannot decrease a single Champion’s MAX HP by more than 60% in one Battle. Cannot increase this Champion’s MAX HP by more than 60,000. Does not decrease Boss’ MAX HP. This Champion’s MAX HP will be increased by 15,000 when this Skill is used against Bosses)",
@@ -378,17 +389,23 @@ func (c *Command) parseSkills(champion *common.Champion, doc *goquery.Document) 
 					check = 0
 					return
 				}
-				data := strings.Split(sc.Text(), "\n")
-				skillName := strings.TrimSpace(regexpSkillName.FindAllString(data[0], -1)[0])
+				html, err := sc.Html()
+				if err != nil {
+					utils.Exit(1, err)
+				}
+				data := strings.Split(html, "<br/>")
+				rpx := regexpSkillName.FindAllString(data[0], -1)
+				skillName := strings.TrimSpace(rpx[0][8:])
 				damageIncreasedBy := regexpSkillDamageIncreasedBy.FindAllString(data[0], -1)
 				if len(damageIncreasedBy) > 0 {
-					data[1] = data[1] + "<br>Damage based on: " + strings.Join(damageIncreasedBy, " ")
+					data = append(data, "Damage based on: "+strings.Join(damageIncreasedBy, " "))
 				}
 				cooldown := regexpSkillCooldown.FindAllStringSubmatch(data[0], -1)
 				description := strings.Join(data[1:], "<br>")
 				for find, rep := range skillDescriptionReplace {
 					description = strings.Replace(description, find, rep, -1)
 				}
+				description = strings.TrimSpace(description)
 				if skillName != "Aura" {
 					passive := strings.Contains(data[0], "[Passive]")
 					skill := champion.AddSkill(skillName, description, passive)

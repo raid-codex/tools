@@ -34,6 +34,8 @@ var (
 		{"Resist", "RES"},
 		{"RESIST", "RES"},
 		{"Arena Battles", "Arena"},
+		{"Doom Tower battles", "Doom Tower"},
+		{"Doom Tower Battles", "Doom Tower"},
 	}
 )
 

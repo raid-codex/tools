@@ -68,9 +68,10 @@ func (s *Skill) Sanitize() error {
 }
 
 var (
-	decreaseTMRegexp = regexp.MustCompile(`(?i)(Decrea|deplete|depleting)([^.<])+Turn Meter`)
-	increaseTMRegexp = regexp.MustCompile(`(?i)(Fill|boost|steal|resets)([^.<])+Turn Meter`)
-	anyTMRegexp      = regexp.MustCompile(`(?i)Turn.*Meter`)
+	decreaseTMRegexp       = regexp.MustCompile(`(?i)(steals|Decrea|deplete|depleting)([^.<])+Turn Meter`)
+	increaseTMRegexp       = regexp.MustCompile(`(?i)(steals|Fill|boost|steal|resets)([^.<])+Turn Meter`)
+	anyTMRegexp            = regexp.MustCompile(`(?i)Turn.*Meter`)
+	descriptionReplacement = regexp.MustCompile(`(\d+)\.(\d+)`)
 )
 
 func (s *Skill) lookForTurnMeter() error {
@@ -79,15 +80,17 @@ func (s *Skill) lookForTurnMeter() error {
 			return nil
 		}
 	}
+	// match description by removing potential "Steals 7.5% of Turn meter" things which invalidates decrease/increase regexp
+	description := descriptionReplacement.ReplaceAllString(s.RawDescription, "$1,$2")
 	matched := false
-	if decreaseTMRegexp.MatchString(s.RawDescription) || strings.Contains(s.RawDescription, "Turn Meters decreased") {
+	if decreaseTMRegexp.MatchString(description) || strings.Contains(s.RawDescription, "Turn Meters decreased") {
 		matched = true
 		s.Effects = append(s.Effects, &StatusEffect{
 			EffectType: "battle_enhancement",
 			Type:       "Decrease Turn Meter",
 		})
 	}
-	if increaseTMRegexp.MatchString(s.RawDescription) || strings.Contains(s.RawDescription, "Turn Meter will be increased") {
+	if increaseTMRegexp.MatchString(description) || strings.Contains(s.RawDescription, "Turn Meter will be increased") {
 		matched = true
 		s.Effects = append(s.Effects, &StatusEffect{
 			EffectType: "battle_enhancement",
@@ -95,7 +98,7 @@ func (s *Skill) lookForTurnMeter() error {
 		})
 	}
 	if anyTMRegexp.MatchString(s.RawDescription) && !matched {
-		for _, wl := range []string{"Turn Meter is", "a full Turn Meter", "or have their Turn Meter filled", "Revives Skullsworn with 50% HP and 50% Turn Meter", "revives all dead allies with 50% HP and 50% Turn Meter", "with the highest Turn Meter", "Immune to Turn Meter decreasing effects.", "Revives a dead ally with 50% HP and 50% Turn Meter", "has more than 75% Turn Meter."} {
+		for _, wl := range []string{"Turn Meter is", "a full Turn Meter", "or have their Turn Meter filled", "Revives Skullsworn with 50% HP and 50% Turn Meter", "revives all dead allies with 50% HP and 50% Turn Meter", "with the highest Turn Meter", "Immune to Turn Meter decreasing effects.", "Revives a dead ally with 50% HP and 50% Turn Meter", "has more than 75% Turn Meter.", "Revives 2 Random allies with 20% HP and 20% Turn Meter"} {
 			if strings.Contains(s.RawDescription, wl) {
 				matched = true
 			}

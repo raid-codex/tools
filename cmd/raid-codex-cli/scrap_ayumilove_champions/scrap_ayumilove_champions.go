@@ -375,6 +375,7 @@ var (
 		"[Has a 75% chance of placing a [Bomb] debuff that will detonate after 3 turns when Fenax is on the same team]":                                                          "(Has a 75% chance of placing a [Bomb] debuff that will detonate after 3 turns when Fenax is on the same team)",
 		"[Will not heal from damage inflicted by Masteries]":                                                                                                                     "(Will not heal from damage inflicted by Masteries)",
 		"[Cannot decrease a single Champion’s MAX HP by more than 25% in one Battle. Will not decrease Bosses MAX HP. Cannot increase this Champion’s MAX HP by more than 50%.]": "(Cannot decrease a single Champion’s MAX HP by more than 25% in one Battle. Will not decrease Bosses MAX HP. Cannot increase this Champion’s MAX HP by more than 50%.)",
+		"[Only heals by 25% of the damage received from boss attacks. This champion only receives half of the heal that all other allies receive.]":                              "(Only heals by 25% of the damage received from boss attacks. This champion only receives half of the heal that all other allies receive.)",
 	}
 )
 

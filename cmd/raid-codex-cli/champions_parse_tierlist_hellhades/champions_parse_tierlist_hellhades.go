@@ -48,7 +48,7 @@ func (c *Command) Run() {
 	}
 	errors := make([]error, 0)
 	champions := make([]*common.Champion, 0)
-	doc.Find("#ptp_e354b992b162333e_1 tr").Each(func(idx int, s *goquery.Selection) {
+	doc.Find(".post-content table.posts-data-table tr").Each(func(idx int, s *goquery.Selection) {
 		if idx == 0 {
 			if s.Text() != `NameRarityFactionOverall RatingClan BossFaction WarsSpiderDragonFire KnightIce GolemArena DefArena Atk` {
 				utils.Exit(1, fmt.Errorf("invalid safe guard"))

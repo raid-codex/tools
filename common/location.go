@@ -11,10 +11,12 @@ func (l *Location) Sanitize() error {
 
 func ConvertLocation(s string) string {
 	if v, ok := map[string]string{
-		"dungeons":         "dungeon",
-		"the-arena":        "arena",
-		"campaign-battles": "campaign",
-		"faction-crypts":   "faction-wars",
+		"dungeons":            "dungeon",
+		"the-arena":           "arena",
+		"campaign-battles":    "campaign",
+		"faction-crypts":      "faction-wars",
+		"the-doom-tower":      "doom-tower",
+		"faction-wars-crypts": "faction-wars",
 	}[s]; ok {
 		return v
 	}

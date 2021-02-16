@@ -357,6 +357,12 @@ var (
 	regexpSkillCooldown          = regexp.MustCompile(`\(Cooldown: ([0-9]+) turns\)`)
 	regexpSkillDamageIncreasedBy = regexp.MustCompile(`(\[[A-Z]+\])`)
 	skillDescriptionReplace      = map[string]string{
+		"[Decrese DEF]":          "[Decrease DEF]",
+		"[Revive on Death Buff]": "[Revive on Death] buff",
+		"[Revive On Death]":      "[Revive on Death]",
+		"[Does not work against bosses. This champion cannot be killed by this skill]":                                "(Does not work against bosses. This champion cannot be killed by this skill)",
+		"[Does not work if there are multiple Nogdars on the team or if there are 3 or fewer champions on the team.]": "(Does not work if there are multiple Nogdars on the team or if there are 3 or fewer champions on the team.)",
+		"[Block cooldown Skills]":           "[Block Cooldown Skills]",
 		"[Gleam of Avarice]":                "(Gleam of Avarice)",
 		"[Not Of This World]":               "(Not Of This World)",
 		"[Hex]":                             "(Hex)", // skipped for now as we don't know what this is

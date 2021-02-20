@@ -189,61 +189,58 @@ func (c *Command) parseStats(champion *common.Champion, doc *goquery.Document) {
 				// only the 2nd column is for stats
 				return
 			}
-			html, err := sc.Html()
-			if err != nil {
-				utils.Exit(1, err)
-			}
-			data := strings.Split(html, "<br/>")
-			chars := champion.Characteristics[60]
-			isStats := false
-			for _, d := range data {
-				if strings.Contains(d, "Total Stats") {
-					isStats = true
-					continue
-				} else if len(d) == 0 || !isStats {
-					continue
-				} else if d == "Additional Information" {
-					break
+			sc.Find("p").Each(func(sIdx int, scc *goquery.Selection) {
+				if sIdx != 1 {
+					// must be the second <p>
+					return
 				}
-				var intField *int64
-				var floatField *float64
-				switch true {
-				case strings.Contains(d, "ATK"):
-					intField = &chars.Attack
-				case strings.Contains(d, "HP"):
-					intField = &chars.HP
-				case strings.Contains(d, "DEF"):
-					intField = &chars.Defense
-				case strings.Contains(d, "ACC"):
-					intField = &chars.Accuracy
-				case strings.Contains(d, "RESIST"):
-					intField = &chars.Resistance
-				case strings.Contains(d, "SPD"):
-					intField = &chars.Speed
-				case strings.Contains(d, "C. Rate") || strings.Contains(d, "C.RATE"):
-					floatField = &chars.CriticalRate
-				case strings.Contains(d, "C. DMG") || strings.Contains(d, "C.DMG"):
-					floatField = &chars.CriticalDamage
-				default:
-					utils.Exit(1, fmt.Errorf("cannot parse stats line '%s'", d))
+				html, err := scc.Html()
+				if err != nil {
+					utils.Exit(1, err)
 				}
-				subD := strings.Split(d, " ")
-				lastPart := strings.Replace(strings.Replace(subD[len(subD)-1], "%", "", -1), ",", "", -1)
-				if lastPart == "?" {
-					continue
+				data := strings.Split(html, "<br/>")
+				chars := champion.Characteristics[60]
+				for _, d := range data {
+					var intField *int64
+					var floatField *float64
+					switch true {
+					case strings.Contains(d, "ATK"):
+						intField = &chars.Attack
+					case strings.Contains(d, "HP"):
+						intField = &chars.HP
+					case strings.Contains(d, "DEF"):
+						intField = &chars.Defense
+					case strings.Contains(d, "ACC"):
+						intField = &chars.Accuracy
+					case strings.Contains(d, "RESIST"):
+						intField = &chars.Resistance
+					case strings.Contains(d, "SPD"):
+						intField = &chars.Speed
+					case strings.Contains(d, "C. Rate") || strings.Contains(d, "C.RATE"):
+						floatField = &chars.CriticalRate
+					case strings.Contains(d, "C. DMG") || strings.Contains(d, "C.DMG"):
+						floatField = &chars.CriticalDamage
+					default:
+						utils.Exit(1, fmt.Errorf("cannot parse stats line '%s'", d))
+					}
+					subD := strings.Split(d, " ")
+					lastPart := strings.Replace(strings.Replace(subD[len(subD)-1], "%", "", -1), ",", "", -1)
+					if lastPart == "?" {
+						continue
+					}
+					m := regexpNbr.FindAllStringSubmatch(lastPart, -1)
+					v, errInt := strconv.ParseInt(m[0][1], 10, 64)
+					if errInt != nil {
+						utils.Exit(1, fmt.Errorf("invalid number in stats %s: %s ; %s", d, lastPart, errInt))
+					}
+					if intField != nil {
+						*intField = v
+					} else if floatField != nil {
+						*floatField = float64(v) / 100.0
+					}
 				}
-				m := regexpNbr.FindAllStringSubmatch(lastPart, -1)
-				v, errInt := strconv.ParseInt(m[0][1], 10, 64)
-				if errInt != nil {
-					utils.Exit(1, fmt.Errorf("invalid number in stats %s: %s ; %s", d, lastPart, errInt))
-				}
-				if intField != nil {
-					*intField = v
-				} else if floatField != nil {
-					*floatField = float64(v) / 100.0
-				}
-			}
-			champion.Characteristics[60] = chars
+				champion.Characteristics[60] = chars
+			})
 		})
 	})
 }

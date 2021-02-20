@@ -22,11 +22,12 @@ type Command struct {
 var (
 	ErrNotFound = fmt.Errorf("not found")
 	nameReplace = map[string]string{
-		"Centurian":          "Centurion",
-		"Steadfast Marshall": "Steadfast Marshal",
-		"Woad Painted":       "Woad-Painted",
-		"Ma’Shalled":         "Ma'Shalled",
-		"Big ‘Un":            "Big'Un",
+		"Centurian":             "Centurion",
+		"Steadfast Marshall":    "Steadfast Marshal",
+		"Woad Painted":          "Woad-Painted",
+		"Ma’Shalled":            "Ma'Shalled",
+		"Big ‘Un":               "Big'Un",
+		"Nogdar The Headhunter": "Nodgar the Headhunter",
 	}
 )
 
@@ -36,6 +37,8 @@ func New(cmd *kingpin.CmdClause) *Command {
 	}
 	return command
 }
+
+const safeguard = `NameOverall RatingClan BossFaction WarsSpiderDragonFire KnightIce GolemArena DefArena Atk`
 
 func (c *Command) Run() {
 	errInit := common.InitFactory(*c.DataDirectory)
@@ -50,8 +53,8 @@ func (c *Command) Run() {
 	champions := make([]*common.Champion, 0)
 	doc.Find(".post-content table.posts-data-table tr").Each(func(idx int, s *goquery.Selection) {
 		if idx == 0 {
-			if s.Text() != `NameRarityFactionOverall RatingClan BossFaction WarsSpiderDragonFire KnightIce GolemArena DefArena Atk` {
-				utils.Exit(1, fmt.Errorf("invalid safe guard"))
+			if s.Text() != safeguard {
+				utils.Exit(1, fmt.Errorf("invalid safe guard: '%s' instead of '%s'", s.Text(), safeguard))
 			}
 			return
 		}
@@ -115,17 +118,15 @@ func (c *Command) Run() {
 
 const (
 	col_Name        = 0
-	col_Rarity      = 1
-	col_Faction     = 2
-	col_Overall     = 3
-	col_ClanBoss    = 4
-	col_FactionWars = 5
-	col_Spider      = 6
-	col_Dragon      = 7
-	col_FireKnight  = 8
-	col_Golem       = 9
-	col_ArenaDef    = 10
-	col_ArenaOff    = 11
+	col_Overall     = 1
+	col_ClanBoss    = 2
+	col_FactionWars = 3
+	col_Spider      = 4
+	col_Dragon      = 5
+	col_FireKnight  = 6
+	col_Golem       = 7
+	col_ArenaDef    = 8
+	col_ArenaOff    = 9
 )
 
 func sanitizeRating(rating string) string {

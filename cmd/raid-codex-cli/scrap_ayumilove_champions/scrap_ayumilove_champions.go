@@ -273,41 +273,46 @@ func (c *Command) parseRating(champion *common.Champion, doc *goquery.Document) 
 			found = true // don't keep checking after since it may alter ratings. if we found "Grinding" then we have our ratings on this array.
 		}
 		s.Find("td").Each(func(subIdx int, sc *goquery.Selection) {
-			data := strings.Split(sc.Text(), "\n")
-			for _, d := range data {
-				count := len(rankRegexp.FindAllStringIndex(d, -1))
-				rank := countToLetter[count]
-				switch true {
-				case strings.Contains(d, "Campaign"):
-					rating.Campaign = rank
-				case strings.Contains(d, "Arena Defense"):
-					rating.ArenaDef = rank
-				case strings.Contains(d, "Arena Offense"):
-					rating.ArenaOff = rank
-				case strings.Contains(d, "Clan Boss"):
-					rating.ClanBossWoGS = rank
-					rating.ClanBosswGS = rank
-				case strings.Contains(d, "Minotaur"):
-					rating.Minotaur = rank
-				case strings.Contains(d, "Spider"):
-					rating.Spider = rank
-				case strings.Contains(d, "Fire Knight"):
-					rating.FireKnight = rank
-				case strings.Contains(d, "Dragon"):
-					rating.Dragon = rank
-				case strings.Contains(d, "Ice Golem"):
-					rating.IceGuardian = rank
-				case strings.Contains(d, "Void Keep"):
-					rating.VoidDungeon = rank
-				case strings.Contains(d, "Magic Keep"):
-					rating.MagicDungeon = rank
-				case strings.Contains(d, "Force Keep"):
-					rating.ForceDungeon = rank
-				case strings.Contains(d, "Spirit Keep"):
-					rating.SpiritDungeon = rank
+			sc.Find("p").Each(func(_ int, scc *goquery.Selection) {
+				v, err := scc.Html()
+				if err != nil {
+					utils.Exit(1, err)
 				}
-
-			}
+				data := strings.Split(v, "<br/>")
+				for _, d := range data {
+					count := len(rankRegexp.FindAllStringIndex(d, -1))
+					rank := countToLetter[count]
+					switch true {
+					case strings.Contains(d, "Campaign"):
+						rating.Campaign = rank
+					case strings.Contains(d, "Arena Defense"):
+						rating.ArenaDef = rank
+					case strings.Contains(d, "Arena Offense"):
+						rating.ArenaOff = rank
+					case strings.Contains(d, "Clan Boss"):
+						rating.ClanBossWoGS = rank
+						rating.ClanBosswGS = rank
+					case strings.Contains(d, "Minotaur"):
+						rating.Minotaur = rank
+					case strings.Contains(d, "Spider"):
+						rating.Spider = rank
+					case strings.Contains(d, "Fire Knight"):
+						rating.FireKnight = rank
+					case strings.Contains(d, "Dragon"):
+						rating.Dragon = rank
+					case strings.Contains(d, "Ice Golem"):
+						rating.IceGuardian = rank
+					case strings.Contains(d, "Void Keep"):
+						rating.VoidDungeon = rank
+					case strings.Contains(d, "Magic Keep"):
+						rating.MagicDungeon = rank
+					case strings.Contains(d, "Force Keep"):
+						rating.ForceDungeon = rank
+					case strings.Contains(d, "Spirit Keep"):
+						rating.SpiritDungeon = rank
+					}
+				}
+			})
 		})
 	})
 	champion.AddRating("ayumilove", rating, 2)

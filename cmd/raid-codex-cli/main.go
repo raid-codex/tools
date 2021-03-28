@@ -28,6 +28,7 @@ import (
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_rebuild_index"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/fusions_sanitize"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/parse_full_sheet"
+	"github.com/raid-codex/tools/cmd/raid-codex-cli/parse_static_data"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/schema_validate"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/scrap_ayumilove_champions"
 	"github.com/raid-codex/tools/cmd/raid-codex-cli/scrap_gameronion_champions"
@@ -179,9 +180,11 @@ var (
 	schemaValidate    = schema.Command("validate", "Validate a file against a schema")
 	schemaValidateCmd = schema_validate.New(schemaValidate)
 
-	parse             = app.Command("parse", "Parse stuff")
-	parseFullSheet    = parse.Command("full-sheet", "Parse the full-sheet stuff")
-	parseFullSheetCmd = parse_full_sheet.New(parseFullSheet)
+	parse              = app.Command("parse", "Parse stuff")
+	parseFullSheet     = parse.Command("full-sheet", "Parse the full-sheet stuff")
+	parseFullSheetCmd  = parse_full_sheet.New(parseFullSheet)
+	parseStaticData    = parse.Command("static-data", "Parse the static data")
+	parseStaticDataCmd = parse_static_data.New(parseStaticData)
 
 	fusions = app.Command("fusions", "do stuff with fusions")
 
@@ -234,6 +237,7 @@ var (
 		"status-effect page generate":          statusEffectPageGenerateCmd,
 		"status-effect page create":            statusEffectPageCreateCmd,
 		"parse full-sheet":                     parseFullSheetCmd,
+		"parse static-data":                    parseStaticDataCmd,
 		"fusions sanitize":                     fusionsSanitizeCmd,
 		"fusions rebuild-index":                fusionsRebuildIndexCmd,
 		"fusions page generate":                fusionsPageGenerateCmd,

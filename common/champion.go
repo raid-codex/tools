@@ -356,7 +356,7 @@ func (c *Champion) DefaultSEO() {
 		"@type":       "Person",
 		"name":        c.Name,
 		"url":         fmt.Sprintf("https://raid-codex.com%s", c.WebsiteLink),
-		"image":       fmt.Sprintf("https://raid-codex.com/wp-content/uploads/champions/%s.jpg", c.ImageSlug),
+		"image":       fmt.Sprintf("https://raid-codex.com/img/hashed-img/%s.png", c.Thumbnail),
 		"description": fmt.Sprintf("Member of the faction %s, %s is a champion of %s rarity and of %s type", c.Faction.Name, c.Name, c.Rarity, c.Type),
 		"affiliation": map[string]interface{}{
 			"@type":    "Organization",

@@ -359,6 +359,8 @@ var (
 	regexpSkillCooldown          = regexp.MustCompile(`\(Cooldown: ([0-9]+) turns\)`)
 	regexpSkillDamageIncreasedBy = regexp.MustCompile(`(\[[A-Z]+\])`)
 	skillDescriptionReplace      = map[string]string{
+		"[Increases C.DMG]":      "[Increase C.DMG]",
+		"[Revive on death]":      "[Revive on Death]",
 		"[Decrese DEF]":          "[Decrease DEF]",
 		"[Revive on Death Buff]": "[Revive on Death] buff",
 		"[Revive On Death]":      "[Revive on Death]",

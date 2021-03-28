@@ -4,11 +4,10 @@ go 1.13
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.1-0.20190109230704-3dcf72e6c17f
-	github.com/alecthomas/kingpin v2.2.6+incompatible
 	github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc // indirect
 	github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf // indirect
 	github.com/andybalholm/cascadia v1.0.1-0.20181012154424-680b6a57bda4 // indirect
-	github.com/cloudflare/cloudflare-go v0.10.4-0.20191003163155-7182d1eebaae
+	github.com/cloudflare/cloudflare-go v0.14.0
 	github.com/davecgh/go-spew v1.1.1
 	github.com/elazarl/goproxy v0.0.0-20200315184450-1f3cb6622dad // indirect
 	github.com/gin-contrib/sse v0.1.1-0.20190905051334-43f0f29dbd2b // indirect
@@ -24,7 +23,6 @@ require (
 	github.com/mattn/go-isatty v0.0.10-0.20190818123653-bf9a1dea1961 // indirect
 	github.com/moul/http2curl v0.0.0-20161031194548-4e24498b31db // indirect
 	github.com/parnurzeal/gorequest v0.2.16-0.20170429061244-5bf13be19878 // indirect
-	github.com/pkg/errors v0.8.2-0.20190227000051-27936f6d90f9 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/sogko/go-wordpress v0.0.0-20160322054548-0f4f3dc4231f
@@ -34,7 +32,9 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xeipuuv/gojsonschema v1.1.1-0.20190423132807-354ad34c2300
-	golang.org/x/sys v0.0.0-20191115151921-52ab43148777 // indirect
+	golang.org/x/net v0.0.0-20210326220855-61e056675ecf // indirect
+	golang.org/x/text v0.3.5 // indirect
+	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect
 )

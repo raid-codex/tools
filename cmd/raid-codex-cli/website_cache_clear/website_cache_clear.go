@@ -1,6 +1,7 @@
 package website_cache_clear
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -35,7 +36,7 @@ func (c *Command) run() error {
 		return err
 	}
 	log.Println("purging Cloudflare cache")
-	resp, err := cf.PurgeCache(zoneID, cloudflare.PurgeCacheRequest{
+	resp, err := cf.PurgeCache(context.TODO(), zoneID, cloudflare.PurgeCacheRequest{
 		Everything: true,
 	})
 	if err != nil {

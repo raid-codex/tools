@@ -105,14 +105,14 @@ func (c *Command) Run() {
 		}
 		champions = append(champions, champion)
 	})
-	if len(errors) > 0 {
-		utils.Exit(1, fmt.Errorf("%v", errors))
-	}
 	for _, champion := range champions {
 		errWrite := utils.WriteToFile(fmt.Sprintf("%s/docs/champions/current/%s.json", *c.DataDirectory, champion.Slug), champion)
 		if errWrite != nil {
 			utils.Exit(1, errWrite)
 		}
+	}
+	if len(errors) > 0 {
+		utils.Exit(1, fmt.Errorf("%v", errors))
 	}
 }
 

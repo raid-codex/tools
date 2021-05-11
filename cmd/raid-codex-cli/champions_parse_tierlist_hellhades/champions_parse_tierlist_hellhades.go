@@ -2,6 +2,7 @@ package champions_parse_tierlist_hellhades
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -112,7 +113,7 @@ func (c *Command) Run() {
 		}
 	}
 	if len(errors) > 0 {
-		utils.Exit(1, fmt.Errorf("%v", errors))
+		log.Printf("errors were encountered: %v\n",  errors)
 	}
 }
 
